@@ -1,0 +1,121 @@
+:root {
+  --color-bg-main: #ffffff;
+  --color-bg-soft: #f9faf8;
+  --color-bg-card: #eef1ed;
+
+  --color-text-main: #1f2933;
+  --color-text-secondary: #6b7280;
+
+  --color-primary: #2f855a;
+  --color-primary-hover: #276749;
+  --color-primary-light: #9ae6b4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--color-bg-main);
+  color: var(--color-text-main);
+  line-height: 1.6;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.btn-primary {
+  font-family: inherit;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+
+/* ---------- TYPOGRAPHY SYSTEM ---------- */
+
+.text-page-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.text-section-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.text-card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.text-body {
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.text-muted {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+}
+
+
+
+/* ---------- SPACING SYSTEM ---------- */
+
+:root {
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+}
+
+
+/* ---------- SHAPES & SHADOWS ---------- */
+
+:root {
+  --radius-sm: 6px;
+  --radius-md: 10px;
+
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+
+/* ---------- LAYOUT ---------- */
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: var(--space-md);
+  padding-right: var(--space-md);
+}
+
+
+
+/* ---------- UI STATES ---------- */
+
+.ui-loading {
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.ui-empty {
+  color: var(--color-text-secondary);
+  font-style: italic;
+}

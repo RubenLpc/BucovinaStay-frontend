@@ -1,0 +1,149 @@
+/* ================= PAGE ================= */
+
+.auth-page {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* ================= BACKGROUND ================= */
+
+.auth-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.9) saturate(1.05) blur(2px);
+  transform: scale(1.05);
+}
+
+.auth-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.55),
+    rgba(0, 0, 0, 0.55)
+  );
+}
+
+/* ================= CONTENT ================= */
+
+.auth-content {
+  position: relative;
+  z-index: 2;
+
+  min-height: 100vh;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 1.5rem;
+}
+
+/* ================= WRAPPER ================= */
+
+.auth-shell {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* ================= CARD ================= */
+
+.auth-card {
+  width: 100%;
+  max-width: 460px;
+
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+
+  border-radius: 16px;
+  padding: 2.5rem 2.25rem;
+
+  box-shadow:
+    0 28px 56px rgba(0, 0, 0, 0.14),
+    0 6px 18px rgba(0, 0, 0, 0.10);
+
+  animation: fadeUp 0.35s ease;
+}
+
+/* ================= TEXT ================= */
+
+.auth-card h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.auth-subtitle {
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+  color: #6b7280;
+  text-align: center;
+}
+
+/* ================= FORM ================= */
+
+.auth-card form {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.auth-card input {
+  width: 100%;
+  padding: 0.85rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 0.95rem;
+}
+
+.auth-card input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+}
+
+/* ================= ERROR ================= */
+
+.auth-error {
+  color: #dc2626;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* ================= FOOTER ================= */
+
+.auth-footer {
+  margin-top: 1.8rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.auth-footer a {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+/* ================= ANIMATION ================= */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

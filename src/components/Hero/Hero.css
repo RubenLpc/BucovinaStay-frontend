@@ -1,0 +1,79 @@
+.hero {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+  
+    /* IMPORTANT: fără background aici */
+  }
+  
+  /* IMAGINEA */
+  .hero-image {
+    position: absolute;
+    inset: 0;
+    z-index: 0; /* 🔑 */
+  
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  
+    transform: scale(1.08);
+    filter: brightness(0.92) saturate(1.15);
+  }
+  
+  /* OVERLAY */
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1; /* 🔑 */
+  
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.35) 0%,
+      rgba(0, 0, 0, 0.15) 45%,
+      rgba(0, 0, 0, 0.55) 100%
+    );
+  }
+  
+  /* CONȚINUT */
+  .hero-content {
+    position: relative;
+    z-index: 2; /* 🔑 */
+  
+    min-height: 100vh;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2.2rem;
+  
+    color: #ffffff;
+  }
+  
+
+  .hero-text h1 {
+    font-size: clamp(3.2rem, 6vw, 4.6rem);
+    font-weight: 700;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+  }
+  
+  .hero-text h1 span {
+    display: block;
+    font-weight: 500;
+    opacity: 0.9;
+  }
+  
+
+  .hero-text p {
+    font-size: 1.1rem;
+    max-width: 520px;
+    opacity: 0.9;
+  }
+  
+  .hero-content {
+    padding-top: 6rem;
+  }
+  
