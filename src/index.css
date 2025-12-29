@@ -1,26 +1,83 @@
+/* =========================================================
+   GLOBAL DESIGN SYSTEM — PROIECT CAZARI BUCOVINA
+   ========================================================= */
+
+/* ---------- ROOT VARIABLES ---------- */
 :root {
+  /* Backgrounds */
   --color-bg-main: #ffffff;
   --color-bg-soft: #f9faf8;
   --color-bg-card: #eef1ed;
 
+  /* Text */
   --color-text-main: #1f2933;
   --color-text-secondary: #6b7280;
 
+  /* Primary */
   --color-primary: #2f855a;
   --color-primary-hover: #276749;
   --color-primary-light: #9ae6b4;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  /* Shadows */
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.06);
+
+  /* Shadows (pro) */
+  --shadow-sm: 0 6px 16px rgba(17, 24, 39, 0.06);
+  --shadow-md: 0 14px 38px rgba(17, 24, 39, 0.1);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+
+  /* Borders */
+  --border-soft: rgba(17, 24, 39, 0.08);
+
+  /* Surfaces */
+  --surface: rgba(255, 255, 255, 0.78);
+
+  --color-star: #f5b301;        /* galben stea */
+  --color-heart: #ff385c;       /* roșu Airbnb-ish */
+  --color-heart-soft: rgba(255, 56, 92, 0.16);
+  --color-star-soft: rgba(245, 179, 1, 0.18);
+  
+    --color-star: #f5b301;
+    --color-heart: #ff385c;
+  
+  
+  
 }
 
-* {
+/* ---------- RESET & BASE ---------- */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: var(--color-bg-main);
   color: var(--color-text-main);
   line-height: 1.6;
+}
+
+img {
+  max-width: 100%;
+  display: block;
 }
 
 a {
@@ -28,40 +85,30 @@ a {
   color: inherit;
 }
 
-.btn-primary {
-  font-family: inherit;
-  background-color: var(--color-primary);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 0.6rem 1.2rem;
-  cursor: pointer;
-  font-weight: 500;
+::selection {
+  background: rgba(47, 133, 90, 0.22);
 }
 
-.btn-primary:hover {
-  background-color: var(--color-primary-hover);
-}
-
-
-/* ---------- TYPOGRAPHY SYSTEM ---------- */
+/* =========================================================
+   TYPOGRAPHY SYSTEM
+   ========================================================= */
 
 .text-page-title {
   font-size: 2.2rem;
   font-weight: 700;
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-md);
 }
 
 .text-section-title {
   font-size: 1.6rem;
   font-weight: 600;
-  margin-bottom: 0.75rem;
+  margin-bottom: var(--space-sm);
 }
 
 .text-card-title {
   font-size: 1.1rem;
   font-weight: 600;
-  margin-bottom: 0.4rem;
+  margin-bottom: var(--space-xs);
 }
 
 .text-body {
@@ -74,48 +121,163 @@ a {
   color: var(--color-text-secondary);
 }
 
-
-
-/* ---------- SPACING SYSTEM ---------- */
-
-:root {
-  --space-xs: 0.25rem;
-  --space-sm: 0.5rem;
-  --space-md: 1rem;
-  --space-lg: 2rem;
-  --space-xl: 3rem;
-}
-
-
-/* ---------- SHAPES & SHADOWS ---------- */
-
-:root {
-  --radius-sm: 6px;
-  --radius-md: 10px;
-
-  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.06);
-}
-
-
-/* ---------- LAYOUT ---------- */
+/* =========================================================
+   LAYOUT
+   ========================================================= */
 
 .container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding-left: var(--space-md);
   padding-right: var(--space-md);
 }
 
+.section {
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-xl);
+}
 
+/* =========================================================
+   CARDS
+   ========================================================= */
 
-/* ---------- UI STATES ---------- */
+/* =========================================================
+   CARDS (AIRBNB STYLE)
+   ========================================================= */
 
-.ui-loading {
+.card {
+  background: transparent;
+  border: none;
+  border-radius: 22px;
+  box-shadow: none;
+  padding: 0;
+}
+
+.card + .card {
+  margin-top: var(--space-lg);
+}
+
+/* =========================================================
+   FORMS & INPUTS
+   ========================================================= */
+
+.input {
+  width: 100%;
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(31, 41, 51, 0.14);
+  background: #ffffff;
+  outline: none;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(47, 133, 90, 0.14);
+}
+
+.input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.btn {
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.08s ease, opacity 0.2s ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.btn-secondary {
+  background: var(--color-bg-card);
+  color: var(--color-text-main);
+}
+
+.btn-secondary:hover {
+  filter: brightness(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   UI STATES
+   ========================================================= */
+
+.ui-loading,
+.ui-empty {
   color: var(--color-text-secondary);
   font-style: italic;
 }
 
-.ui-empty {
-  color: var(--color-text-secondary);
-  font-style: italic;
+/* =========================================================
+   UTILITIES
+   ========================================================= */
+
+.mt-sm {
+  margin-top: var(--space-sm);
+}
+.mt-md {
+  margin-top: var(--space-md);
+}
+.mt-lg {
+  margin-top: var(--space-lg);
+}
+
+.mb-sm {
+  margin-bottom: var(--space-sm);
+}
+.mb-md {
+  margin-bottom: var(--space-md);
+}
+.mb-lg {
+  margin-bottom: var(--space-lg);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gap-sm {
+  gap: var(--space-sm);
+}
+.gap-md {
+  gap: var(--space-md);
+}
+.gap-lg {
+  gap: var(--space-lg);
 }

@@ -59,8 +59,19 @@ async function getMe() {
   }
 }
 
+async function updateMe(payload) {
+    const user = await apiFetch("/auth/me", {
+      method: "PUT",
+      body: JSON.stringify(payload),
+    });
+  
+    useAuthStore.getState().setUser(user);
+    return user;
+  }
+
 export const authService = {
   login,
   register,
   getMe,
+  updateMe,
 };

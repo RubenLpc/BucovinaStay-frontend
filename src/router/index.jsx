@@ -6,6 +6,9 @@ import AuthLayout from "../layouts/AuthLayout";
 import Home from "../pages/Home/Home";
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
+import Profile from "../pages/Profile/Profile";
+import ProtectedRoute from "./ProtectedRoute";
+import Trails from "../pages/Trails/Trails";
 
 export const router = createBrowserRouter([
   {
@@ -22,6 +25,12 @@ export const router = createBrowserRouter([
     element: <MainLayout />,
     children: [
       { index: true, element: <Home /> },
+      { path: "trasee", element: <Trails /> },
+
+      {
+        element: <ProtectedRoute />,
+        children: [{ path: "profile", element: <Profile /> }],
+      },
     ],
   },
 ]);

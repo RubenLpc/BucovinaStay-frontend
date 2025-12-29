@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { Menu, User, LogOut } from "lucide-react";
 import { useAuthStore } from "../../stores/authStore";
+import { useLocation } from "react-router-dom";
+
 import "./Header.css";
 
 export default function Header() {
@@ -12,7 +14,24 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
   const [transparent, setTransparent] = useState(true);
+  const location = useLocation();
 
+  // pagini unde ai imagine (hero / auth)
+  const isHeroPage = location.pathname === "/" || location.pathname.startsWith("/auth");
+  useEffect(() => {
+    if (!isHeroPage) {
+      setTransparent(false); // pe profile / alte pagini, header mereu glass
+      return;
+    }
+    const onScroll = () => setTransparent(window.scrollY < 60);
+    onScroll();
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isHeroPage]);
+  
+  // dacă e pe hero/auth => theme-dark, altfel theme-light
+  const headerTheme = isHeroPage ? "theme-dark" : "theme-light";
+  
   const initials = user?.name
     ?.split(" ")
     .map((n) => n[0])
