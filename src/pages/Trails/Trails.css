@@ -525,3 +525,98 @@
     }
   }
   
+
+  /* ================= TRAILS – SMALL MOBILE (S24 / 360–430px) ================= */
+@media (max-width: 430px){
+
+  /* hero poza de sus: puțin mai înalt ca să nu pară “tăiat” */
+  .tr-heroTop{
+    height: 200px;     /* era 160 la 620px */
+    margin-bottom: -24px;
+  }
+
+  /* header spacing */
+  .tr-head{
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .tr-title{
+    font-size: 1.55rem; /* mai confortabil pe 360px */
+    line-height: 1.12;
+  }
+
+  .tr-subtitle{
+    font-size: 0.92rem;
+    max-width: 46ch;
+  }
+
+  /* badge rezultate */
+  .tr-count{
+    padding: 9px 10px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+  }
+
+  /* controls card */
+  .tr-controls{
+    padding: 10px;
+    border-radius: 16px;
+    gap: 10px;
+  }
+
+  /* search */
+  .tr-search{
+    padding: 11px 11px;
+    border-radius: 14px;
+  }
+  .tr-input{
+    font-size: 0.95rem;
+  }
+
+  /* ✅ filters: pe 360px mai bine 1 col (nu 2), ca să nu fie înghesuit */
+  .tr-filters{
+    grid-template-columns: 1fr; /* suprascrie 2-coloane de la max 620 */
+    gap: 10px;
+  }
+
+  .tr-select{
+    padding: 12px 12px;
+  }
+
+  /* chips: scroll dar mai mici ca să intre mai multe */
+  .tr-chip{
+    padding: 9px 11px;
+    font-size: 0.9rem;
+  }
+
+  /* grid cards + media mai compact */
+  .tr-grid{
+    gap: 12px;
+  }
+
+  .tr-media{
+    height: 155px;
+  }
+
+  .tr-body{
+    padding: 12px 12px 14px 12px;
+  }
+
+  .tr-card-title{
+    font-size: 1.02rem;
+  }
+
+  .tr-meta{
+    font-size: 0.88rem;
+    gap: 10px;
+  }
+
+  /* art dreapta: mai discret pe 360px */
+  .tr-headArt{
+    width: 280px;
+    right: -34px;
+    top: -18px;
+    opacity: 0.18;
+  }
+}

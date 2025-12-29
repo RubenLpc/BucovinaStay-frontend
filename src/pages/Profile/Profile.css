@@ -195,3 +195,88 @@
     );
   }
   
+
+  /* ================= PROFILE – SMALL MOBILE (S24 / 360–430px) ================= */
+@media (max-width: 430px){
+
+  .profile-page{
+    padding: 92px 0 28px; /* era 110px 0 48px */
+  }
+
+  .profile-card{
+    padding: 14px;
+    border-radius: 16px;
+    max-width: 100%;
+  }
+
+  .profile-top{
+    grid-template-columns: 52px 1fr;  /* mai mic */
+    gap: 12px;
+    padding-bottom: 12px;
+  }
+
+  .profile-avatar{
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+  }
+
+  .profile-name{
+    font-size: 1.15rem;
+    line-height: 1.15;
+  }
+
+  .profile-sub{
+    font-size: 0.9rem;
+    margin-top: 4px;
+  }
+
+  /* acțiunile să fie sub și “tap friendly” */
+  .profile-top-actions{
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .profile-action,
+  .profile-logout{
+    width: 100%;
+    justify-content: center;
+    padding: 11px 14px;
+  }
+
+  .profile-grid{
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .profile-item{
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .profile-label{
+    font-size: 0.85rem;
+  }
+
+  .profile-value{
+    font-size: 0.95rem;
+  }
+
+  .profile-input{
+    padding: 0.8rem 0.85rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+  }
+
+  .profile-actions{
+    gap: 8px;
+  }
+
+  /* dacă ai butoane în profile-actions, le faci full pe mobile mic */
+  .profile-actions .btn,
+  .profile-actions button{
+    width: 100%;
+    justify-content: center;
+  }
+}

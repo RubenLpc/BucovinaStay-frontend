@@ -340,3 +340,96 @@
     }
   }
   
+
+  /* ================= TRAILS HERO – SMALL MOBILE (S24 / 360-430px) ================= */
+@media (max-width: 430px){
+
+  .trh-section{
+    padding: 1.4rem 0 1.6rem 0;
+  }
+
+  .trh-card{
+    border-radius: 18px;
+    padding: 16px;
+    gap: 14px;
+  }
+
+  /* badge mai compact */
+  .trh-badge{
+    padding: 8px 12px;
+    font-size: 0.82rem;
+    gap: 8px;
+  }
+  .trh-badge-ico{
+    width: 26px;
+    height: 26px;
+  }
+
+  /* title + subtitle: scalare bună pe 360-430px */
+  .trh-title{
+    margin: 14px 0 10px 0;
+    font-size: clamp(1.75rem, 7.2vw, 2.15rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+  }
+
+  .trh-subtitle{
+    font-size: 0.95rem;
+    line-height: 1.55;
+    max-width: 100%;
+  }
+
+  /* buttons: 2 pe rând dacă încape, altfel full */
+  .trh-actions{
+    margin-top: 16px;
+    gap: 10px;
+  }
+  .trh-btn{
+    width: 100%;
+    justify-content: center;
+    padding: 12px 16px;
+    font-size: 0.88rem;
+  }
+
+  /* features: mai strâns */
+  .trh-features{
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .trh-feature{
+    gap: 12px;
+  }
+  .trh-feature-ico{
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+  }
+  .trh-feature-title{
+    font-size: 0.95rem;
+  }
+  .trh-feature-sub{
+    font-size: 0.9rem;
+  }
+
+  /* ART: să nu domine și să fie centrat corect */
+  .trh-right{
+    min-height: auto;
+    margin-top: 10px;
+  }
+
+  .trh-artWrap{
+    width: 100%;
+  }
+
+  .trh-artWrap::before{
+    width: min(360px, 90%);
+    height: min(360px, 90%);
+    opacity: 0.85;
+  }
+
+  .trh-art{
+    width: min(320px, 92%);
+    transform: none; /* scoatem translate pe mobil mic */
+    filter: drop-shadow(0 18px 26px rgba(17, 24, 39, 0.14));
+  }
+}

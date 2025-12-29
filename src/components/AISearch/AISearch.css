@@ -75,3 +75,48 @@
   50%  { opacity: 1;   transform: scale(1.4); }
   100% { opacity: 0.4; transform: scale(1); }
 }
+
+
+/* ================= AI SEARCH – SMALL MOBILE ================= */
+@media (max-width: 430px){
+
+  .ai-bar{
+    margin-top: 1.1rem;
+    max-width: 100%;
+    width: 100%;
+
+    gap: 0.5rem;
+    padding: 0.55rem 0.6rem 0.55rem 0.75rem;
+
+    border-radius: 18px; /* mai modern pe mobil */
+  }
+
+  .ai-icon{
+    font-size: 1rem;
+  }
+
+  .ai-bar input{
+    font-size: 0.9rem;
+  }
+
+  .ai-bar input::placeholder{
+    font-size: 0.88rem;
+  }
+
+  .ai-bar button{
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  /* pulse mai discret */
+  .ai-pulse{
+    width: 5px;
+    height: 5px;
+  }
+}
+
+@media (max-width: 360px){
+  .ai-bar button{
+    display: none;
+  }
+}

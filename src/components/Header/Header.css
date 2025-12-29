@@ -424,3 +424,43 @@
   border-color: rgba(255, 255, 255, 0.22);
   color: #fff;
 }
+
+
+/* ================= SMALL MOBILE (S24 / 360-430px) ================= */
+@media (max-width: 430px){
+
+  /* header mai compact */
+  .header-inner{
+    height: 62px;
+    gap: 10px;
+  }
+
+  /* brand mai mic (ca sa nu se calce cu avatar/menu) */
+  .brand-main,
+  .brand-accent{
+    font-size: 1.05rem;
+  }
+
+  /* nav/action spacing mai tight */
+  .header-actions{
+    gap: 8px;
+  }
+
+  .menu-toggle{
+    width: 38px;
+    height: 38px;
+  }
+
+  .avatar-btn{
+    width: 38px;
+    height: 38px;
+    font-size: 0.88rem;
+  }
+
+  /* dropdown-urile sa fie incadrate in ecran */
+  .mobile-menu,
+  .user-dropdown{
+    right: 8px;              /* nu lipit de margine */
+    min-width: min(92vw, 240px);
+  }
+}
