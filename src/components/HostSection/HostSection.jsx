@@ -1,6 +1,10 @@
 import React, { useMemo } from "react";
 import "./HostSection.css";
 import { ShieldCheck, Star, MessageSquareText, BadgeCheck } from "lucide-react";
+import defaultAvatar  from "../../assets/default_avatar.png";
+
+
+
 
 function clamp(n, min, max) {
   return Math.max(min, Math.min(max, n));
@@ -27,6 +31,8 @@ export default function HostSection({ host,property, onMessage }) {
 
   const isSuperHost = Boolean(host?.isSuperHost);
   const isVerified = Boolean(host?.verified);
+  const DEFAULT_HOST_AVATAR = defaultAvatar;
+
 
   return (
     <section className="hsWrap">
@@ -37,12 +43,16 @@ export default function HostSection({ host,property, onMessage }) {
         <div className="hsCard">
           <div className="hsCardTop">
             <div className="hsAvatarWrap">
-              <img
-                className="hsAvatar"
-                src={host?.avatarUrl || "https://i.pravatar.cc/160?img=12"}
-                alt={`Avatar ${host?.name || "Gazdă"}`}
-                loading="lazy"
-              />
+            <img
+  className="hsAvatar"
+  src={host?.avatarUrl || DEFAULT_HOST_AVATAR}
+  alt={`Avatar ${host?.name || "Gazdă"}`}
+  loading="lazy"
+  onError={(e) => {
+    e.currentTarget.src = DEFAULT_HOST_AVATAR;
+  }}
+/>
+
               {isSuperHost ? (
                 <div className="hsBadge" title="Super-gazdă">
                   <ShieldCheck size={16} />
@@ -118,7 +128,16 @@ export default function HostSection({ host,property, onMessage }) {
               </div>
               <div className="hsRow">
                 <span className="hsKey">Timp de răspuns:</span>
-                <span className="hsVal">{host?.responseTimeText || "—"}</span>
+                <span className="hsVal">
+  {host?.responseTimeText ||
+    (host?.responseTimeBucket === "within_hour"
+      ? "în mai puțin de o oră"
+      : host?.responseTimeBucket === "within_day"
+      ? "în aceeași zi"
+      : host?.responseTimeBucket === "few_days"
+      ? "în câteva zile"
+      : "—")}
+</span>
               </div>
             </div>
 

@@ -1,571 +1,523 @@
-import { useMemo, useState } from "react";
-import { useEffect } from "react";
+// client/src/pages/HostDashboard/HostDashboard.jsx
+import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import TopNav from "../../components/TopNav/TopNav";
 import { useAuthStore } from "../../stores/authStore";
 import { hostDashboardService } from "../../api/hostDashboardService";
-import { toast } from "sonner";
+import { getHostInbox } from "../../api/hostMessagesService";
+import ConfirmModal from "../../components/ConfirmModal/ConfirmModal";
+import { getHostListingsStats,getHostOverviewStats } from "../../api/analyticsService";
 
-import {
-  LayoutDashboard,
-  ArrowUpDown,
-  PauseCircle,
-  PlayCircle,
-  Home,
-  Plus,
-  Search,
-  BarChart3,
-  CreditCard,
-  Settings,
-  Eye,
-  MousePointerClick,
-  PhoneCall,
-  TrendingUp,
-  BadgeCheck,
-  AlertTriangle,
-  ChevronRight,
-  ExternalLink,
-} from "lucide-react";
+
+import { toast } from "sonner";
 import "./HostDashboard.css";
 
-/**
- * NOTE: momentan mock data.
- * Mai târziu îl legi de API: /api/host/me, /api/host/listings, /api/host/stats
- */
 
-
-
-const mockStats = {
-  views: 1240,
-  contactClicks: 86,
-  phoneClicks: 31,
-  whatsappClicks: 41,
-  messageClicks: 14,
-  ctr: 6.9, // %
-  trend: "+12%",
+const STATUS_LABEL = {
+  all: "Toate",
+  draft: "Draft",
+  pending: "În așteptare",
+  live: "Publicat",
+  paused: "Pauzat",
+  rejected: "Respins",
 };
 
-const mockChart = [
-  { label: "Lun", v: 80 },
-  { label: "Mar", v: 120 },
-  { label: "Mie", v: 95 },
-  { label: "Joi", v: 160 },
-  { label: "Vin", v: 210 },
-  { label: "Sâm", v: 260 },
-  { label: "Dum", v: 315 },
-];
-
-
-function statusLabel(s) {
-  if (s === "draft") return "Draft";
-  if (s === "pending") return "În așteptare";
-  if (s === "live") return "Publicat";
-  if (s === "paused") return "Pauzat";
-  if (s === "rejected") return "Respins";
-  return s;
-}
-
-function statusClass(s) {
-  if (s === "live") return "pill-live";
-  if (s === "pending") return "pill-pending";
-  if (s === "draft") return "pill-draft";
-  if (s === "paused") return "pill-paused";
-  if (s === "rejected") return "pill-rejected";
-  return "";
-}
-
-function MiniBars({ data }) {
-  const max = Math.max(...data.map((d) => d.v));
-  return (
-    <div className="miniBars" aria-label="Grafic vizualizări (ultimele 7 zile)">
-      {data.map((d) => (
-        <div key={d.label} className="barWrap" title={`${d.label}: ${d.v}`}>
-          <div className="bar" style={{ height: `${(d.v / max) * 100}%` }} />
-          <span className="barLbl">{d.label}</span>
-        </div>
-      ))}
-    </div>
-  );
+function clamp(n, a, b) {
+  return Math.max(a, Math.min(b, n));
 }
 
 export default function HostDashboard() {
+  const navigate = useNavigate();
+  const { user, logout } = useAuthStore();
+  const [activeTab, setActiveTab] = useState("Dashboard");
+  
 
-  // ✅ listings as state (mock CRUD)
-  const { user } = useAuthStore();
+  const [subscription, setSubscription] = useState({
+    plan: "free",
+    subscriptionStatus: "inactive",
+    nextBillingDate: null,
+  });
 
-  const [listings, setListings] = useState([]);
-  const [loadingListings, setLoadingListings] = useState(true);
+  const [overview, setOverview] = useState(null);
 
-  // plan: momentan din user sau fallback
-  const hostName = user?.name || user?.firstName || user?.email?.split("@")[0] || "Host";
-  const subscriptionStatus = user?.subscriptionStatus || "inactive";
-  const isActive = subscriptionStatus === "active";
 
-  const initials = (hostName || "H")
-  .split(" ")
-  .filter(Boolean)
-  .slice(0, 2)
-  .map((x) => x[0].toUpperCase())
-  .join("");
+  const [listingsRes, setListingsRes] = useState({ items: [], total: 0, page: 1, limit: 6 });
+  const [inbox, setInbox] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // UI state
+  const [status, setStatus] = useState("all");
+  const [q, setQ] = useState("");
+  const [sort, setSort] = useState("views_desc"); // views_desc | clicks_desc | completion_desc | name_asc
+  const [page, setPage] = useState(1);
+  const limit = 6;
+
+  const [confirm, setConfirm] = useState(null);
+
+
+  const daily = overview?.daily || [];
+const maxY = Math.max(
+  1,
+  ...daily.map((d) => Math.max(d.impressions || 0, d.clicks || 0))
+);
+const shown = daily.slice(-9);
+
+/*
+confirm = {
+  title,
+  description,
+  tone,
+  action: async () => {}
+}
+*/
+const [confirmLoading, setConfirmLoading] = useState(false);
+
+
+async function load() {
+  setLoading(true);
+  try {
+    const [res, statsMapRes, overviewRes, inboxRaw] = await Promise.all([
+      hostDashboardService.getMyListings({
+        page,
+        limit,
+        ...(status !== "all" ? { status } : {}),
+        ...(q.trim() ? { q: q.trim() } : {}),
+      }),
+      getHostListingsStats({ range: "30d" }),
+      getHostOverviewStats({ range: "30d" }),
+      getHostInbox({ limit: 6 }),
+    ]);
+
+    setOverview(overviewRes || null);
+    console.log("overviewRes", overviewRes);
+
+
+    const byId = statsMapRes?.byListingId || {};
+    const mergedItems = (res?.items || []).map((p) => ({
+      ...p,
+      views30: byId[p.id]?.views30 ?? 0,
+      clicks30: byId[p.id]?.clicks30 ?? 0,
+    }));
+
+    setListingsRes({
+      items: mergedItems,
+      total: res?.total || 0,
+      page: res?.page || page,
+      limit: res?.limit || limit,
+    });
+
+    setInbox(inboxRaw?.items || inboxRaw || []);
+  } catch (err) {
+    toast.error("Eroare dashboard", {
+      description: err?.message || "Nu am putut încărca datele.",
+    });
+  } finally {
+    setLoading(false);
+  }
+}
+
 
 
   useEffect(() => {
-    let alive = true;
-
+    let mounted = true;
     (async () => {
-      try {
-        setLoadingListings(true);
-        const data = await hostDashboardService.getMyListings({ page: 1, limit: 50 });
-        if (!alive) return;
-        setListings(data.items || []);
-      } catch (e) {
-        toast.error("Nu am putut încărca proprietățile", { description: e.message });
-      } finally {
-        if (alive) setLoadingListings(false);
-      }
+      if (!mounted) return;
+      await load();
     })();
-
     return () => {
-      alive = false;
+      mounted = false;
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, status, q]);
 
-  // ✅ tabs + search
-  const [listingsQuery, setListingsQuery] = useState("");
-  const [listingsTab, setListingsTab] = useState("all"); // all | needs | pending | live | draft | paused | rejected
+  const allListings = listingsRes.items || [];
 
-  // ✅ sorting
-  const [sortKey, setSortKey] = useState("views30"); // name | status | completion | views30 | clicks30
-  const [sortDir, setSortDir] = useState("desc"); // asc | desc
-
-  // ✅ statuses grouped like "top apps"
-  const NEEDS = useMemo(() => new Set(["draft", "paused", "rejected"]), []);
-
-  // if you have a global toast system, swap these lines:
-  const toastInfo = (msg) => console.log("info:", msg);
-  const toastSuccess = (msg) => console.log("success:", msg);
-  const toastWarn = (msg) => console.log("warn:", msg);
-
-  const listingsCounts = useMemo(() => {
-    const base = { all: 0, needs: 0, draft: 0, pending: 0, live: 0, paused: 0, rejected: 0 };
-    listings.forEach((l) => {
-      base.all += 1;
-      if (base[l.status] !== undefined) base[l.status] += 1;
-      if (NEEDS.has(l.status)) base.needs += 1;
-    });
-    return base;
-  }, [listings, NEEDS]);
-
-  const setSorting = (key) => {
-    setSortKey((prev) => {
-      if (prev === key) {
-        setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-        return prev;
-      }
-      setSortDir(key === "name" ? "asc" : "desc");
-      return key;
-    });
-  };
-
-  const submitForReview = async (id) => {
-    try {
-      await hostDashboardService.submitForReview(id);
-      toast.success("Trimis la verificare");
-      setListings((prev) => prev.map((l) => (l.id === id ? { ...l, status: "pending" } : l)));
-    } catch (e) {
-      toast.error("Eroare", { description: e.message });
-    }
-  };
-  
-  const toggleLivePaused = async (id) => {
-    try {
-      const before = listings.find((x) => x.id === id)?.status;
-      await hostDashboardService.togglePause(id);
-  
-      // backend toggles live<->paused
-      const nextStatus = before === "live" ? "paused" : "live";
-      toast.success(nextStatus === "live" ? "Publicată" : "Pauzată");
-  
-      setListings((prev) => prev.map((l) => (l.id === id ? { ...l, status: nextStatus } : l)));
-    } catch (e) {
-      toast.error("Eroare", { description: e.message });
-    }
-  };
-  
-
-  const filteredListings = useMemo(() => {
-    const q = listingsQuery.trim().toLowerCase();
-
-    const arr = listings.filter((l) => {
-      const tabOk =
-        listingsTab === "all"
-          ? true
-          : listingsTab === "needs"
-          ? NEEDS.has(l.status)
-          : l.status === listingsTab;
-
-      const searchOk = !q || l.name.toLowerCase().includes(q) || l.location.toLowerCase().includes(q);
-      return tabOk && searchOk;
-    });
-
-    const dir = sortDir === "asc" ? 1 : -1;
-    const norm = (v) => (typeof v === "string" ? v.toLowerCase() : v);
+  // sortare client-side (maximal + consistent)
+  const listings = useMemo(() => {
+    const arr = [...allListings];
 
     arr.sort((a, b) => {
-      const va = norm(a[sortKey]);
-      const vb = norm(b[sortKey]);
-
-      if (typeof va === "string" && typeof vb === "string") return va.localeCompare(vb) * dir;
-      return ((va ?? 0) - (vb ?? 0)) * dir;
+      if (sort === "views_desc") return (b.views30 ?? 0) - (a.views30 ?? 0);
+      if (sort === "clicks_desc") return (b.clicks30 ?? 0) - (a.clicks30 ?? 0);
+      if (sort === "completion_desc") return (b.completion ?? 0) - (a.completion ?? 0);
+      if (sort === "name_asc") return String(a.name || "").localeCompare(String(b.name || ""), "ro");
+      return 0;
     });
 
     return arr;
-  }, [listings, listingsQuery, listingsTab, sortKey, sortDir, NEEDS]);
+  }, [allListings, sort]);
 
-  // ✅ Dashboard should not be a "full listings page"
-  const dashboardListings = useMemo(() => filteredListings.slice(0, 5), [filteredListings]);
-
-  const quickTips = useMemo(() => {
+  // KPIs reale din items (nu depind de stats global)
+  const kpis = useMemo(() => {
+    const impressions = overview?.impressions ?? 0;
+    const clicks = overview?.clicks ?? 0;
+    const ctr = overview?.ctr ?? 0;
+  
+    // completion tot din listing-uri (e ok)
+    const avgCompletion =
+      listings.length
+        ? Math.round(listings.reduce((a, x) => a + (Number(x.completion) || 0), 0) / listings.length)
+        : 0;
+  
     return [
-      { icon: <TrendingUp size={18} />, text: "Adaugă minim 8 poze pentru mai multe click-uri pe contact." },
-      { icon: <BadgeCheck size={18} />, text: "Completează facilitățile – crește încrederea utilizatorilor." },
-      { icon: <MousePointerClick size={18} />, text: "Un titlu clar + locație exactă = CTR mai bun." },
+      { label: "Vizualizări (30 zile)", value: impressions, hint: "Impressions reale" },
+      { label: "Click-uri contact", value: clicks, hint: "Click-uri reale" },
+      { label: "Completare medie", value: `${avgCompletion}%`, hint: "Calitate anunț" },
+      { label: "CTR", value: `${ctr}%`, hint: "Click / view" },
     ];
-  }, []);
+  }, [overview, listings]);
+  
 
-  const goEdit = (id) => {
-    window.location.href = `/host/listings/${id}/edit`;
-  };
+  const pagesCount = useMemo(() => {
+    const total = Number(listingsRes.total) || 0;
+    return Math.max(1, Math.ceil(total / limit));
+  }, [listingsRes.total]);
 
-  const stop = (e) => e.stopPropagation();
+  function statusTone(s) {
+    if (s === "live") return "good";
+    if (s === "pending") return "warn";
+    if (s === "draft") return "muted";
+    if (s === "paused") return "muted";
+    if (s === "rejected") return "bad";
+    return "muted";
+  }
 
-  const SortIcon = ({ k }) =>
-    sortKey === k ? (
-      <span className={`sortIcon ${sortDir === "asc" ? "asc" : "desc"}`} aria-hidden="true">
-        <ArrowUpDown size={14} />
-      </span>
-    ) : null;
+  async function onSubmitForReview(id) {
+    try {
+      await hostDashboardService.submitForReview(id);
+      toast.success("Trimis la verificare", { description: "Anunțul a intrat în procesul de review." });
+      await load();
+    } catch (err) {
+      toast.error("Nu s-a putut trimite", { description: err?.message || "Încearcă din nou." });
+    }
+  }
+
+  async function onTogglePause(id) {
+    try {
+      await hostDashboardService.togglePause(id);
+      toast.success("Actualizat", { description: "Statusul a fost modificat." });
+      await load();
+    } catch (err) {
+      toast.error("Nu s-a putut modifica", { description: err?.message || "Încearcă din nou." });
+    }
+  }
+
+  function openConfirm(cfg){
+    setConfirm(cfg);
+  }
+  
+  function closeConfirm(){
+    setConfirm(null);
+    setConfirmLoading(false);
+  }
+  
+  async function runConfirm(){
+    if (!confirm?.action) return;
+    try{
+      setConfirmLoading(true);
+      await confirm.action();
+      closeConfirm();
+    }catch(err){
+      setConfirmLoading(false);
+      toast.error("Acțiunea a eșuat", {
+        description: err?.message || "Încearcă din nou."
+      });
+    }
+  }
+  
+
+  function onEdit(id) {
+    // schimbă ruta dacă la tine e alta
+    navigate(`/host/properties/${id}/edit`);
+  }
+
+  function handleOpenSettings() {
+    toast("Setări", { description: "Deschidere pagină / modal setări." });
+  }
+  function handleOpenBilling() {
+    toast("Abonament", { description: "Administrare abonament și facturare." });
+  }
+  function handleUpgrade() {
+    toast("Upgrade", { description: "Upgrade plan abonament." });
+  }
 
   return (
-    <>
-      {/* Sidebar */}
+    <div className="hdPage">
       
 
-      {/* Main */}
-      <div className="hostMain">
-        <header className="hostTopbar">
-          <div className="topLeft">
-            <div className="crumb">Gazdă</div>
-
-            <div className="titleRow">
-              <h1 className="pageTitle">Dashboard</h1>
-
-              <span className={`planChip ${isActive ? "isActive" : "isInactive"}`}>
-                {isActive ? <BadgeCheck size={14} /> : <AlertTriangle size={14} />}
-                {isActive ? "Plan activ" : "Plan inactiv"}
-              </span>
-            </div>
-
-            <div className="subtitle">
-              Salut, <strong>{hostName}</strong>
-              <span className="dotSep">•</span>
-              Ultimele 30 zile
-            </div>
+      <main className="hdMain">
+        <div className="hdHeader">
+          <div>
+            <div className="hdTitle">Prezentare generală</div>
+            <div className="hdSub">Monitorizează performanța proprietăților și administrează anunțurile.</div>
           </div>
 
-          <div className="topRight">
-            {!isActive && (
-              <a className="topCta" href="/host/billing">
-                Activează <ChevronRight size={16} />
-              </a>
-            )}
-
-            <a className="ghostLink" href="/">
-              Vezi site-ul <ExternalLink size={16} />
-            </a>
-
-            <div className="avatar">MH</div>
+          <div className="hdActions">
+            <button className="hdChip hdChipAccent" type="button">📅 Ultimele 30 zile</button>
+            <button className="hdChip" type="button">Export</button>
           </div>
-        </header>
+        </div>
 
-        {/* Subscription banner */}
-        {!isActive && (
-          <div className="banner bannerWarn">
-            <div className="bannerIcon">
-              <AlertTriangle size={18} />
-            </div>
-            <div className="bannerText">
-              <div className="bannerTitle">Nu ai un abonament activ.</div>
-              <div className="bannerSub">
-                Poți crea proprietăți în Draft, dar pentru a le publica ai nevoie de abonament.
+        <section className="hdGrid">
+          {/* KPI */}
+          <div className="hdKpis">
+            {kpis.map((k) => (
+              <div key={k.label} className="hdCard">
+                <div className="hdCardTop">
+                  <div className="hdCardLabel">{k.label}</div>
+                  <div className="hdCardMini">↗</div>
+                </div>
+                <div className="hdCardValue">{k.value}</div>
+                <div className="hdCardHint">{k.hint}</div>
+                <div className="hdSpark" />
+              </div>
+            ))}
+          </div>
+
+          {/* Chart placeholder (maximal, dar încă demo) */}
+          <div className="hdCard hdChart">
+            <div className="hdCardTop">
+              <div className="hdCardLabel">Activitate</div>
+              <div className="hdLegend">
+                <span className="hdLegendDot" /> Vizualizări
+                <span className="hdLegendDot alt" /> Click-uri
               </div>
             </div>
-            <a className="bannerCta" href="/host/billing">
-              Activează abonamentul <ChevronRight size={16} />
-            </a>
-          </div>
-        )}
+            <div className="hdChartArea">
+            <div className="hdBars">
+  {shown.map((d) => {
+    const hViews = Math.round(((d.impressions || 0) / maxY) * 100);
+    const hClicks = Math.round(((d.clicks || 0) / maxY) * 100);
 
-        {/* KPI grid */}
-        <section className="grid3">
-          <div className="kpiCard">
-            <div className="kpiIcon">
-              <Eye size={18} />
-            </div>
-            <div className="kpiMeta">
-              <div className="kpiLabel">Vizualizări (30 zile)</div>
-              <div className="kpiValue">{mockStats.views}</div>
-              <div className="kpiHint">{mockStats.trend} față de perioada anterioară</div>
-            </div>
-          </div>
+    return (
+      <div
+        key={d.day}
+        className="hdBarCol"
+        title={`${d.day}\nVizualizări: ${d.impressions}\nClick-uri: ${d.clicks}`}
+      >
+        <div className="hdBar" style={{ height: `${hViews}%` }} />
+        <div className="hdBar alt" style={{ height: `${hClicks}%` }} />
+      </div>
+    );
+  })}
+</div>
 
-          <div className="kpiCard">
-            <div className="kpiIcon">
-              <MousePointerClick size={18} />
-            </div>
-            <div className="kpiMeta">
-              <div className="kpiLabel">Click-uri contact</div>
-              <div className="kpiValue">{mockStats.contactClicks}</div>
-              <div className="kpiHint">CTR: {mockStats.ctr}%</div>
             </div>
           </div>
 
-          <div className="kpiCard">
-            <div className="kpiIcon">
-              <PhoneCall size={18} />
-            </div>
-            <div className="kpiMeta">
-              <div className="kpiLabel">Telefon / WhatsApp</div>
-              <div className="kpiValue">
-                {mockStats.phoneClicks} / {mockStats.whatsappClicks}
-              </div>
-              <div className="kpiHint">Mesaje: {mockStats.messageClicks}</div>
-            </div>
-          </div>
-        </section>
+          {/* Listings table (corect + filtre reale) */}
+          <div className="hdCard hdTable">
+            <div className="hdCardTop">
+              <div className="hdCardLabel">Anunțurile tale</div>
 
-        {/* Middle row */}
-        <section className="grid2">
-          <div className="panel">
-            <div className="panelHead">
-              <div>
-                <div className="panelTitle">Activitate (ultimele 7 zile)</div>
-                <div className="panelSub">Vizualizări agregate pentru listările tale.</div>
-              </div>
-              <a className="panelLink" href="/host/stats">
-                Detalii <ChevronRight size={16} />
-              </a>
-            </div>
-            <MiniBars data={mockChart} />
-          </div>
+              <div className="hdToolbar">
+                <div className="hdFilters">
+                  <select
+                    className="hdSelect"
+                    value={status}
+                    onChange={(e) => { setPage(1); setStatus(e.target.value); }}
+                    aria-label="Filtru status"
+                  >
+                    {Object.keys(STATUS_LABEL).map((k) => (
+                      <option key={k} value={k}>{STATUS_LABEL[k]}</option>
+                    ))}
+                  </select>
 
-          <div className="panel">
-            <div className="panelHead">
-              <div>
-                <div className="panelTitle">Recomandări rapide</div>
-                <div className="panelSub">Optimizări care cresc contactările.</div>
+                  <select
+                    className="hdSelect"
+                    value={sort}
+                    onChange={(e) => setSort(e.target.value)}
+                    aria-label="Sortare"
+                  >
+                    <option value="views_desc">Sortare: Vizualizări ↓</option>
+                    <option value="clicks_desc">Sortare: Click-uri ↓</option>
+                    <option value="completion_desc">Sortare: Completare ↓</option>
+                    <option value="name_asc">Sortare: Nume A→Z</option>
+                  </select>
+                </div>
+
+                <div className="hdSearch">
+                  <input
+                    className="hdSearchInput"
+                    value={q}
+                    onChange={(e) => { setPage(1); setQ(e.target.value); }}
+                    placeholder="Caută după titlu / locație…"
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="tips">
-              {quickTips.map((t, idx) => (
-                <div className="tip" key={idx}>
-                  <div className="tipIcon">{t.icon}</div>
-                  <div className="tipText">{t.text}</div>
+            <div className="hdTableHead">
+              <div>Proprietate</div>
+              <div>Status</div>
+              <div>Completare</div>
+              <div>Vizualizări</div>
+              <div>Click-uri</div>
+              <div />
+            </div>
+
+            <div className="hdRows">
+              {loading && (
+                <div className="hdSkeleton">
+                  <div className="skLine" />
+                  <div className="skLine" />
+                  <div className="skLine" />
+                </div>
+              )}
+
+              {!loading && listings.map((p) => {
+                const tone = statusTone(p.status);
+                const completion = clamp(Number(p.completion) || 0, 0, 100);
+
+                return (
+                  <div className="hdRow" key={p.id}>
+                    <div className="hdProp">
+                      <div
+                        className="hdThumb"
+                        style={{
+                          backgroundImage: p.imageUrl ? `url(${p.imageUrl})` : undefined,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                        }}
+                      />
+                      <div className="hdPropText">
+                        <div className="hdPropName">{p.name}</div>
+                        <div className="hdPropMeta">{p.location}</div>
+                      </div>
+                    </div>
+
+                    <div className="hdCell">
+                      <span className={`hdBadge tone-${tone}`}>
+                        {STATUS_LABEL[p.status] || p.status}
+                      </span>
+                    </div>
+
+                    <div className="hdCell">
+                      <div className="hdProgress">
+                        <div className="hdProgressBar" style={{ width: `${completion}%` }} />
+                      </div>
+                      <div className="hdProgressText">{completion}%</div>
+                    </div>
+
+                    <div className="hdCell">{p.views30}</div>
+                    <div className="hdCell">{p.clicks30}</div>
+
+                    <div className="hdCell hdActionsCell">
+                      {p.status === "draft" && (
+                        <button
+                        className="hdBtn hdBtnAccent"
+                        onClick={() =>
+                          openConfirm({
+                            title: "Trimite anunțul la verificare?",
+                            description:
+                              "După trimitere, nu vei mai putea modifica anunțul până la finalizarea verificării.",
+                            tone: "accent",
+                            action: async () => {
+                              await hostDashboardService.submitForReview(p.id);
+                              toast.success("Trimis la verificare");
+                              await load();
+                            },
+                          })
+                        }
+                      >
+                        Trimite
+                      </button>
+                      
+                      )}
+
+                      {(p.status === "live" || p.status === "paused") && (
+                        <button
+                        className="hdBtn"
+                        onClick={() =>
+                          openConfirm({
+                            title: p.status === "paused" ? "Reiei anunțul?" : "Pui anunțul pe pauză?",
+                            description:
+                              p.status === "paused"
+                                ? "Anunțul va redeveni vizibil pentru clienți."
+                                : "Anunțul nu va mai fi vizibil până îl reiei.",
+                            tone: "default",
+                            action: async () => {
+                              await hostDashboardService.togglePause(p.id);
+                              toast.success("Status actualizat");
+                              await load();
+                            },
+                          })
+                        }
+                      >
+                        {p.status === "paused" ? "Reia" : "Pauză"}
+                      </button>
+                      
+                      )}
+
+                      <button className="hdBtn" onClick={() => onEdit(p.id)} type="button">
+                        Editează
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {!loading && (!listings || listings.length === 0) && (
+                <div className="hdEmpty">
+                  Nu există proprietăți pentru filtrul selectat.
+                </div>
+              )}
+
+              {!loading && pagesCount > 1 && (
+                <div className="hdPager">
+                  <button className="hdBtn" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}>
+                    ← Înapoi
+                  </button>
+                  <div className="hdPagerText">Pagina {page} / {pagesCount}</div>
+                  <button className="hdBtn" onClick={() => setPage((p) => Math.min(pagesCount, p + 1))} disabled={page >= pagesCount}>
+                    Înainte →
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Inbox */}
+          <div className="hdCard hdInbox">
+            <div className="hdCardTop">
+              <div className="hdCardLabel">Mesaje</div>
+              <button className="hdChip" type="button">Inbox</button>
+            </div>
+
+            <div className="hdInboxList">
+              {(inbox || []).slice(0, 6).map((m) => (
+                <div className="hdMsg" key={m.id || m._id}>
+                  <div className="hdMsgAvatar" />
+                  <div className="hdMsgBody">
+                    <div className="hdMsgTop">
+                      <div className="hdMsgName">{m.fromName || m.name || "Client"}</div>
+                      <div className="hdMsgTime">{m.time || ""}</div>
+                    </div>
+                    <div className="hdMsgText">{m.text || m.message || "—"}</div>
+                  </div>
                 </div>
               ))}
-            </div>
 
-            <div className="actionsRow">
-              <a className="btnPrimary" href="/host/listings/new">
-                <Plus size={18} /> Adaugă proprietate
-              </a>
-              <a className="btnSoft" href="/host/listings">
-                Vezi proprietăți <ChevronRight size={16} />
-              </a>
+              {(!inbox || inbox.length === 0) && !loading && (
+                <div className="hdEmpty">Nu ai mesaje.</div>
+              )}
             </div>
           </div>
+
+          <ConfirmModal
+  open={!!confirm}
+  title={confirm?.title}
+  description={confirm?.description}
+  tone={confirm?.tone}
+  confirmText="Confirmă"
+  cancelText="Renunță"
+  loading={confirmLoading}
+  onConfirm={runConfirm}
+  onClose={closeConfirm}
+/>
+
         </section>
-
-        {/* Listings table (OVERVIEW) */}
-        <section className="panel">
-          <div className="panelHead panelHead--listings">
-            <div className="phLeft">
-              <div className="panelTitle">Proprietățile tale</div>
-              <div className="panelSub">Overview (top 5). Pentru tot tabelul, mergi în “Proprietățile mele”.</div>
-              {loadingListings && (
-  <div className="panel" style={{ padding: "1rem" }}>
-    Se încarcă proprietățile...
-  </div>
-)}
-
-
-              <div className="tabsRow" role="tablist" aria-label="Filtre status">
-                <button className={`tab ${listingsTab === "all" ? "active" : ""}`} type="button" onClick={() => setListingsTab("all")}>
-                  Toate <span className="tabCount">{listingsCounts.all}</span>
-                </button>
-
-                <button className={`tab ${listingsTab === "needs" ? "active" : ""}`} type="button" onClick={() => setListingsTab("needs")}>
-                  Atenție <span className="tabCount">{listingsCounts.needs}</span>
-                </button>
-
-                <button className={`tab ${listingsTab === "pending" ? "active" : ""}`} type="button" onClick={() => setListingsTab("pending")}>
-                  În așteptare <span className="tabCount">{listingsCounts.pending}</span>
-                </button>
-
-                <button className={`tab ${listingsTab === "live" ? "active" : ""}`} type="button" onClick={() => setListingsTab("live")}>
-                  Publicate <span className="tabCount">{listingsCounts.live}</span>
-                </button>
-              </div>
-            </div>
-
-            <div className="phRight">
-              <div className="tableSearch">
-                <Search size={16} className="tsIcon" />
-                <input
-                  className="tsInput"
-                  value={listingsQuery}
-                  onChange={(e) => setListingsQuery(e.target.value)}
-                  placeholder="Caută proprietate / locație..."
-                  aria-label="Caută proprietate"
-                />
-                {listingsQuery?.length > 0 && (
-                  <button className="tsClear" type="button" onClick={() => setListingsQuery("")} aria-label="Șterge căutarea">
-                    ✕
-                  </button>
-                )}
-              </div>
-
-              <a className="addBtn" href="/host/listings/new">
-                <Plus size={18} /> Adaugă
-              </a>
-
-              <a className="panelLink" href="/host/listings">
-                Vezi toate <ChevronRight size={16} />
-              </a>
-            </div>
-          </div>
-
-          <div className="tableWrap">
-            <table className="hostTable">
-              <thead>
-                <tr>
-                  <th>
-                    <button className="thBtn" type="button" onClick={() => setSorting("name")}>
-                      Proprietate <SortIcon k="name" />
-                    </button>
-                  </th>
-
-                  <th>
-                    <button className="thBtn" type="button" onClick={() => setSorting("status")}>
-                      Status <SortIcon k="status" />
-                    </button>
-                  </th>
-
-                  <th>
-                    <button className="thBtn" type="button" onClick={() => setSorting("completion")}>
-                      Completare <SortIcon k="completion" />
-                    </button>
-                  </th>
-
-                  <th className="num">
-                    <button className="thBtn thBtnRight" type="button" onClick={() => setSorting("views30")}>
-                      Vizualizări <SortIcon k="views30" />
-                    </button>
-                  </th>
-
-                  <th className="num">
-                    <button className="thBtn thBtnRight" type="button" onClick={() => setSorting("clicks30")}>
-                      Click-uri <SortIcon k="clicks30" />
-                    </button>
-                  </th>
-
-                  <th className="num">Acțiuni</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {dashboardListings.map((l) => (
-                  <tr
-                    key={l.id}
-                    className="clickRow"
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => goEdit(l.id)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") goEdit(l.id);
-                    }}
-                    title="Click pentru editare"
-                  >
-                    <td>
-                      <div className="propCell">
-                        <div className="propThumb" />
-                        <div>
-                          <div className="propName">{l.name}</div>
-                          <div className="propSub">{l.location}</div>
-                        </div>
-                      </div>
-                    </td>
-
-                    <td>
-                      <span className={`pill ${statusClass(l.status)}`}>{statusLabel(l.status)}</span>
-                    </td>
-
-                    <td>
-                      <div className="progress">
-                        <div className="progressBar" style={{ width: `${l.completion}%` }} />
-                      </div>
-                      <div className="progressText">{l.completion}%</div>
-                    </td>
-
-                    <td className="num">{l.views30}</td>
-                    <td className="num">{l.clicks30}</td>
-
-                    <td className="actions" onClick={stop}>
-                      <a className="rowBtn" href={`/host/listings/${l.id}/edit`} onClick={stop}>
-                        Editează
-                      </a>
-                      <a className="rowBtn" href={`/host/listings/${l.id}/preview`} onClick={stop}>
-                        Preview
-                      </a>
-
-                      {l.status === "draft" && (
-                        <button className="rowBtn rowBtnPrimary" type="button" onClick={(e) => { stop(e); submitForReview(l.id); }}>
-                          Trimite
-                        </button>
-                      )}
-
-                      {(l.status === "live" || l.status === "paused") && (
-                        <button className="rowBtn rowBtnPrimary" type="button" onClick={(e) => { stop(e); toggleLivePaused(l.id); }}>
-                          {l.status === "live" ? (
-                            <>
-                              <PauseCircle size={16} /> Pauză
-                            </>
-                          ) : (
-                            <>
-                              <PlayCircle size={16} /> Publică
-                            </>
-                          )}
-                        </button>
-                      )}
-
-                      {l.status === "pending" && <span className="rowHint">În verificare</span>}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {filteredListings.length === 0 && (
-            <div className="emptyBlock">
-              <div className="emptyTitle">Nicio proprietate găsită</div>
-              <div className="emptySub">Schimbă tab-ul sau caută alt termen.</div>
-              
-            </div>
-          )}
-        </section>
-
-        <footer className="hostFoot">© {new Date().getFullYear()} BucovinaStay — Host Panel</footer>
-      </div>
-    </>
+      </main>
+    </div>
   );
 }

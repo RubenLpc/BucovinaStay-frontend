@@ -7,9 +7,9 @@ import { useFavorites } from "../../hooks/useFavorites";
 import HostSection from "../../components/HostSection/HostSection";
 import MessageHostModal from "../../components/HostSection/MessageHostModal";
 import { sendHostMessage } from "../../api/hostMessagesService";
-
-
-
+import { trackImpression, trackClick } from "../../api/analyticsService";
+import { getHostProfilePublic } from "../../api/hostProfileService";
+import defaultAvatar from "../../assets/default_avatar.png";
 
 import { toast } from "sonner";
 import "./PropertyPage.css";
@@ -108,6 +108,17 @@ function Modal({ open, title, onClose, children, size = "lg" }) {
 export default function PropertyPage() {
   const { id } = useParams();
 
+  useEffect(() => {
+    if (!id) return;
+
+    // dedupe per sesiune (nu umfli views)
+    const key = `pp:view:${id}`;
+    if (sessionStorage.getItem(key)) return;
+
+    sessionStorage.setItem(key, "1");
+    trackImpression([id]); // type: impression
+  }, [id]);
+
   const [loading, setLoading] = useState(true);
   const [p, setP] = useState(null);
   const [err, setErr] = useState("");
@@ -117,33 +128,36 @@ export default function PropertyPage() {
   const [showFullDescription, setShowFullDescription] = useState(false);
 
   const user = useAuthStore((s) => s.user);
-const { favIds, toggle: toggleFav, loading: favLoading } = useFavorites(!!user);
+  const {
+    favIds,
+    toggle: toggleFav,
+    loading: favLoading,
+  } = useFavorites(!!user);
 
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
 
-const [lightboxOpen, setLightboxOpen] = useState(false);
-const [activeIndex, setActiveIndex] = useState(0);
+  // zoom + pan
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [dragging, setDragging] = useState(false);
+  const dragStart = React.useRef({ x: 0, y: 0 });
+  const panStart = React.useRef({ x: 0, y: 0 });
 
-// zoom + pan
-const [zoom, setZoom] = useState(1);
-const [pan, setPan] = useState({ x: 0, y: 0 });
-const [dragging, setDragging] = useState(false);
-const dragStart = React.useRef({ x: 0, y: 0 });
-const panStart = React.useRef({ x: 0, y: 0 });
+  const [Host, setHost] = useState(null);
 
+  const [msgOpen, setMsgOpen] = useState(false);
 
-const [Host, setHost] = useState(null);
+  const [hostUser, setHostUser] = useState(null); // user basic (name/phone) - din property
+  const [hostProfile, setHostProfile] = useState(null); // HostProfile public
+  const [hostProfileLoading, setHostProfileLoading] = useState(false);
 
-const [msgOpen, setMsgOpen] = useState(false);
+  const DEFAULT_HOST_AVATAR = defaultAvatar; // pune tu un asset real
 
-
-
-
-
-const isFav = useMemo(() => {
-  if (!id) return false;
-  return favIds.has(String(id));
-}, [favIds, id]);
-
+  const isFav = useMemo(() => {
+    if (!id) return false;
+    return favIds.has(String(id));
+  }, [favIds, id]);
 
   useEffect(() => {
     let alive = true;
@@ -154,7 +168,8 @@ const isFav = useMemo(() => {
         const data = await getPropertyById(id);
         if (!alive) return;
         setP(data.property);
-        setHost(data.host);      } catch (e) {
+        setHostUser(data.host || null);
+      } catch (e) {
         if (!alive) return;
         setErr(e?.message || "Nu am putut încărca proprietatea.");
       } finally {
@@ -202,6 +217,41 @@ const isFav = useMemo(() => {
 
   const canShowHighlights = ratingAvg > 0 && reviewsCount > 0;
 
+  const hostFromProperty =
+    p?.hostId && typeof p.hostId === "object" ? p.hostId : null;
+
+  const hostUserId =
+    hostFromProperty?._id ||
+    hostUser?._id ||
+    (typeof p?.hostId === "string" ? p.hostId : null) ||
+    null;
+  useEffect(() => {
+    let alive = true;
+
+    (async () => {
+      if (!hostUserId) {
+        setHostProfile(null);
+        return;
+      }
+
+      try {
+        setHostProfileLoading(true);
+        const res = await getHostProfilePublic(hostUserId);
+        if (!alive) return;
+        setHostProfile(res?.host || null);
+      } catch {
+        if (!alive) return;
+        setHostProfile(null); // fallback silent
+      } finally {
+        if (alive) setHostProfileLoading(false);
+      }
+    })();
+
+    return () => {
+      alive = false;
+    };
+  }, [hostUserId]);
+
   const quickFacts = useMemo(() => {
     const items = [];
 
@@ -233,9 +283,20 @@ const isFav = useMemo(() => {
     return `https://www.google.com/maps?q=${q}&z=12&output=embed`;
   }, [coords, p]);
 
-  const host = p?.hostId && typeof p.hostId === "object" ? p.hostId : null;
-  const hostName = host?.name || "Gazda";
-  const hostPhone = host?.phone || "";
+  const hostName =
+    hostProfile?.displayName ||
+    hostFromProperty?.name ||
+    hostUser?.name ||
+    "Gazda";
+
+  const hostPhone = hostFromProperty?.phone || hostUser?.phone || "";
+
+  const hostAvatar =
+    (isNonEmptyString(hostProfile?.avatarUrl) && hostProfile.avatarUrl) ||
+    DEFAULT_HOST_AVATAR;
+
+  const hostBio =
+    (isNonEmptyString(hostProfile?.bio) && hostProfile.bio.trim()) || "";
 
   const hasPhone = typeof hostPhone === "string" && hostPhone.trim().length > 0;
   const cleanPhone = (s) => String(s || "").replace(/[^\d+]/g, "");
@@ -243,6 +304,8 @@ const isFav = useMemo(() => {
   const waHref = hasPhone
     ? `https://wa.me/${cleanPhone(hostPhone).replace(/^\+/, "")}`
     : "";
+
+  const smsHref = hasPhone ? `sms:${cleanPhone(hostPhone)}` : "";
 
   const onShare = async () => {
     try {
@@ -262,15 +325,19 @@ const isFav = useMemo(() => {
 
   const onSave = async () => {
     if (!user) {
-      toast.info("Autentificare", { description: "Autentifică-te ca să salvezi la favorite." });
+      toast.info("Autentificare", {
+        description: "Autentifică-te ca să salvezi la favorite.",
+      });
       return;
     }
-  
+
     try {
       await toggleFav(String(id));
       // toasturile sunt deja în favoritesService (add/remove)
     } catch (e) {
-      toast.error("Eroare", { description: e?.message || "Nu am putut actualiza favoritele." });
+      toast.error("Eroare", {
+        description: e?.message || "Nu am putut actualiza favoritele.",
+      });
     }
   };
 
@@ -284,7 +351,6 @@ const isFav = useMemo(() => {
     });
     toast.success("Mesaj trimis");
   }
-  
 
   if (loading) {
     return (
@@ -301,7 +367,6 @@ const isFav = useMemo(() => {
               <div className="ppSkeletonCard" />
             </div>
           </div>
-          
         </div>
       </div>
     );
@@ -376,16 +441,15 @@ const isFav = useMemo(() => {
               <span>Distribuie</span>
             </button>
             <button
-  className={`ppActionBtn ${isFav ? "isActive" : ""}`}
-  onClick={onSave}
-  disabled={favLoading}
-  aria-pressed={isFav}
-  title={isFav ? "Scoate din favorite" : "Adaugă la favorite"}
->
-  <Heart size={16} fill={isFav ? "currentColor" : "none"} />
-  <span>{isFav ? "Salvat" : "Salvează"}</span>
-</button>
-
+              className={`ppActionBtn ${isFav ? "isActive" : ""}`}
+              onClick={onSave}
+              disabled={favLoading}
+              aria-pressed={isFav}
+              title={isFav ? "Scoate din favorite" : "Adaugă la favorite"}
+            >
+              <Heart size={16} fill={isFav ? "currentColor" : "none"} />
+              <span>{isFav ? "Salvat" : "Salvează"}</span>
+            </button>
           </div>
         </div>
 
@@ -419,7 +483,10 @@ const isFav = useMemo(() => {
 
               <button
                 className="ppAllPhotosBtn"
-                onClick={() => setShowAllPhotos(true)}
+                onClick={() => {
+                  trackClick(id, "contact_gallery");
+                  setShowAllPhotos(true);
+                }}
               >
                 <ImagesIcon size={16} />
                 Afișează toate fotografiile
@@ -598,9 +665,7 @@ const isFav = useMemo(() => {
                       <div className="ppHighlightTitle">
                         Recenzii verificate
                       </div>
-                      <div className="ppHighlightDesc">
-                        
-                      </div>
+                      <div className="ppHighlightDesc"></div>
                     </div>
                   </div>
                 </div>
@@ -678,6 +743,7 @@ const isFav = useMemo(() => {
                     <a
                       className="ppPrimaryBtn ppPrimaryBtnSolid"
                       href={telHref}
+                      onClick={() => trackClick(id, "contact_phone")}
                     >
                       Sună acum
                     </a>
@@ -695,18 +761,25 @@ const isFav = useMemo(() => {
                     </button>
                   )}
 
-                  <button
+                  <a
                     className="ppOutlineBtn ppOutlineBtnFull"
-                    onClick={() =>
-                      toast.message("Mesaj către gazdă", {
-                        description: "În curând: formular / chat în platformă.",
-                      })
-                    }
+                    href={smsHref}
+                    onClick={() => trackClick(id, "contact_sms")}
                   >
                     Trimite mesaj
-                  </button>
+                  </a>
 
-                  
+                  {hasPhone ? (
+                    <a
+                      className="ppOutlineBtn ppOutlineBtnFull"
+                      href={waHref}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={() => trackClick(id, "contact_whatsapp")}
+                    >
+                      WhatsApp
+                    </a>
+                  ) : null}
                 </div>
 
                 <div className="ppContactHint">
@@ -735,23 +808,47 @@ const isFav = useMemo(() => {
             </div>
           </div>
         </div>
-        {Host ? (
-  <>
-    <HostSection host={host} property={p} onMessage={() => setMsgOpen(true)} />
-    <MessageHostModal
-      open={msgOpen}
-      onClose={() => setMsgOpen(false)}
-      host={Host}
-      property={p}
-      onSend={handleSendMessage}
-    />
-  </>
-) : null}
+        {hostUserId ? (
+          <>
+            <HostSection
+              host={{
+                id: hostUserId,
+                name: hostName,
+                avatarUrl: hostAvatar,
+                bio: hostBio,
+                verified: !!hostProfile?.verified,
+                isSuperHost: !!hostProfile?.isSuperHost,
+                hostingSince: hostProfile?.hostingSince || null,
+                responseRate: hostProfile?.responseRate ?? null,
+                responseTimeBucket:
+                  hostProfile?.responseTimeBucket || "unknown",
+                languages: Array.isArray(hostProfile?.languages)
+                  ? hostProfile.languages
+                  : [],
+                stats: hostProfile?.stats || null,
+              }}
+              loading={hostProfileLoading}
+              property={p}
+              onMessage={() => setMsgOpen(true)}
+            />
 
+            <MessageHostModal
+              open={msgOpen}
+              onClose={() => setMsgOpen(false)}
+              host={{
+                id: hostUserId,
+                name: hostName,
+                avatarUrl: hostAvatar,
+              }}
+              property={p}
+              onSend={handleSendMessage}
+            />
+          </>
+        ) : null}
 
         <div style={{ marginTop: 28 }}>
-            <PropertyReviews propertyId={id} />
-          </div>
+          <PropertyReviews propertyId={id} />
+        </div>
 
         {/* MODALS */}
 

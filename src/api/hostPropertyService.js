@@ -57,11 +57,16 @@ async function submitForReview(id) {
 async function getCloudinarySignature() {
   // endpointul tău din backend: /uploads/cloudinary-signature
   try {
-    return await apiFetch("/properties/cloudinary-signature", { method: "POST" });
+    return await apiFetch("/properties/cloudinary-signature", { method: "GET" });
   } catch (err) {
     toast.error("Eroare upload", { description: err.message || "Nu am putut obține semnătura." });
     throw err;
   }
+}
+
+ async function getPropertyById(id) {
+  if (!id) throw new Error("Missing property id");
+  return apiFetch(`/properties/${id}`, { method: "GET" });
 }
 
 export const hostPropertyService = {
@@ -69,4 +74,5 @@ export const hostPropertyService = {
   updateDraft,
   submitForReview,
   getCloudinarySignature,
+  getPropertyById,
 };

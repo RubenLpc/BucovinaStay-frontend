@@ -325,13 +325,13 @@ a {
 
   border-radius: 14px;
   border: 1px solid rgba(17, 24, 39, 0.10);
-  background: rgba(17, 24, 39, 0.04);
+  background: rgba(17, 24, 39, 0.92);
 
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 780;
   letter-spacing: -0.01em;
-  color: rgba(17, 24, 39, 0.92);
+  color: rgba(234, 236, 240, 1);
 
   cursor: pointer;
   display: inline-flex;
@@ -347,8 +347,8 @@ a {
 
 .btn-primary:hover {
   transform: translateY(-1px);
-  background: rgba(17, 24, 39, 0.06);
-  border-color: rgba(17, 24, 39, 0.16);
+  background: rgba(17, 24, 39, 1);
+  border-color: rgba(17, 24, 39, 1);
 }
 
 .btn-primary:active {

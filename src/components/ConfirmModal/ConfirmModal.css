@@ -1,0 +1,86 @@
+/* client/src/components/ConfirmModal/ConfirmModal.css */
+
+.cmBackdrop{
+    position: fixed;
+    inset: 0;
+    background: rgba(17,24,39,0.55);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+  }
+  
+  .cmModal{
+    width: 100%;
+    max-width: 420px;
+    border-radius: 18px;
+    padding: 18px;
+    background: rgba(255,255,255,0.96);
+    border: 1px solid rgba(17,24,39,0.12);
+    box-shadow: 0 40px 80px rgba(17,24,39,0.35);
+    animation: cmIn .18s ease-out;
+  }
+  
+  @keyframes cmIn{
+    from{ transform: translateY(8px) scale(.98); opacity: 0; }
+    to{ transform: none; opacity: 1; }
+  }
+  
+  .cmHeader{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+  }
+  
+  .cmTitle{
+    font-size: 18px;
+    font-weight: 950;
+    color: rgba(17,24,39,0.92);
+  }
+  
+  .cmDesc{
+    margin-top: 10px;
+    color: rgba(17,24,39,0.70);
+    font-weight: 650;
+    line-height: 1.45;
+  }
+  
+  .cmActions{
+    margin-top: 18px;
+    display:flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  .cmBtn{
+    height: 38px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(17,24,39,0.14);
+    background: rgba(17,24,39,0.04);
+    color: rgba(17,24,39,0.92);
+    font-weight: 900;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  
+  .cmBtn:hover{
+    background: rgba(17,24,39,0.08);
+  }
+  
+  .cmBtnPrimary{
+    border: 1px solid rgba(255,56,92,0.28);
+    background: rgba(255,56,92,0.12);
+  }
+  
+  /* tones */
+  .cmBtnPrimary.tone-danger{
+    border: 1px solid rgba(239,68,68,0.35);
+    background: rgba(239,68,68,0.12);
+  }
+  
+  .cmBtnPrimary.tone-accent{
+    border: 1px solid rgba(255,56,92,0.35);
+    background: rgba(255,56,92,0.14);
+  }
+  

@@ -2,10 +2,12 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import "./HorizontalListings.css";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useAnalyticsImpressions } from "../../hooks/useAnalyticsImpressions";
+import { trackClick } from "../../api/analyticsService";
+
 
 import { useAuthStore } from "../../stores/authStore";
 import { useFavorites } from "../../hooks/useFavorites";
-import { trackClick, trackImpression } from "../../api/analyticsService";
 
 import {
   ChevronLeft,
@@ -160,6 +162,9 @@ export default function HorizontalListings({
   loading = false,
   onSeeAll, // optional callback (ex: navigate la /cazari?...)
 }) {
+
+  useAnalyticsImpressions(items);
+
   const navigate = useNavigate();
   const { isAuthenticated } = useAuthStore();
   const { favIds, toggle: toggleFav } = useFavorites(isAuthenticated);
@@ -193,14 +198,12 @@ export default function HorizontalListings({
     return { now, cheapThreshold, smartPickIds };
   }, [items]);
 
-  useEffect(() => {
-    if (!items?.length) return;
-    trackImpression(items.map((x) => x.id));
-  }, [items]);
+  
 
   const open = useCallback(
     (id) => {
-      trackClick(id);
+      trackClick(id, "open");
+
       navigate(`/cazari/${id}`);
     },
     [navigate]

@@ -1,5 +1,5 @@
-const API_URL ="http://localhost:3000";
-//"https://bucovinastay-backend-2.onrender.com" ||
+const API_URL ="https://bucovinastay-backend-2.onrender.com" ||"http://localhost:3000";
+//
 
 export async function apiFetch(url, options = {}) {
   const token = localStorage.getItem("token");

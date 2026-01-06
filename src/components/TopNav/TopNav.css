@@ -1,0 +1,279 @@
+/* client/src/components/TopNav/TopNav.css */
+
+.tnWrap{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    padding: 18px 18px 0;
+    background: transparent;
+  }
+  
+  .tnInner{
+    height: 64px;
+    border-radius: 18px;
+    padding: 10px 12px;
+    display: grid;
+    grid-template-columns: 220px 1fr auto;
+    gap: 12px;
+  
+    background: rgba(10,10,12,0.82);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow:
+      0 18px 50px rgba(0,0,0,0.55),
+      inset 0 1px 0 rgba(255,255,255,0.04);
+    backdrop-filter: blur(12px);
+  }
+  
+  .tnBrand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding-left: 6px;
+  }
+  
+  .tnLogo{
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    display:grid;
+    place-items:center;
+  
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.9);
+    font-weight: 700;
+  }
+  
+  .tnBrandText{
+    color: rgba(255,255,255,0.92);
+    font-weight: 700;
+    letter-spacing: 0.2px;
+  }
+  
+  .tnCenter{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  
+  .tnPill{
+    display:flex;
+    align-items:center;
+    gap: 6px;
+    padding: 6px;
+    border-radius: 999px;
+  
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+  
+  .tnTab{
+    height: 34px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 0;
+    cursor: pointer;
+  
+    background: transparent;
+    color: rgba(255,255,255,0.70);
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.2px;
+  }
+  
+  .tnTab:hover{
+    color: rgba(255,255,255,0.92);
+  }
+  
+  .tnTab.isActive{
+    background: rgba(255,255,255,0.10);
+    color: rgba(255,255,255,0.95);
+    box-shadow:
+      0 8px 20px rgba(0,0,0,0.35),
+      inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+  
+  .tnRight{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    padding-right: 6px;
+  }
+  
+  /* Subscription */
+  .tnSubPill{
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.88);
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.2px;
+  }
+  
+  .tnSubPill:hover{
+    background: rgba(255,255,255,0.08);
+  }
+  
+  .tnSubPlan{ opacity: .95; }
+  .tnSubStatus{ opacity: .80; font-weight: 650; }
+  
+  .tnDotSep{
+    width: 5px;
+    height: 5px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.35);
+  }
+  
+  .tone-good{ box-shadow: inset 0 0 0 1px rgba(120,255,180,0.08); }
+  .tone-warn{ box-shadow: inset 0 0 0 1px rgba(255,210,120,0.10); }
+  .tone-muted{ box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06); }
+  
+  /* Buttons */
+  .tnPrimaryBtn{
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.10);
+    color: rgba(255,255,255,0.95);
+    font-weight: 800;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  
+  .tnPrimaryBtn:hover{
+    background: rgba(255,255,255,0.13);
+  }
+  
+  .tnIconBtn{
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.9);
+    cursor: pointer;
+    display:grid;
+    place-items:center;
+    position: relative;
+  }
+  
+  .tnIconBtn:hover{
+    background: rgba(255,255,255,0.08);
+  }
+  
+  .tnNotifDot{
+    position: absolute;
+    top: 9px;
+    right: 9px;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: rgba(120,255,180,0.95);
+    box-shadow: 0 0 0 2px rgba(10,10,12,0.85);
+  }
+  
+  /* Profile dropdown */
+  .tnProfile{ position: relative; }
+  
+  .tnAvatarBtn{
+    border: 0;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+  
+  .tnAvatar{
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    display:grid;
+    place-items:center;
+  
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.95);
+    font-weight: 850;
+    font-size: 12px;
+    letter-spacing: 0.4px;
+  }
+  
+  .tnBackdrop{
+    position: fixed;
+    inset: 0;
+    background: transparent;
+    border: 0;
+  }
+  
+  .tnMenu{
+    position: absolute;
+    right: 0;
+    top: 48px;
+    width: 240px;
+    border-radius: 16px;
+    padding: 10px;
+  
+    background: rgba(10,10,12,0.92);
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: 0 24px 70px rgba(0,0,0,0.55);
+    backdrop-filter: blur(14px);
+  }
+  
+  .tnMenuHead{
+    padding: 10px 10px 12px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 8px;
+  }
+  
+  .tnMenuName{
+    color: rgba(255,255,255,0.96);
+    font-weight: 850;
+    font-size: 13px;
+  }
+  
+  .tnMenuMeta{
+    margin-top: 4px;
+    color: rgba(255,255,255,0.65);
+    font-size: 12px;
+    font-weight: 650;
+  }
+  
+  .tnMenuItem{
+    width: 100%;
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.03);
+    color: rgba(255,255,255,0.86);
+    cursor: pointer;
+    text-align: left;
+    padding: 0 12px;
+    font-weight: 700;
+    font-size: 12.5px;
+  }
+  
+  .tnMenuItem:hover{
+    background: rgba(255,255,255,0.06);
+  }
+  
+  .tnMenuSep{
+    height: 1px;
+    margin: 8px 4px;
+    background: rgba(255,255,255,0.08);
+  }
+  
+  .tnMenuItem.danger{
+    color: rgba(255,160,160,0.95);
+  }
+  

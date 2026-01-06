@@ -1,5 +1,9 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { trackClick,trackImpression } from "../../api/analyticsService";
+import { useAnalyticsImpressions } from "../../hooks/useAnalyticsImpressions";
+
+
 import {
   Wifi,
   Car,
@@ -50,9 +54,41 @@ function safeText(x, fallback = "—") {
 
 export default function StayCard({ stay }) {
   const navigate = useNavigate();
+  const cardRef = useRef(null);
+  useEffect(() => {
+    const id = stay?.id;
+    if (!id) return;
+  
+    // dedupe per sesiune (nu umfli views la scroll)
+    const key = `imp:${id}`;
+    if (sessionStorage.getItem(key)) return;
+  
+    const el = cardRef.current;
+    if (!el) return;
+  
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        if (!e?.isIntersecting) return;
+  
+        sessionStorage.setItem(key, "1");
+        trackImpression([id]); // trimite { listingIds: [id] }
+        obs.disconnect();
+      },
+      { threshold: 0.55 } // considerăm "view" când e vizibil peste ~55%
+    );
+  
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [stay?.id]);
+  
 
-  const open = () => navigate(`/cazari/${stay?.id}`);
-
+  const open = () => {
+    const id = stay?.id;
+    if (id) trackClick(id, "open");
+    navigate(`/cazari/${id}`);
+  };
+  
   const imageUrl = stay?.image || "/placeholder-stay.jpg";
   const title = safeText(stay?.name, "Fără titlu");
   const subtitle = safeText(stay?.subtitle, "—");

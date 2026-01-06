@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import {
@@ -15,12 +15,24 @@ import {
   AlertTriangle,
   Sparkles,
   ShieldCheck,
+  UserCircle2,
 } from "lucide-react";
+
 import { useAuthStore } from "../../stores/authStore";
 import { hostPropertyService } from "../../api/hostPropertyService";
+import { hostProfileService } from "../../api/hostProfileService";
+import HostProfileModal from "../../components/HostProfileModal/HostProfileModal";
+
 import "./HostAddProperty.css";
 
-const TYPES = ["pensiune", "cabana", "hotel", "apartament", "vila", "tiny_house"];
+const TYPES = [
+  "pensiune",
+  "cabana",
+  "hotel",
+  "apartament",
+  "vila",
+  "tiny_house",
+];
 
 const FACILITIES = [
   { key: "wifi", label: "Wi-Fi" },
@@ -37,7 +49,11 @@ const FACILITIES = [
 const STEPS = [
   { id: "details", title: "Detalii", subtitle: "Titlu, tip, descriere" },
   { id: "location", title: "Locație", subtitle: "Oraș, localitate, adresă" },
-  { id: "pricing", title: "Preț & facilități", subtitle: "Preț/noapte, dotări" },
+  {
+    id: "pricing",
+    title: "Preț & facilități",
+    subtitle: "Preț/noapte, dotări",
+  },
   { id: "photos", title: "Poze", subtitle: "Cover + galerie" },
   { id: "review", title: "Review", subtitle: "Verifică și trimite" },
 ];
@@ -79,17 +95,31 @@ function countCompletion(form) {
 
 function buildWarnings(form) {
   const w = [];
-  if ((form.title?.trim()?.length || 0) < 3) w.push("Titlul e prea scurt (min. 3 caractere).");
-  if ((form.description?.trim()?.length || 0) < 20) w.push("Descrierea e prea scurtă (min. 20 caractere).");
+  if ((form.title?.trim()?.length || 0) < 3)
+    w.push("Titlul e prea scurt (min. 3 caractere).");
+  if ((form.description?.trim()?.length || 0) < 20)
+    w.push("Descrierea e prea scurtă (min. 20 caractere).");
   if ((form.city?.trim()?.length || 0) < 2) w.push("Completează orașul.");
   if (Number(form.capacity) < 1) w.push("Capacitatea trebuie să fie minim 1.");
   if (Number(form.pricePerNight) < 0) w.push("Prețul nu poate fi negativ.");
-  if ((form.images?.length || 0) < 5) w.push("Recomandat minim 5 poze (ideal 8–12).");
-  if (!form.coverImage?.url && !(form.images?.[0]?.url)) w.push("Alege o poză de cover.");
+  if ((form.images?.length || 0) < 5)
+    w.push("Recomandat minim 5 poze (ideal 8–12).");
+  if (!form.coverImage?.url && !form.images?.[0]?.url)
+    w.push("Alege o poză de cover.");
   return w;
 }
 
-export default function HostAddProperty() {
+/** ce înseamnă “profil complet” pentru a permite creare proprietate */
+function isHostProfileComplete(profile) {
+  if (!profile) return false;
+  const okName =
+    typeof profile.displayName === "string" &&
+    profile.displayName.trim().length >= 2;
+  // bio e opțional, dar ok dacă există
+  return okName;
+}
+
+export default function HostAddProperty({ editId = null }) {
   const navigate = useNavigate();
   const { user } = useAuthStore();
 
@@ -103,6 +133,11 @@ export default function HostAddProperty() {
 
   const coverInputRef = useRef(null);
   const galleryInputRef = useRef(null);
+
+  // Host profile gating
+  const [hostProfile, setHostProfile] = useState(null);
+  const [hpLoading, setHpLoading] = useState(true);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const [form, setForm] = useState({
     title: "",
@@ -120,8 +155,8 @@ export default function HostAddProperty() {
 
     facilities: [],
 
-    images: [], // [{url, publicId, width, height, format, bytes}]
-    coverImage: null, // {url, publicId...}
+    images: [],
+    coverImage: null,
   });
 
   // Guard: only host/admin
@@ -135,18 +170,90 @@ export default function HostAddProperty() {
     );
   }
 
+  // load host profile (required before creating properties)
+  useEffect(() => {
+    let alive = true;
+
+    (async () => {
+      setHpLoading(true);
+      try {
+        const res = await hostProfileService.getMyHostProfile(); // <-- IMPORTANT
+        const hp = res?.hostProfile || null; // <-- IMPORTANT
+
+        if (!alive) return;
+        setHostProfile(hp);
+
+        const ok = hp?.displayName?.trim()?.length >= 2;
+        if (!ok) setProfileOpen(true);
+      } catch (e) {
+        if (!alive) return;
+        setHostProfile(null);
+      } finally {
+        if (alive) setHpLoading(false);
+      }
+    })();
+
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const hostProfileOk = useMemo(
+    () => isHostProfileComplete(hostProfile),
+    [hostProfile]
+  );
+  useEffect(() => {
+    if (!editId) return;
+
+    let alive = true;
+    (async () => {
+      try {
+        const res = await hostPropertyService.getPropertyById(editId);
+        const p = res?.property || res; // depinde ce returnezi din backend
+
+        if (!alive || !p) return;
+
+        setPropertyId(p._id);
+
+        setForm({
+          title: p.title || "",
+          subtitle: p.subtitle || "",
+          description: p.description || "",
+          type: p.type || "pensiune",
+
+          city: p.city || "",
+          locality: p.locality || "",
+          addressLine: p.addressLine || "",
+
+          pricePerNight: p.pricePerNight ?? 250,
+          currency: p.currency || "RON",
+          capacity: p.capacity ?? 2,
+
+          facilities: Array.isArray(p.facilities) ? p.facilities : [],
+
+          images: Array.isArray(p.images) ? p.images : [],
+          coverImage: p.coverImage || p.images?.[0] || null,
+        });
+      } catch (e) {
+        toast.error("Nu am putut încărca proprietatea pentru edit.");
+      }
+    })();
+
+    return () => {
+      alive = false;
+    };
+  }, [editId]);
+
   const completion = useMemo(() => countCompletion(form), [form]);
 
   const stepValid = useMemo(() => {
-    if (step === 0) {
-      return form.title.trim().length >= 3 && form.description.trim().length >= 20;
-    }
-    if (step === 1) {
-      return form.city.trim().length >= 2;
-    }
-    if (step === 2) {
+    if (step === 0)
+      return (
+        form.title.trim().length >= 3 && form.description.trim().length >= 20
+      );
+    if (step === 1) return form.city.trim().length >= 2;
+    if (step === 2)
       return Number(form.pricePerNight) >= 0 && Number(form.capacity) >= 1;
-    }
     if (step === 3) {
       const hasCover = Boolean(form.coverImage?.url || form.images?.[0]?.url);
       const enoughPhotos = (form.images?.length || 0) >= 5;
@@ -155,12 +262,18 @@ export default function HostAddProperty() {
     return true;
   }, [step, form]);
 
-  const allValid = useMemo(() => buildWarnings(form).length === 0, [form]);
+  const warnings = useMemo(() => buildWarnings(form), [form]);
+  const allValid = warnings.length === 0;
 
   const toggleFacility = (key) => {
     setForm((p) => {
       const has = p.facilities.includes(key);
-      return { ...p, facilities: has ? p.facilities.filter((x) => x !== key) : [...p.facilities, key] };
+      return {
+        ...p,
+        facilities: has
+          ? p.facilities.filter((x) => x !== key)
+          : [...p.facilities, key],
+      };
     });
   };
 
@@ -184,10 +297,30 @@ export default function HostAddProperty() {
     coverImage: form.coverImage || form.images?.[0] || null,
   });
 
-  // Save draft returns ID (important!)
+  const ensureHostProfile = () => {
+    if (hpLoading) {
+      toast.info("Se verifică profilul gazdei…");
+      return false;
+    }
+    if (!hostProfileOk) {
+      toast.error("Completează profilul de gazdă înainte", {
+        description: "Adaugă cel puțin un nume de afișare (Display name).",
+      });
+      navigate("/host/profile", { replace: false });
+      return false;
+    }
+    return true;
+  };
+
+  // Save draft returns ID
   const saveDraft = async (opts = { silent: false }) => {
-    // For drafts, we still want a decent minimum so we don't create junk
-    const canSave = form.title.trim().length >= 3 && form.description.trim().length >= 20 && form.city.trim().length >= 2;
+    if (!ensureHostProfile()) return null;
+
+    // minimum quality for draft
+    const canSave =
+      form.title.trim().length >= 3 &&
+      form.description.trim().length >= 20 &&
+      form.city.trim().length >= 2;
 
     if (!canSave) {
       if (!opts.silent) {
@@ -201,20 +334,19 @@ export default function HostAddProperty() {
     setSaving(true);
     try {
       const payload = buildPayloadForBackend();
-      let data;
 
       if (!propertyId) {
-        data = await hostPropertyService.createDraft(payload);
-        setPropertyId(data._id);
+        const data = await hostPropertyService.createDraft(payload);
+        const id = data?._id || data?.id;
+        setPropertyId(id);
         if (!opts.silent) toast.success("Draft creat");
-        return data._id;
+        return id;
       } else {
-        data = await hostPropertyService.updateDraft(propertyId, payload);
+        await hostPropertyService.updateDraft(propertyId, payload);
         if (!opts.silent) toast.success("Draft salvat");
         return propertyId;
       }
     } catch (e) {
-      // toast handled in service
       return null;
     } finally {
       setSaving(false);
@@ -222,6 +354,14 @@ export default function HostAddProperty() {
   };
 
   const submit = async () => {
+    if (!hostProfileOk) {
+      toast.error("Completează profilul de gazdă înainte.");
+      setProfileOpen(true);
+      return;
+    }
+
+    if (!ensureHostProfile()) return;
+
     let id = propertyId;
     if (!id) id = await saveDraft({ silent: false });
 
@@ -230,13 +370,11 @@ export default function HostAddProperty() {
       return;
     }
 
-    // hard validation for submit
-    const warnings = buildWarnings(form);
     if (warnings.length) {
       toast.error("Mai ai câteva lucruri de completat", {
         description: warnings[0],
       });
-      setStep(4); // send user to review
+      setStep(4);
       return;
     }
 
@@ -246,7 +384,7 @@ export default function HostAddProperty() {
       toast.success("Trimis spre verificare");
       navigate("/host", { replace: true });
     } catch (e) {
-      // toast already
+      // toast handled in service
     } finally {
       setSubmitting(false);
     }
@@ -254,6 +392,7 @@ export default function HostAddProperty() {
 
   // ---------- Cloudinary signed upload ----------
   const uploadToCloudinary = async (file) => {
+    // IMPORTANT: în multe setup-uri, semnătura e aceeași pentru cover și galerie
     const sig = await hostPropertyService.getCloudinarySignature();
     const url = `https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`;
 
@@ -267,7 +406,8 @@ export default function HostAddProperty() {
     const res = await fetch(url, { method: "POST", body: fd });
     const data = await res.json();
 
-    if (!res.ok) throw new Error(data?.error?.message || "Cloudinary upload failed");
+    if (!res.ok)
+      throw new Error(data?.error?.message || "Cloudinary upload failed");
 
     return {
       url: data.secure_url,
@@ -280,6 +420,11 @@ export default function HostAddProperty() {
   };
 
   const onPickCover = async (e) => {
+    if (!ensureHostProfile()) {
+      e.target.value = "";
+      return;
+    }
+
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -289,7 +434,9 @@ export default function HostAddProperty() {
       setForm((p) => ({ ...p, coverImage: uploaded }));
       toast.success("Cover încărcat");
     } catch (err) {
-      toast.error("Nu am putut încărca cover-ul", { description: err?.message || "Eroare upload" });
+      toast.error("Nu am putut încărca cover-ul", {
+        description: err?.message || "Eroare upload",
+      });
     } finally {
       setUploading(false);
       e.target.value = "";
@@ -297,23 +444,33 @@ export default function HostAddProperty() {
   };
 
   const onPickImages = async (e) => {
+    if (!ensureHostProfile()) {
+      e.target.value = "";
+      return;
+    }
+
     const arr = Array.from(e.target.files || []);
     if (!arr.length) return;
 
     setUploading(true);
     try {
       const uploaded = [];
+      // upload serial -> mai sigur (rate limit / stabil)
       for (const f of arr) uploaded.push(await uploadToCloudinary(f));
 
       setForm((p) => {
         const nextImages = [...(p.images || []), ...uploaded];
-        const nextCover = p.coverImage?.url ? p.coverImage : (uploaded[0] || null);
+        const nextCover = p.coverImage?.url
+          ? p.coverImage
+          : uploaded[0] || null;
         return { ...p, images: nextImages, coverImage: nextCover };
       });
 
       toast.success(`Încărcate ${arr.length} imagini`);
     } catch (err) {
-      toast.error("Nu am putut încărca imaginile", { description: err?.message || "Eroare upload" });
+      toast.error("Nu am putut încărca imaginile", {
+        description: err?.message || "Eroare upload",
+      });
     } finally {
       setUploading(false);
       e.target.value = "";
@@ -324,11 +481,8 @@ export default function HostAddProperty() {
     setForm((p) => {
       const next = (p.images || []).filter((i) => i.publicId !== publicId);
 
-      // If removed image was cover -> fallback
       let nextCover = p.coverImage;
-      if (p.coverImage?.publicId === publicId) {
-        nextCover = next[0] || null;
-      }
+      if (p.coverImage?.publicId === publicId) nextCover = next[0] || null;
 
       return { ...p, images: next, coverImage: nextCover };
     });
@@ -349,9 +503,6 @@ export default function HostAddProperty() {
       toast.error("Completează câmpurile necesare pentru acest pas.");
       return;
     }
-
-    // optional: save draft between steps (silent)
-    // helpful in production so you don't lose progress
     if (step <= 3) await saveDraft({ silent: true });
 
     setStep((s) => Math.min(STEPS.length - 1, s + 1));
@@ -363,24 +514,51 @@ export default function HostAddProperty() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const canSubmitNow = allValid && !submitting && !saving;
-
-  const warnings = useMemo(() => buildWarnings(form), [form]);
+  const canSubmitNow = allValid && !submitting && !saving && !uploading;
 
   return (
     <div className="hostAddShell">
+      {/* Gate banner */}
+      {!hpLoading && !hostProfileOk && (
+        <div className="haBanner haBannerWarn">
+          <div className="haBannerIcon">
+            <UserCircle2 size={18} />
+          </div>
+          <div className="haBannerText">
+            <div className="haBannerTitle">Completează profilul de gazdă</div>
+            <div className="haBannerSub">
+              Înainte să creezi o proprietate, ai nevoie de un HostProfile
+              (minim Display name).
+            </div>
+          </div>
+          <button
+            className="haBannerBtn"
+            type="button"
+            onClick={() => setProfileOpen(true)}
+          >
+            Mergi la profil
+          </button>
+        </div>
+      )}
+
       {/* Top header */}
       <header className="hostAddTop">
         <div className="topLeft">
           <div className="titleRow">
-            <h1>Adaugă proprietate</h1>
+            <h1>{editId ? "Editează proprietate" : "Adaugă proprietate"}</h1>
+
             <span className={`statusPill ${propertyId ? "hasId" : ""}`}>
-              {propertyId ? "Draft salvat" : "Draft nou"}
+              {editId
+                ? "Editare draft"
+                : propertyId
+                ? "Draft salvat"
+                : "Draft nou"}
             </span>
           </div>
 
           <p className="sub">
-            Creezi un draft, adaugi poze (cover separat), apoi trimiți la verificare.
+            Creezi un draft, adaugi poze (cover separat), apoi trimiți la
+            verificare.
           </p>
 
           <div className="metaRow">
@@ -393,7 +571,10 @@ export default function HostAddProperty() {
                 <div className="metaValue">{completion}%</div>
               </div>
               <div className="progressBar">
-                <div className="progressFill" style={{ width: `${completion}%` }} />
+                <div
+                  className="progressFill"
+                  style={{ width: `${completion}%` }}
+                />
               </div>
             </div>
 
@@ -415,11 +596,15 @@ export default function HostAddProperty() {
             className="btn btn-secondary"
             type="button"
             onClick={() => saveDraft({ silent: false })}
-            disabled={saving || uploading}
-            title="Salvează draft-ul"
+            disabled={saving || uploading || !hostProfileOk}
+            title={
+              !hostProfileOk
+                ? "Completează profilul de gazdă"
+                : "Salvează draft-ul"
+            }
           >
             <Save size={18} />
-            {saving ? "Se salvează..." : "Save draft"}
+            {saving ? "Se salvează..." : "Salvează draft"}
           </button>
 
           <button
@@ -448,7 +633,9 @@ export default function HostAddProperty() {
               <button
                 key={s.id}
                 type="button"
-                className={`stepItem ${isActive ? "active" : ""} ${isDone ? "done" : ""}`}
+                className={`stepItem ${isActive ? "active" : ""} ${
+                  isDone ? "done" : ""
+                }`}
                 onClick={() => setStep(idx)}
               >
                 <span className="stepDot">{isDone ? "✓" : idx + 1}</span>
@@ -469,7 +656,9 @@ export default function HostAddProperty() {
           <div className="panelTop">
             <div className="panelTitle">
               {STEPS[step].title}
-              <span className="panelBadge">{step + 1}/{STEPS.length}</span>
+              <span className="panelBadge">
+                {step + 1}/{STEPS.length}
+              </span>
             </div>
             <div className="panelHint">{STEPS[step].subtitle}</div>
           </div>
@@ -483,7 +672,9 @@ export default function HostAddProperty() {
                   <input
                     className="input"
                     value={form.title}
-                    onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((p) => ({ ...p, title: e.target.value }))
+                    }
                     placeholder="Ex: Pensiune modernă cu spa"
                     maxLength={90}
                   />
@@ -493,15 +684,19 @@ export default function HostAddProperty() {
                 </div>
 
                 <div className="fieldRow">
-                  <label className="label">Subtitle</label>
+                  <label className="label">Subtitlu</label>
                   <input
                     className="input"
                     value={form.subtitle}
-                    onChange={(e) => setForm((p) => ({ ...p, subtitle: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((p) => ({ ...p, subtitle: e.target.value }))
+                    }
                     placeholder="Ex: Spa & mic dejun"
                     maxLength={60}
                   />
-                  <div className="fieldHelp">{form.subtitle.trim().length}/60</div>
+                  <div className="fieldHelp">
+                    {form.subtitle.trim().length}/60
+                  </div>
                 </div>
               </div>
 
@@ -511,7 +706,9 @@ export default function HostAddProperty() {
                   <select
                     className="input"
                     value={form.type}
-                    onChange={(e) => setForm((p) => ({ ...p, type: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((p) => ({ ...p, type: e.target.value }))
+                    }
                   >
                     {TYPES.map((t) => (
                       <option key={t} value={t}>
@@ -529,7 +726,10 @@ export default function HostAddProperty() {
                     type="number"
                     value={form.capacity}
                     onChange={(e) =>
-                      setForm((p) => ({ ...p, capacity: clampNumber(e.target.value, 1, 50) }))
+                      setForm((p) => ({
+                        ...p,
+                        capacity: clampNumber(e.target.value, 1, 50),
+                      }))
                     }
                     min={1}
                     max={50}
@@ -543,7 +743,9 @@ export default function HostAddProperty() {
                 <textarea
                   className="input textarea"
                   value={form.description}
-                  onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((p) => ({ ...p, description: e.target.value }))
+                  }
                   placeholder="Spune clar ce primește oaspetele: camere, vibe, spații, priveliște, acces, parcare..."
                   maxLength={4000}
                 />
@@ -557,7 +759,8 @@ export default function HostAddProperty() {
                 <div>
                   <div className="calloutTitle">Tip pro</div>
                   <div className="calloutText">
-                    Primele 2–3 propoziții contează cel mai mult (apar în card + preview).
+                    Primele 2–3 propoziții contează cel mai mult (apar în card +
+                    preview).
                   </div>
                 </div>
               </div>
@@ -572,7 +775,8 @@ export default function HostAddProperty() {
                 <div>
                   <div className="calloutTitle">Locație</div>
                   <div className="calloutText">
-                    Orașul este obligatoriu. Localitatea și adresa sunt opționale, dar cresc conversia.
+                    Orașul este obligatoriu. Localitatea și adresa sunt
+                    opționale, dar cresc conversia.
                   </div>
                 </div>
               </div>
@@ -583,7 +787,9 @@ export default function HostAddProperty() {
                   <input
                     className="input"
                     value={form.city}
-                    onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((p) => ({ ...p, city: e.target.value }))
+                    }
                     placeholder="Suceava"
                   />
                   <div className="fieldHelp">Minim 2 caractere</div>
@@ -594,7 +800,9 @@ export default function HostAddProperty() {
                   <input
                     className="input"
                     value={form.locality}
-                    onChange={(e) => setForm((p) => ({ ...p, locality: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((p) => ({ ...p, locality: e.target.value }))
+                    }
                     placeholder="Voroneț"
                   />
                   <div className="fieldHelp">Sat / comună / zonă</div>
@@ -606,10 +814,15 @@ export default function HostAddProperty() {
                 <input
                   className="input"
                   value={form.addressLine}
-                  onChange={(e) => setForm((p) => ({ ...p, addressLine: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((p) => ({ ...p, addressLine: e.target.value }))
+                  }
                   placeholder="Strada, nr"
                 />
-                <div className="fieldHelp">Nu afișa detalii sensibile (ex: cod ușă), doar adresă generală.</div>
+                <div className="fieldHelp">
+                  Nu afișa detalii sensibile (ex: cod ușă), doar adresă
+                  generală.
+                </div>
               </div>
             </div>
           )}
@@ -627,12 +840,17 @@ export default function HostAddProperty() {
                       type="number"
                       value={form.pricePerNight}
                       onChange={(e) =>
-                        setForm((p) => ({ ...p, pricePerNight: clampNumber(e.target.value, 0, 999999) }))
+                        setForm((p) => ({
+                          ...p,
+                          pricePerNight: clampNumber(e.target.value, 0, 999999),
+                        }))
                       }
                       min={0}
                     />
                   </div>
-                  <div className="fieldHelp">Apare în listă + calcul rezervare</div>
+                  <div className="fieldHelp">
+                    Apare în listă + calcul rezervare
+                  </div>
                 </div>
 
                 <div className="fieldRow">
@@ -640,7 +858,9 @@ export default function HostAddProperty() {
                   <select
                     className="input"
                     value={form.currency}
-                    onChange={(e) => setForm((p) => ({ ...p, currency: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((p) => ({ ...p, currency: e.target.value }))
+                    }
                   >
                     <option value="RON">RON</option>
                     <option value="EUR">EUR</option>
@@ -653,7 +873,9 @@ export default function HostAddProperty() {
                 <BedDouble size={18} />
                 <div className="priceText">
                   <div className="priceLabel">Preview</div>
-                  <div className="priceValue">{formatMoney(form.pricePerNight, form.currency)} / noapte</div>
+                  <div className="priceValue">
+                    {formatMoney(form.pricePerNight, form.currency)} / noapte
+                  </div>
                 </div>
               </div>
 
@@ -669,7 +891,9 @@ export default function HostAddProperty() {
                   <button
                     key={f.key}
                     type="button"
-                    className={`chip ${form.facilities.includes(f.key) ? "active" : ""}`}
+                    className={`chip ${
+                      form.facilities.includes(f.key) ? "active" : ""
+                    }`}
                     onClick={() => toggleFacility(f.key)}
                   >
                     {f.label}
@@ -682,7 +906,8 @@ export default function HostAddProperty() {
                 <div>
                   <div className="calloutTitle">Tip pro</div>
                   <div className="calloutText">
-                    Wi-Fi + Parcare + Mic dejun sunt cele mai căutate — dacă le ai, merită bifate.
+                    Wi-Fi + Parcare + Mic dejun sunt cele mai căutate — dacă le
+                    ai, merită bifate.
                   </div>
                 </div>
               </div>
@@ -699,14 +924,20 @@ export default function HostAddProperty() {
                     <div>
                       <div className="blockTitle">Cover photo</div>
                       <div className="blockSub">
-                        Poza principală (cea mai importantă). Recomand: fațada / living luminos / view.
+                        Poza principală (cea mai importantă). Recomand: fațada /
+                        living luminos / view.
                       </div>
                     </div>
 
                     <div className="blockActions">
-                      <button className="btn btn-secondary" type="button" onClick={openCoverPicker} disabled={uploading}>
+                      <button
+                        className="btn btn-secondary"
+                        type="button"
+                        onClick={openCoverPicker}
+                        disabled={uploading || hpLoading || !hostProfileOk}
+                      >
                         <ImageIcon size={18} />
-                        {uploading ? "Upload..." : "Upload cover"}
+                        {uploading ? "Upload..." : "Încarcă cover"}
                       </button>
                       <input
                         ref={coverInputRef}
@@ -719,7 +950,11 @@ export default function HostAddProperty() {
                     </div>
                   </div>
 
-                  <div className={`coverPreview ${form.coverImage?.url ? "hasImg" : ""}`}>
+                  <div
+                    className={`coverPreview ${
+                      form.coverImage?.url ? "hasImg" : ""
+                    }`}
+                  >
                     {form.coverImage?.url ? (
                       <>
                         <img src={form.coverImage.url} alt="Cover" />
@@ -734,7 +969,9 @@ export default function HostAddProperty() {
                         </div>
                         <div className="coverEmptyText">
                           <div className="coverEmptyTitle">Alege un cover</div>
-                          <div className="coverEmptySub">Un cover bun crește click-urile considerabil.</div>
+                          <div className="coverEmptySub">
+                            Un cover bun crește click-urile considerabil.
+                          </div>
                         </div>
                       </div>
                     )}
@@ -747,14 +984,20 @@ export default function HostAddProperty() {
                     <div>
                       <div className="blockTitle">Galerie</div>
                       <div className="blockSub">
-                        Minim 5 poze (ideal 8–12). Include: camere, baie, exterior, spații comune, view.
+                        Minim 5 poze (ideal 8–12). Include: camere, baie,
+                        exterior, spații comune, view.
                       </div>
                     </div>
 
                     <div className="blockActions">
-                      <button className="btn btn-primary" type="button" onClick={openGalleryPicker} disabled={uploading}>
+                      <button
+                        className="btn btn-primary"
+                        type="button"
+                        onClick={openGalleryPicker}
+                        disabled={uploading || hpLoading || !hostProfileOk}
+                      >
                         <ImageIcon size={18} />
-                        {uploading ? "Upload..." : "Upload imagini"}
+                        {uploading ? "Upload..." : "Încarcă imagini"}
                       </button>
                       <input
                         ref={galleryInputRef}
@@ -769,8 +1012,16 @@ export default function HostAddProperty() {
                   </div>
 
                   <div className="photoStats">
-                    <div className={`statChip ${(form.images?.length || 0) >= 5 ? "ok" : "warn"}`}>
-                      {(form.images?.length || 0) >= 5 ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />}
+                    <div
+                      className={`statChip ${
+                        (form.images?.length || 0) >= 5 ? "ok" : "warn"
+                      }`}
+                    >
+                      {(form.images?.length || 0) >= 5 ? (
+                        <CheckCircle2 size={16} />
+                      ) : (
+                        <AlertTriangle size={16} />
+                      )}
                       <span>{form.images?.length || 0} / 5 minim</span>
                     </div>
                     <div className="statChip neutral">
@@ -784,26 +1035,38 @@ export default function HostAddProperty() {
                         <ImageIcon size={22} />
                       </div>
                       <div className="galleryEmptyText">
-                        <div className="galleryEmptyTitle">Nu ai încă poze în galerie</div>
-                        <div className="galleryEmptySub">Apasă “Upload imagini” și adaugă câteva cadre bune.</div>
+                        <div className="galleryEmptyTitle">
+                          Nu ai încă poze în galerie
+                        </div>
+                        <div className="galleryEmptySub">
+                          Apasă “Încarcă imagini” și adaugă câteva cadre bune.
+                        </div>
                       </div>
                     </div>
                   ) : (
                     <div className="thumbGrid">
                       {form.images.map((img) => {
-                        const isCover = form.coverImage?.publicId === img.publicId;
+                        const isCover =
+                          form.coverImage?.publicId === img.publicId;
                         return (
-                          <div className={`thumb ${isCover ? "isCover" : ""}`} key={img.publicId}>
+                          <div
+                            className={`thumb ${isCover ? "isCover" : ""}`}
+                            key={img.publicId}
+                          >
                             <img src={img.url} alt="" />
                             <div className="thumbTop">
-                              {isCover && <span className="thumbPill">Cover</span>}
+                              {isCover && (
+                                <span className="thumbPill">Cover</span>
+                              )}
                             </div>
 
                             <div className="thumbActions">
                               <button
                                 type="button"
                                 className="miniBtn"
-                                onClick={() => setCoverFromGallery(img.publicId)}
+                                onClick={() =>
+                                  setCoverFromGallery(img.publicId)
+                                }
                                 disabled={uploading}
                               >
                                 Set cover
@@ -829,7 +1092,8 @@ export default function HostAddProperty() {
                     <div>
                       <div className="calloutTitle">Important</div>
                       <div className="calloutText">
-                        Evită poze întunecate/blur. Cover-ul ar trebui să fie cel mai clar și “wow”.
+                        Evită poze întunecate/blur. Cover-ul ar trebui să fie
+                        cel mai clar și “wow”.
                       </div>
                     </div>
                   </div>
@@ -845,15 +1109,27 @@ export default function HostAddProperty() {
                 <div className="reviewCard">
                   <div className="reviewHead">
                     <div className="reviewTitle">Rezumat</div>
-                    <div className={`reviewBadge ${warnings.length ? "warn" : "ok"}`}>
-                      {warnings.length ? <AlertTriangle size={16} /> : <CheckCircle2 size={16} />}
-                      {warnings.length ? `${warnings.length} atenționări` : "Gata de trimis"}
+                    <div
+                      className={`reviewBadge ${
+                        warnings.length ? "warn" : "ok"
+                      }`}
+                    >
+                      {warnings.length ? (
+                        <AlertTriangle size={16} />
+                      ) : (
+                        <CheckCircle2 size={16} />
+                      )}
+                      {warnings.length
+                        ? `${warnings.length} atenționări`
+                        : "Gata de trimis"}
                     </div>
                   </div>
 
                   <div className="reviewRow">
                     <div className="reviewLabel">Titlu</div>
-                    <div className="reviewValue">{form.title?.trim() || "—"}</div>
+                    <div className="reviewValue">
+                      {form.title?.trim() || "—"}
+                    </div>
                   </div>
                   <div className="reviewRow">
                     <div className="reviewLabel">Tip</div>
@@ -862,12 +1138,16 @@ export default function HostAddProperty() {
                   <div className="reviewRow">
                     <div className="reviewLabel">Locație</div>
                     <div className="reviewValue">
-                      {[form.locality?.trim(), form.city?.trim()].filter(Boolean).join(", ") || "—"}
+                      {[form.locality?.trim(), form.city?.trim()]
+                        .filter(Boolean)
+                        .join(", ") || "—"}
                     </div>
                   </div>
                   <div className="reviewRow">
                     <div className="reviewLabel">Preț</div>
-                    <div className="reviewValue">{formatMoney(form.pricePerNight, form.currency)} / noapte</div>
+                    <div className="reviewValue">
+                      {formatMoney(form.pricePerNight, form.currency)} / noapte
+                    </div>
                   </div>
                   <div className="reviewRow">
                     <div className="reviewLabel">Capacitate</div>
@@ -877,7 +1157,9 @@ export default function HostAddProperty() {
                     <div className="reviewLabel">Facilități</div>
                     <div className="reviewValue">
                       {form.facilities?.length
-                        ? FACILITIES.filter((f) => form.facilities.includes(f.key))
+                        ? FACILITIES.filter((f) =>
+                            form.facilities.includes(f.key)
+                          )
                             .map((f) => f.label)
                             .join(", ")
                         : "—"}
@@ -885,15 +1167,27 @@ export default function HostAddProperty() {
                   </div>
                   <div className="reviewRow">
                     <div className="reviewLabel">Poze</div>
-                    <div className="reviewValue">{form.images?.length || 0} (cover: {form.coverImage?.url ? "da" : "nu"})</div>
+                    <div className="reviewValue">
+                      {form.images?.length || 0} (cover:{" "}
+                      {form.coverImage?.url ? "da" : "nu"})
+                    </div>
                   </div>
 
                   <div className="reviewMedia">
                     <div className="reviewCover">
                       <div className="reviewMediaLabel">Cover preview</div>
-                      <div className={`reviewCoverBox ${form.coverImage?.url || form.images?.[0]?.url ? "has" : ""}`}>
-                        {(form.coverImage?.url || form.images?.[0]?.url) ? (
-                          <img src={form.coverImage?.url || form.images?.[0]?.url} alt="Cover preview" />
+                      <div
+                        className={`reviewCoverBox ${
+                          form.coverImage?.url || form.images?.[0]?.url
+                            ? "has"
+                            : ""
+                        }`}
+                      >
+                        {form.coverImage?.url || form.images?.[0]?.url ? (
+                          <img
+                            src={form.coverImage?.url || form.images?.[0]?.url}
+                            alt="Cover preview"
+                          />
                         ) : (
                           <div className="reviewCoverEmpty">—</div>
                         )}
@@ -903,7 +1197,9 @@ export default function HostAddProperty() {
                     <div className="reviewDesc">
                       <div className="reviewMediaLabel">Descriere</div>
                       <div className="reviewDescBox">
-                        {form.description?.trim() ? form.description.trim() : "—"}
+                        {form.description?.trim()
+                          ? form.description.trim()
+                          : "—"}
                       </div>
                     </div>
                   </div>
@@ -916,24 +1212,58 @@ export default function HostAddProperty() {
                   </div>
 
                   <ul className="checkList">
-                    <li className={form.title.trim().length >= 3 ? "ok" : "bad"}>
-                      {form.title.trim().length >= 3 ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />}
+                    <li
+                      className={form.title.trim().length >= 3 ? "ok" : "bad"}
+                    >
+                      {form.title.trim().length >= 3 ? (
+                        <CheckCircle2 size={16} />
+                      ) : (
+                        <AlertTriangle size={16} />
+                      )}
                       Titlu (min 3)
                     </li>
-                    <li className={form.description.trim().length >= 20 ? "ok" : "bad"}>
-                      {form.description.trim().length >= 20 ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />}
+                    <li
+                      className={
+                        form.description.trim().length >= 20 ? "ok" : "bad"
+                      }
+                    >
+                      {form.description.trim().length >= 20 ? (
+                        <CheckCircle2 size={16} />
+                      ) : (
+                        <AlertTriangle size={16} />
+                      )}
                       Descriere (min 20)
                     </li>
                     <li className={form.city.trim().length >= 2 ? "ok" : "bad"}>
-                      {form.city.trim().length >= 2 ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />}
+                      {form.city.trim().length >= 2 ? (
+                        <CheckCircle2 size={16} />
+                      ) : (
+                        <AlertTriangle size={16} />
+                      )}
                       Oraș (obligatoriu)
                     </li>
-                    <li className={(form.images?.length || 0) >= 5 ? "ok" : "bad"}>
-                      {(form.images?.length || 0) >= 5 ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />}
+                    <li
+                      className={(form.images?.length || 0) >= 5 ? "ok" : "bad"}
+                    >
+                      {(form.images?.length || 0) >= 5 ? (
+                        <CheckCircle2 size={16} />
+                      ) : (
+                        <AlertTriangle size={16} />
+                      )}
                       Minim 5 poze
                     </li>
-                    <li className={(form.coverImage?.url || form.images?.[0]?.url) ? "ok" : "bad"}>
-                      {(form.coverImage?.url || form.images?.[0]?.url) ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />}
+                    <li
+                      className={
+                        form.coverImage?.url || form.images?.[0]?.url
+                          ? "ok"
+                          : "bad"
+                      }
+                    >
+                      {form.coverImage?.url || form.images?.[0]?.url ? (
+                        <CheckCircle2 size={16} />
+                      ) : (
+                        <AlertTriangle size={16} />
+                      )}
                       Cover setat
                     </li>
                   </ul>
@@ -950,10 +1280,18 @@ export default function HostAddProperty() {
                       </ul>
 
                       <div className="warnActions">
-                        <button className="btn btn-secondary" type="button" onClick={() => setStep(0)}>
+                        <button
+                          className="btn btn-secondary"
+                          type="button"
+                          onClick={() => setStep(0)}
+                        >
                           Repară detalii
                         </button>
-                        <button className="btn btn-secondary" type="button" onClick={() => setStep(3)}>
+                        <button
+                          className="btn btn-secondary"
+                          type="button"
+                          onClick={() => setStep(3)}
+                        >
                           Repară poze
                         </button>
                       </div>
@@ -963,7 +1301,10 @@ export default function HostAddProperty() {
                       <CheckCircle2 size={18} />
                       <div>
                         <div className="calloutTitle">Arată bine</div>
-                        <div className="calloutText">Poți trimite spre verificare. Dacă vrei, mai adaugă 2–3 poze extra.</div>
+                        <div className="calloutText">
+                          Poți trimite spre verificare. Dacă vrei, mai adaugă
+                          2–3 poze extra.
+                        </div>
                       </div>
                     </div>
                   )}
@@ -982,8 +1323,11 @@ export default function HostAddProperty() {
 
           <div className="previewCard">
             <div className="previewImage">
-              {(form.coverImage?.url || form.images?.[0]?.url) ? (
-                <img src={form.coverImage?.url || form.images?.[0]?.url} alt="preview" />
+              {form.coverImage?.url || form.images?.[0]?.url ? (
+                <img
+                  src={form.coverImage?.url || form.images?.[0]?.url}
+                  alt="preview"
+                />
               ) : (
                 <div className="previewEmpty">
                   <ImageIcon size={20} />
@@ -997,13 +1341,18 @@ export default function HostAddProperty() {
             </div>
 
             <div className="previewBody">
-              <div className="previewTitle">{form.title.trim() || "Titlu proprietate"}</div>
+              <div className="previewTitle">
+                {form.title.trim() || "Titlu proprietate"}
+              </div>
               <div className="previewSub">
-                {[form.locality?.trim(), form.city?.trim()].filter(Boolean).join(", ") || "Locație"}
+                {[form.locality?.trim(), form.city?.trim()]
+                  .filter(Boolean)
+                  .join(", ") || "Locație"}
               </div>
 
               <div className="previewPrice">
-                {formatMoney(form.pricePerNight, form.currency)} <span>/ noapte</span>
+                {formatMoney(form.pricePerNight, form.currency)}{" "}
+                <span>/ noapte</span>
               </div>
 
               <div className="previewChips">
@@ -1016,7 +1365,9 @@ export default function HostAddProperty() {
                   );
                 })}
                 {(form.facilities?.length || 0) > 4 && (
-                  <span className="tinyChip muted">+{(form.facilities.length - 4)}</span>
+                  <span className="tinyChip muted">
+                    +{form.facilities.length - 4}
+                  </span>
                 )}
               </div>
             </div>
@@ -1029,11 +1380,25 @@ export default function HostAddProperty() {
             </div>
             <div className="sideMiniRow">
               <div className="miniKey">Upload</div>
-              <div className={`miniVal ${uploading ? "pulse" : ""}`}>{uploading ? "în curs…" : "idle"}</div>
+              <div className={`miniVal ${uploading ? "pulse" : ""}`}>
+                {uploading ? "în curs…" : "idle"}
+              </div>
             </div>
             <div className="sideMiniRow">
               <div className="miniKey">Salvare</div>
-              <div className={`miniVal ${saving ? "pulse" : ""}`}>{saving ? "în curs…" : "idle"}</div>
+              <div className={`miniVal ${saving ? "pulse" : ""}`}>
+                {saving ? "în curs…" : "idle"}
+              </div>
+            </div>
+            <div className="sideMiniRow">
+              <div className="miniKey">Gazdă</div>
+              <div className={`miniVal ${hostProfileOk ? "" : "bad"}`}>
+                {hpLoading
+                  ? "se verifică…"
+                  : hostProfileOk
+                  ? "profil OK"
+                  : "profil incomplet"}
+              </div>
             </div>
           </div>
 
@@ -1041,7 +1406,9 @@ export default function HostAddProperty() {
             <ShieldCheck size={18} />
             <div>
               <div className="calloutTitle">Workflow</div>
-              <div className="calloutText">Draft → Pending → Live. Adminul aprobă înainte să apară public.</div>
+              <div className="calloutText">
+                Draft → Pending → Live. Adminul aprobă înainte să apară public.
+              </div>
             </div>
           </div>
         </aside>
@@ -1052,7 +1419,11 @@ export default function HostAddProperty() {
         <div className="stickyInner">
           <div className="stickyLeft">
             <div className={`stickyState ${stepValid ? "ok" : "bad"}`}>
-              {stepValid ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />}
+              {stepValid ? (
+                <CheckCircle2 size={16} />
+              ) : (
+                <AlertTriangle size={16} />
+              )}
               {stepValid ? "Pas valid" : "Completează pasul"}
             </div>
             <div className="stickyMeta">
@@ -1064,22 +1435,42 @@ export default function HostAddProperty() {
           </div>
 
           <div className="stickyRight">
-            <button className="btn btn-secondary" type="button" onClick={goBack} disabled={step === 0}>
+            <button
+              className="btn btn-secondary"
+              type="button"
+              onClick={goBack}
+              disabled={step === 0}
+            >
               <ChevronLeft size={18} /> Înapoi
             </button>
 
             {step < 4 ? (
-              <button className="btn btn-primary" type="button" onClick={goNext} disabled={uploading || saving}>
+              <button
+                className="btn btn-primary"
+                type="button"
+                onClick={goNext}
+                disabled={uploading || saving}
+              >
                 Următorul <ChevronRight size={18} />
               </button>
             ) : (
-              <button className="btn btn-primary" type="button" onClick={submit} disabled={!canSubmitNow}>
+              <button
+                className="btn btn-primary"
+                type="button"
+                onClick={submit}
+                disabled={!canSubmitNow}
+              >
                 <Send size={18} />
                 {submitting ? "Se trimite..." : "Trimite la verificare"}
               </button>
             )}
           </div>
         </div>
+        <HostProfileModal
+          open={profileOpen}
+          onClose={() => setProfileOpen(false)}
+          onSaved={(p) => setHostProfile(p)}
+        />
       </div>
     </div>
   );

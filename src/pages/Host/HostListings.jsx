@@ -1,5 +1,5 @@
 // client/src/pages/Host/HostListings.jsx
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuthStore } from "../../stores/authStore";
@@ -39,16 +39,16 @@ function statusLabel(s) {
   if (s === "live") return "Publicat";
   if (s === "paused") return "Pauzat";
   if (s === "rejected") return "Respins";
-  return s;
+  return s || "—";
 }
 
-function statusClass(s) {
-  if (s === "live") return "pill-live";
-  if (s === "pending") return "pill-pending";
-  if (s === "draft") return "pill-draft";
-  if (s === "paused") return "pill-paused";
-  if (s === "rejected") return "pill-rejected";
-  return "";
+function statusTone(s) {
+  if (s === "live") return "tone-good";
+  if (s === "pending") return "tone-warn";
+  if (s === "draft") return "tone-muted";
+  if (s === "paused") return "tone-muted";
+  if (s === "rejected") return "tone-bad";
+  return "tone-muted";
 }
 
 // fallback image dacă nu există cover/poze
@@ -182,11 +182,12 @@ export default function HostListings() {
   // per-item loading states
   const [busy, setBusy] = useState({}); // { [id]: "submit" | "toggle" | "delete" }
   const setBusyFor = (id, action) => setBusy((p) => ({ ...p, [id]: action }));
-  const clearBusyFor = (id) => setBusy((p) => {
-    const next = { ...p };
-    delete next[id];
-    return next;
-  });
+  const clearBusyFor = (id) =>
+    setBusy((p) => {
+      const next = { ...p };
+      delete next[id];
+      return next;
+    });
 
   const totalPages = Math.max(1, Math.ceil((total || 0) / limit));
 
@@ -198,15 +199,19 @@ export default function HostListings() {
     action: null, // () => Promise<void>
   });
 
+  const openConfirm = ({ id, title, message, action }) => {
+    setConfirm({ open: true, id, title, message, action });
+  };
+  const closeConfirm = () => setConfirm({ open: false, id: null, title: "", message: "", action: null });
+
   const fetchData = async () => {
     try {
       setLoading(true);
       const data = await getMyProperties({ page, limit, status: tab, q: debouncedQ });
 
-      // Normalize
       const normalized = (data.items || []).map((p) => ({
         ...p,
-        id: p._id,
+        id: p._id || p.id,
         __thumb: p.coverImage?.url || p.images?.[0]?.url || p.image || FALLBACK_IMG,
       }));
 
@@ -243,7 +248,6 @@ export default function HostListings() {
   }, [page, totalPages]);
 
   const countsLocal = useMemo(() => {
-    // local counts for current page only (fast)
     const base = { all: 0, draft: 0, pending: 0, live: 0, paused: 0, rejected: 0 };
     items.forEach((x) => {
       base.all += 1;
@@ -253,15 +257,7 @@ export default function HostListings() {
   }, [items]);
 
   const stats = useMemo(() => {
-    // quick stats based on loaded page (not global)
-    const s = {
-      live: 0,
-      pending: 0,
-      draft: 0,
-      paused: 0,
-      rejected: 0,
-      avgPrice: null,
-    };
+    const s = { live: 0, pending: 0, draft: 0, paused: 0, rejected: 0, avgPrice: null };
     if (!items.length) return s;
 
     let sum = 0;
@@ -312,14 +308,7 @@ export default function HostListings() {
     });
   };
 
-  const openConfirm = ({ id, title, message, action }) => {
-    setConfirm({ open: true, id, title, message, action });
-  };
-
-  const closeConfirm = () => {
-    setConfirm({ open: false, id: null, title: "", message: "", action: null });
-  };
-
+  // --- actions ---
   const doSubmit = async (id) => {
     setBusyFor(id, "submit");
     try {
@@ -363,13 +352,14 @@ export default function HostListings() {
     }
   };
 
-  const goEdit = (id) => navigate(`/host/listings/${id}/edit`);
-  const goPreview = (id) => navigate(`/host/listings/${id}/preview`);
-  const goNew = () => navigate(`/host/listings/new`);
+  // routes (keep consistent with TopNav)
+  const goEdit = (id) => navigate(`/host/${id}/edit`);
+  const goPreview = (id) => navigate(`/cazari/${id}`);
+  const goNew = () => navigate(`/host/add`);
 
   const SortIcon = ({ k }) =>
     sortKey === k ? (
-      <span className={`sortIcon ${sortDir === "asc" ? "asc" : "desc"}`} aria-hidden="true">
+      <span className={`hlSortIcon ${sortDir === "asc" ? "asc" : "desc"}`} aria-hidden="true">
         <ArrowUpDown size={14} />
       </span>
     ) : null;
@@ -384,319 +374,334 @@ export default function HostListings() {
   ];
 
   return (
-    <div className="hostListingsShell">
-      {/* TOPBAR */}
-      <header className="hlTopbar">
-        <div className="hlLeft">
-          <div className="hlCrumb">Gazdă</div>
+    <div className="hlPage">
+      <div className="hlMain">
+        {/* TOPBAR */}
+        <header className="hlHeader">
+          <div>
+            <div className="hlCrumb">Gazdă</div>
 
-          <div className="hlTitleRow">
-            <h1 className="hlTitle">Proprietățile mele</h1>
+            <div className="hlTitleRow">
+              <h1 className="hlTitle">Proprietățile mele</h1>
 
-            <a className="hlGhostLink" href="/" title="Vezi site-ul">
-              Vezi site-ul <ExternalLink size={16} />
-            </a>
-          </div>
-
-          <div className="hlSubtitle">
-            Salut, <strong>{hostName}</strong> • gestionează draft-urile și publicările
-          </div>
-
-          <div className="hlStats">
-            <div className="hlStatCard">
-              <div className="hlStatIcon">
-                <Layers size={18} />
-              </div>
-              <div className="hlStatTxt">
-                <div className="hlStatLabel">În listă (pagina curentă)</div>
-                <div className="hlStatValue">{items.length}</div>
-              </div>
+              <a className="hlGhostLink" href="/" title="Vezi site-ul">
+                Vezi site-ul <ExternalLink size={16} />
+              </a>
             </div>
 
-            <div className="hlStatCard">
-              <div className="hlStatIcon green">
-                <CheckCircle2 size={18} />
-              </div>
-              <div className="hlStatTxt">
-                <div className="hlStatLabel">Publicate</div>
-                <div className="hlStatValue">{stats.live}</div>
-              </div>
+            <div className="hlSub">
+              Salut, <strong>{hostName}</strong> • gestionează draft-urile și publicările
             </div>
 
-            <div className="hlStatCard">
-              <div className="hlStatIcon amber">
-                <Clock size={18} />
+            <div className="hlKpis">
+              <div className="hlKpi">
+                <div className="hlKpiTop">
+                  <div className="hlKpiLabel">În listă (pagina curentă)</div>
+                  <div className="hlKpiIcon">
+                    <Layers size={18} />
+                  </div>
+                </div>
+                <div className="hlKpiVal">{items.length}</div>
+                <div className="hlKpiHint">Carduri încărcate în pagina curentă</div>
               </div>
-              <div className="hlStatTxt">
-                <div className="hlStatLabel">În așteptare</div>
-                <div className="hlStatValue">{stats.pending}</div>
-              </div>
-            </div>
 
-            <div className="hlStatCard">
-              <div className="hlStatIcon">
-                <Sparkles size={18} />
+              <div className="hlKpi">
+                <div className="hlKpiTop">
+                  <div className="hlKpiLabel">Publicate</div>
+                  <div className="hlKpiIcon good">
+                    <CheckCircle2 size={18} />
+                  </div>
+                </div>
+                <div className="hlKpiVal">{stats.live}</div>
+                <div className="hlKpiHint">Din pagina curentă</div>
               </div>
-              <div className="hlStatTxt">
-                <div className="hlStatLabel">Preț mediu</div>
-                <div className="hlStatValue">
+
+              <div className="hlKpi">
+                <div className="hlKpiTop">
+                  <div className="hlKpiLabel">În așteptare</div>
+                  <div className="hlKpiIcon warn">
+                    <Clock size={18} />
+                  </div>
+                </div>
+                <div className="hlKpiVal">{stats.pending}</div>
+                <div className="hlKpiHint">Se verifică de admin</div>
+              </div>
+
+              <div className="hlKpi">
+                <div className="hlKpiTop">
+                  <div className="hlKpiLabel">Preț mediu</div>
+                  <div className="hlKpiIcon">
+                    <Sparkles size={18} />
+                  </div>
+                </div>
+                <div className="hlKpiVal">
                   {stats.avgPrice != null ? formatMoney(stats.avgPrice, items?.[0]?.currency || "RON") : "—"}
                 </div>
+                <div className="hlKpiHint">Doar pentru cele încărcate</div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="hlRight">
-          <button className="hlAddBtn" type="button" onClick={goNew}>
-            <Plus size={18} /> Adaugă
-          </button>
-          <button className="hlBackDash" type="button" onClick={() => navigate("/host")}>
-            Dashboard <ChevronRight size={16} />
-          </button>
-        </div>
-      </header>
-
-      {/* PANEL */}
-      <section className="hlPanel">
-        <div className="hlPanelHead">
-          <div className="hlTabs" role="tablist" aria-label="Filtre status">
-            {tabs.map(([k, label]) => (
-              <button
-                key={k}
-                type="button"
-                className={`hlTab ${tab === k ? "active" : ""}`}
-                onClick={() => setTab(k)}
-              >
-                {label}
-                <span className="hlCount">
-                  {k === "all" ? total : (countsLocal[k] ?? 0)}
-                </span>
-              </button>
-            ))}
-          </div>
-
-          <div className="hlControls">
-            <div className="hlSearch" role="search">
-              <Search size={16} className="hlSearchIcon" />
-              <input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder="Caută după titlu / oraș / localitate..."
-                aria-label="Caută proprietăți"
-              />
-              {!!q && (
-                <button className="hlClear" type="button" onClick={() => setQ("")} aria-label="Șterge căutarea">
-                  <X size={16} />
-                </button>
-              )}
-            </div>
-
-            <div className="hlSort" aria-label="Sortare">
-              <button className="hlSortBtn" type="button" onClick={() => toggleSorting("updatedAt")}>
-                Updated <SortIcon k="updatedAt" />
-              </button>
-              <button className="hlSortBtn" type="button" onClick={() => toggleSorting("title")}>
-                Titlu <SortIcon k="title" />
-              </button>
-              <button className="hlSortBtn" type="button" onClick={() => toggleSorting("pricePerNight")}>
-                Preț <SortIcon k="pricePerNight" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* BODY */}
-        {loading ? (
-          <div className="hlLoading">
-            <div className="hlSkelGrid">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div className="hlSkelCard" key={i}>
-                  <div className="hlSkelImg" />
-                  <div className="hlSkelLine w80" />
-                  <div className="hlSkelLine w60" />
-                  <div className="hlSkelLine w50" />
-                  <div className="hlSkelBtns" />
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : sortedItems.length === 0 ? (
-          <div className="hlEmpty">
-            <div className="hlEmptyIcon">
-              <AlertTriangle size={22} />
-            </div>
-            <h3>Nicio proprietate</h3>
-            <p>Încearcă alt tab sau caută alt termen.</p>
-            <button className="hlPrimary" type="button" onClick={goNew}>
-              <Plus size={18} /> Adaugă proprietate
+          <div className="hlHeaderActions">
+            <button className="hlBtn hlBtnAccent" type="button" onClick={goNew}>
+              <Plus size={18} /> Adaugă
+            </button>
+            <button className="hlBtn" type="button" onClick={() => navigate("/host")}>
+              Dashboard <ChevronRight size={16} />
             </button>
           </div>
-        ) : (
-          <>
-            {/* GRID/CARDS */}
-            <div className="hlGrid">
-              {sortedItems.map((p) => {
-                const isBusy = Boolean(busy[p.id]);
-                const busyAction = busy[p.id];
+        </header>
 
-                const canSubmit = p.status === "draft" || p.status === "rejected";
-                const canToggle = p.status === "live" || p.status === "paused";
+        {/* PANEL */}
+        <section className="hlCard">
+          <div className="hlCardTopbar">
+            <div className="hlTabs" role="tablist" aria-label="Filtre status">
+              {tabs.map(([k, label]) => (
+                <button
+                  key={k}
+                  type="button"
+                  className={`hlTab ${tab === k ? "active" : ""}`}
+                  onClick={() => setTab(k)}
+                >
+                  {label}
+                  <span className="hlCount">{k === "all" ? total : countsLocal[k] ?? 0}</span>
+                </button>
+              ))}
+            </div>
 
-                return (
-                  <article className="hlCard" key={p.id}>
-                    <button className="hlMedia" type="button" onClick={() => goEdit(p.id)} aria-label="Editează">
-                      <img src={p.__thumb} alt="" loading="lazy" />
-                      <div className="hlMediaOverlay">
-                        <span className={`hlPill ${statusClass(p.status)}`}>{statusLabel(p.status)}</span>
-                        <span className="hlPill soft">
-                          {formatMoney(p.pricePerNight, p.currency)} / noapte
-                        </span>
-                      </div>
-                    </button>
+            <div className="hlControls">
+              <div className="hlSearch" role="search">
+                <Search size={16} className="hlSearchIcon" />
+                <input
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
+                  placeholder="Caută după titlu / oraș / localitate..."
+                  aria-label="Caută proprietăți"
+                />
+                {!!q && (
+                  <button className="hlIconBtn" type="button" onClick={() => setQ("")} aria-label="Șterge căutarea">
+                    <X size={16} />
+                  </button>
+                )}
+              </div>
 
-                    <div className="hlCardBody">
-                      <div className="hlCardTop">
-                        <div className="hlCardTitle" title={p.title || ""}>
+              <div className="hlSort" aria-label="Sortare">
+                <button className="hlSortBtn" type="button" onClick={() => toggleSorting("updatedAt")}>
+                  Updated <SortIcon k="updatedAt" />
+                </button>
+                <button className="hlSortBtn" type="button" onClick={() => toggleSorting("title")}>
+                  Titlu <SortIcon k="title" />
+                </button>
+                <button className="hlSortBtn" type="button" onClick={() => toggleSorting("pricePerNight")}>
+                  Preț <SortIcon k="pricePerNight" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* BODY */}
+          {loading ? (
+            <div className="hlLoading">
+              <div className="hlSkelGrid">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div className="hlSkelCard" key={i}>
+                    <div className="hlSkelImg" />
+                    <div className="hlSkelLine w80" />
+                    <div className="hlSkelLine w60" />
+                    <div className="hlSkelLine w50" />
+                    <div className="hlSkelBtns" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : sortedItems.length === 0 ? (
+            <div className="hlEmpty">
+              <div className="hlEmptyIcon">
+                <AlertTriangle size={22} />
+              </div>
+              <h3>Nicio proprietate</h3>
+              <p>Încearcă alt tab sau caută alt termen.</p>
+              <button className="hlBtn hlBtnAccent" type="button" onClick={goNew}>
+                <Plus size={18} /> Adaugă proprietate
+              </button>
+            </div>
+          ) : (
+            <>
+              {/* GRID/CARDS */}
+              <div className="hlGrid">
+                {sortedItems.map((p) => {
+                  const isBusy = Boolean(busy[p.id]);
+                  const busyAction = busy[p.id];
+
+                  const canSubmit = p.status === "draft" || p.status === "rejected";
+                  const canToggle = p.status === "live" || p.status === "paused";
+
+                  return (
+                    <article className="hlListingCard" key={p.id}>
+                      <button className="hlMedia" type="button" onClick={() => goEdit(p.id)} aria-label="Editează">
+                        <img src={p.__thumb} alt="" loading="lazy" />
+                        <div className="hlMediaOverlay">
+                          <span className={`hlBadge ${statusTone(p.status)}`}>{statusLabel(p.status)}</span>
+                          <span className="hlBadge tone-muted">
+                            {formatMoney(p.pricePerNight, p.currency)} / noapte
+                          </span>
+                        </div>
+                      </button>
+
+                      <div className="hlBody">
+                        <div className="hlTitleLine" title={p.title || ""}>
                           {p.title || "Fără titlu"}
                         </div>
-                        <div className="hlCardMeta">
+
+                        <div className="hlMeta">
                           <span>{p.locality || p.city || "—"}</span>
                           <span className="dot">•</span>
-                          <span>{p.type}</span>
+                          <span>{p.type || "—"}</span>
                           <span className="dot">•</span>
-                          <span>max {p.capacity}</span>
-                        </div>
-                        {p.subtitle ? <div className="hlCardSub">{p.subtitle}</div> : null}
-                      </div>
-
-                      <div className="hlCardFoot">
-                        <div className="hlUpdated">
-                          <Clock size={14} />
-                          <span>updated {timeAgo(p.updatedAt || p.createdAt)}</span>
+                          <span>max {p.capacity ?? "—"}</span>
                         </div>
 
-                        <div className="hlActions">
-  <div className="hlActionRow">
-    <button className="hlBtn hlBtnGhost" type="button" onClick={() => goEdit(p.id)} disabled={isBusy}>
+                        {p.subtitle ? <div className="hlSubline">{p.subtitle}</div> : null}
+
+                        <div className="hlFoot">
+                          <div className="hlUpdated">
+                            <Clock size={14} />
+                            <span>updated {timeAgo(p.updatedAt || p.createdAt)}</span>
+                          </div>
+
+                          <div className="hlActions">
+  <div className="hlActionRowTop">
+    <button className="hlBtnEq" type="button" onClick={() => goEdit(p.id)} disabled={isBusy}>
       <Pencil size={16} /> Edit
     </button>
 
-    <button className="hlBtn hlBtnGhost" type="button" onClick={() => goPreview(p.id)} disabled={isBusy}>
+    <button className="hlBtnEq" type="button" onClick={() => goPreview(p.id)} disabled={isBusy}>
       <Eye size={16} /> Preview
     </button>
 
-    {canSubmit && (
-      <button className="hlBtn hlBtnPrimary" type="button" disabled={isBusy} onClick={() => doSubmit(p.id)}>
+    {canSubmit ? (
+      <button className="hlBtnEq hlBtnEqAccent" type="button" disabled={isBusy} onClick={() => doSubmit(p.id)}>
         <Send size={16} /> Trimite
       </button>
-    )}
-
-    {canToggle && (
-      <button className="hlBtn hlBtnPrimary" type="button" disabled={isBusy} onClick={() => doTogglePause(p.id)}>
-        {p.status === "live" ? (
-          <>
-            <PauseCircle size={16} /> Pauză
-          </>
-        ) : (
-          <>
-            <PlayCircle size={16} /> Publică
-          </>
-        )}
+    ) : canToggle ? (
+      <button className="hlBtnEq hlBtnEqAccent" type="button" disabled={isBusy} onClick={() => doTogglePause(p.id)}>
+        {p.status === "live" ? <PauseCircle size={16} /> : <PlayCircle size={16} />}
+        {p.status === "live" ? "Pauză" : "Publică"}
+      </button>
+    ) : (
+      <button className="hlBtnEq" type="button" disabled>
+        —
       </button>
     )}
   </div>
 
-  <div className="hlActionRowBottom">
-    <button className="hlBtn hlBtnDanger" type="button" disabled={isBusy} onClick={() => doDelete(p.id)}>
-      <Trash2 size={16} /> Delete
-    </button>
-  </div>
+  <button
+  className="hlDeleteFull"
+  type="button"
+  disabled={isBusy}
+  onClick={() =>
+    openConfirm({
+      id: p.id,
+      title: "Ștergi proprietatea?",
+      message: `Ștergerea este permanentă. "${p.title || "Fără titlu"}" va fi eliminată definitiv.`,
+      action: async () => {
+        await doDelete(p.id);
+      },
+    })
+  }
+>
+  <Trash2 size={16} /> Delete
+</button>
+
 </div>
 
+                        </div>
                       </div>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-
-            {/* PAGINATION */}
-            <div className="hlPagination">
-              <button
-                className="hlPageBtn"
-                type="button"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-              >
-                ← Înapoi
-              </button>
-
-              <div className="hlPageInfo">
-                Pagina <strong>{page}</strong> din <strong>{totalPages}</strong>
-                <span className="sep">•</span>
-                <span className="muted">{total} total</span>
+                    </article>
+                  );
+                })}
               </div>
 
-              <button
-                className="hlPageBtn"
-                type="button"
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-              >
-                Înainte →
-              </button>
-            </div>
-          </>
-        )}
-      </section>
+              {/* PAGINATION */}
+              <div className="hlPager">
+                <button
+                  className="hlBtn"
+                  type="button"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                >
+                  ← Înapoi
+                </button>
 
-      {/* CONFIRM MODAL */}
-      <Modal
-        open={confirm.open}
-        title={confirm.title}
-        onClose={() => {
-          if (busy[confirm.id]) return;
-          closeConfirm();
-        }}
-      >
-        <p className="hlModalText">{confirm.message}</p>
+                <div className="hlPagerText">
+                  Pagina <strong>{page}</strong> din <strong>{totalPages}</strong>
+                  <span className="sep">•</span>
+                  <span className="muted">{total} total</span>
+                </div>
 
-        <div className="hlModalActions">
-          <button
-            className="hlBtnSoft"
-            type="button"
-            onClick={() => {
-              if (busy[confirm.id]) return;
-              closeConfirm();
-            }}
-          >
-            Anulează
-          </button>
+                <button
+                  className="hlBtn"
+                  type="button"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                >
+                  Înainte →
+                </button>
+              </div>
+            </>
+          )}
+        </section>
 
-          <button
-            className="hlBtnSolid"
-            type="button"
-            onClick={async () => {
-              if (!confirm.action) return;
-              try {
-                await confirm.action();
-              } finally {
+        {/* CONFIRM MODAL */}
+        <Modal
+          open={confirm.open}
+          title={confirm.title}
+          onClose={() => {
+            if (confirm.id && busy[confirm.id]) return;
+            closeConfirm();
+          }}
+        >
+          <p className="hlModalText">{confirm.message}</p>
+
+          <div className="hlModalActions">
+            <button
+              className="hlBtn"
+              type="button"
+              onClick={() => {
+                if (confirm.id && busy[confirm.id]) return;
                 closeConfirm();
-              }
-            }}
-            disabled={busy[confirm.id]}
-          >
-            {busy[confirm.id] ? <Loader2 size={16} className="spin" /> : null}
-            Confirm
-          </button>
-        </div>
+              }}
+            >
+              Anulează
+            </button>
 
-        <div className="hlModalHint">
-          <Sparkles size={16} />
-          Tip: păstrează 8–12 poze și un cover luminos pentru CTR mai bun.
-        </div>
-      </Modal>
+            <button
+  className="hlBtn danger"
+  type="button"
+  onClick={async () => {
+    if (!confirm.action) return;
+    try {
+      setBusyFor(confirm.id, "delete");
+      await confirm.action();
+    } finally {
+      clearBusyFor(confirm.id);
+      closeConfirm();
+    }
+  }}
+  disabled={busy[confirm.id]}
+>
+  {busy[confirm.id] ? <Loader2 size={16} className="spin" /> : <Trash2 size={16} />}
+  Șterge definitiv
+</button>
+
+          </div>
+
+          <div className="hlModalHint">
+            <Sparkles size={16} />
+            Tip: păstrează 8–12 poze și un cover luminos pentru CTR mai bun.
+          </div>
+        </Modal>
+      </div>
     </div>
   );
 }

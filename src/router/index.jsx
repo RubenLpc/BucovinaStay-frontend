@@ -15,6 +15,9 @@ import HostDashboard from "../pages/Host/HostDashboard";
 import HostAddProperty from "../pages/Host/HostAddProperty";
 import HostListings from "../pages/Host/HostListings";
 import PropertyPage from "../pages/PropertyPage/PropertyPage";
+import HostEditProperty from "../pages/Host/HostEditProperty";
+import HostActivity from "../pages/Host/HostActivity";
+import HostReports from "../pages/Host/HostReports";
 
 
 export const router = createBrowserRouter([
@@ -49,10 +52,15 @@ export const router = createBrowserRouter([
     children: [
      
       { index: true, element: <HostDashboard /> },
+      { path: "dashboard", element: <HostDashboard /> },
+
       { path: "add", element: <HostAddProperty /> },
       { path: "listings", element: <HostListings /> },
+      { path: ":id/edit", element: <HostEditProperty /> },
+      { path: "activity", element: <HostActivity /> },
+      { path: "reports", element: <HostReports /> },
 
-
+      
 
     ],
   },
