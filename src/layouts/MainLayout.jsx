@@ -1,6 +1,6 @@
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
-import { Outlet } from "react-router-dom";
+import { Outlet,useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { authService } from "../api/authService";
 import { Toaster } from "sonner";
@@ -16,12 +16,15 @@ export default function MainLayout() {
       });
     }
   }, []);
+
+  const { pathname } = useLocation();
+  const isHome = pathname === "/" || pathname === "/trasee";
   
   return (
     <>
       <Header />
 
-      <main>
+      <main className={`app-main ${isHome ? "noOffset" : "withOffset"}`}>
         <Outlet />
       </main>
       <Footer />

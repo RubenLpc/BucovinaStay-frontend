@@ -1,0 +1,186 @@
+.hostShell{
+    min-height: 100vh;
+    background: var(--color-bg-soft);
+    display: grid;
+    grid-template-columns: 272px 1fr;
+  }
+  
+  .hostMain{
+    height: 100vh;
+    overflow: auto;
+    padding: 18px 20px 28px;
+  }
+  
+  .hostContent{
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* =========================================================
+     SIDEBAR (premium, not bulky)
+     ========================================================= */
+  
+  .hostSidebar{
+    position: sticky;
+    top: 0;
+    height: 100vh;
+  
+    background: rgba(255,255,255,0.76);
+    border-right: 1px solid var(--hd-border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  
+    padding: 14px 12px;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 14px;
+  }
+  
+  /* Brand */
+  .sbBrand{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  
+    padding: 10px 10px;
+    border-radius: var(--hd-radius-lg);
+    border: 1px solid rgba(17, 24, 39, 0.08);
+    background: rgba(255,255,255,0.75);
+    box-shadow: 0 10px 26px rgba(17, 24, 39, 0.05);
+  }
+  
+  .sbLogo{
+    width: 36px;
+    height: 36px;
+    border-radius: 14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  
+    color: var(--color-text-main);
+    background: rgba(47,133,90,0.12);
+    border: 1px solid rgba(47,133,90,0.18);
+  }
+  
+  .sbBrandText{ line-height: 1.1; }
+  
+  .sbName{
+    font-weight: 900;
+    color: var(--color-text-main);
+    font-size: 14px;
+  }
+  .sbSub{
+    margin-top: 3px;
+    font-size: 12px;
+    color: rgba(107,114,128,0.92);
+    font-weight: 700;
+  }
+  
+  /* Nav */
+  .sbNav{
+    display:flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px 2px;
+  }
+  
+  /* Link item */
+  .sbItem{
+    position: relative;
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  
+    font-size: small;
+    padding: 10px 12px;
+    border-radius: 14px;
+  
+    text-decoration: none;
+    font-weight: 800;
+    color: rgba(31,41,51,0.86);
+  
+    border: 1px solid transparent;
+    background: transparent;
+    transition: background 0.18s ease, transform 0.08s ease, border-color 0.18s ease;
+  }
+  
+  .sbItem svg{ opacity: .82; }
+  
+  .sbItem:hover{
+    background: rgba(17, 24, 39, 0.035);
+    border-color: rgba(17, 24, 39, 0.06);
+  }
+  .sbItem:active{ transform: translateY(1px); }
+  
+  /* Active indicator (like top apps) */
+  .sbItem.active{
+    background: rgba(47,133,90,0.12);
+    border-color: rgba(47,133,90,0.16);
+    color: var(--color-primary-hover);
+  }
+  .sbItem.active::before{
+    content:"";
+    position:absolute;
+    left: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 60%;
+    border-radius: 999px;
+    background: rgba(47,133,90,0.55);
+  }
+  
+  /* Footer plan card (small, not huge) */
+  .sbFooter{ padding: 0 2px 2px; }
+  
+  .planCard{
+    border-radius: var(--hd-radius-lg);
+    border: 1px solid rgba(17, 24, 39, 0.10);
+    background: rgba(255,255,255,0.78);
+    box-shadow: 0 14px 30px rgba(17,24,39,0.06);
+    padding: 12px;
+  }
+  
+  .planTop{
+    display:flex;
+    gap: 10px;
+    align-items:flex-start;
+  }
+  
+  .planTop svg{ opacity: .9; }
+  
+  .planTitle{
+    font-weight: 900;
+    color: var(--color-text-main);
+    font-size: 13px;
+    letter-spacing: .01em;
+  }
+  .planSub{
+    margin-top: 4px;
+    font-size: 12.5px;
+    line-height: 1.35;
+    color: rgba(107,114,128,0.92);
+  }
+  
+  .planBtn{
+    margin-top: 10px;
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    text-decoration:none;
+  
+    font-weight: 900;
+    font-size: 13px;
+    padding: 10px 12px;
+    border-radius: 14px;
+  
+    border: 1px solid rgba(47,133,90,0.16);
+    background: rgba(47,133,90,0.12);
+    color: var(--color-primary-hover);
+  
+    transition: background 0.18s ease, transform 0.08s ease;
+  }
+  .planBtn:hover{ background: rgba(47,133,90,0.16); }
+  .planBtn:active{ transform: translateY(1px); }
