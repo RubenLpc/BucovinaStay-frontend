@@ -111,12 +111,36 @@ function buildWarnings(form) {
 
 /** ce înseamnă “profil complet” pentru a permite creare proprietate */
 function isHostProfileComplete(profile) {
-  if (!profile) return false;
-  const okName =
-    typeof profile.displayName === "string" &&
-    profile.displayName.trim().length >= 2;
-  // bio e opțional, dar ok dacă există
-  return okName;
+  const errors = {};
+
+  if (!profile) {
+    return { ok: false, errors: { _global: "Profilul nu există încă." } };
+  }
+
+  // Identity
+  if (!profile.displayName || profile.displayName.trim().length < 2) {
+    errors.displayName = "Display name (minim 2 caractere) este obligatoriu.";
+  }
+
+ 
+
+  // Optional dar “pro” să fie obligatoriu:
+  if (!profile.avatar) {
+    errors.avatar = "Adaugă o poză (avatar).";
+  }
+
+  // Host type / firmă (dacă ai)
+  // if (!profile.hostType) errors.hostType = "Alege tipul: persoană fizică / firmă.";
+
+
+  // Descriere (dacă vrei să fie obligatorie)
+  if (!profile.bio) {
+    errors.bio = "Bio este obligatoriu (minim 50 caractere).";
+  }
+
+ 
+  const ok = Object.keys(errors).length === 0;
+  return { ok, errors };
 }
 
 export default function HostAddProperty({ editId = null }) {
@@ -198,10 +222,10 @@ export default function HostAddProperty({ editId = null }) {
     };
   }, []);
 
-  const hostProfileOk = useMemo(
-    () => isHostProfileComplete(hostProfile),
-    [hostProfile]
-  );
+  const hpCheck = useMemo(() => isHostProfileComplete(hostProfile), [hostProfile]);
+  const hostProfileOk = hpCheck.ok;
+  const hostProfileErrors = hpCheck.errors;
+  
   useEffect(() => {
     if (!editId) return;
 

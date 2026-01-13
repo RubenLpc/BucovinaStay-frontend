@@ -284,10 +284,12 @@ export default function PropertyPage() {
   }, [coords, p]);
 
   const hostName =
-    hostProfile?.displayName ||
-    hostFromProperty?.name ||
-    hostUser?.name ||
-    "Gazda";
+  hostProfile?.displayName ||
+  hostProfile?.name ||
+  hostFromProperty?.name ||
+  hostUser?.name ||
+  "Gazda";
+
 
   const hostPhone = hostFromProperty?.phone || hostUser?.phone || "";
 

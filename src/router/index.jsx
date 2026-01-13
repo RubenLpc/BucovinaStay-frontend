@@ -18,6 +18,20 @@ import PropertyPage from "../pages/PropertyPage/PropertyPage";
 import HostEditProperty from "../pages/Host/HostEditProperty";
 import HostActivity from "../pages/Host/HostActivity";
 import HostReports from "../pages/Host/HostReports";
+import HostSettings from "../pages/Host/HostSettings";
+import AdminLayout from "../layouts/AdminLayout";
+import AdminRoute from "./AdminRoute";
+import MaintananceLayout from "../layouts/MaintananceLayout";
+
+import AdminOverview from "../pages/Admin/AdminOverview";
+import AdminUsers from "../pages/Admin/AdminUsers";
+import AdminListings from "../pages/Admin/AdminListings";
+import AdminSettings from "../pages/Admin/AdminSettings";
+import AdminReviews from "../pages/Admin/AdminReviews";
+import Maintenance from "../pages/Maintenance/Maintenance";
+
+
+
 
 
 export const router = createBrowserRouter([
@@ -59,9 +73,42 @@ export const router = createBrowserRouter([
       { path: ":id/edit", element: <HostEditProperty /> },
       { path: "activity", element: <HostActivity /> },
       { path: "reports", element: <HostReports /> },
+      { path: "settings", element: <HostSettings /> },
+
 
       
 
     ],
   },
+  {
+    path: "/admin",
+    element: <AdminLayout />,
+    children: [
+      {
+        element: <AdminRoute />,
+        children: [
+          { index: true, element: <AdminOverview /> },
+          { path: "users", element: <AdminUsers /> },
+          { path: "listings", element: <AdminListings /> },
+          { path: "settings", element: <AdminSettings /> },
+          { path: "reviews", element: <AdminReviews /> },
+
+
+
+        ],
+      },
+    ],
+  },
+  {
+    path: "/maintenance",
+    element: <MaintananceLayout />,
+    children: [
+      {
+        children: [
+          { index: true, element: <Maintenance /> },
+        ],
+      },
+    ],
+  },
+  
 ]);

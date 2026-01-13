@@ -9,6 +9,8 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [asHost, setAsHost] = useState(false);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +22,15 @@ export default function Register() {
     }
   
     try {
-      await authService.register({ name, email, password });
+      const res = await authService.register({
+        email,
+        password,
+        name,
+        role: asHost ? "host" : "guest",
+      });
+if(asHost){
+  navigate("/host/dashboard");}
+  else
       navigate("/");
     } catch (err) {
       setError(err.message);
@@ -63,6 +73,19 @@ export default function Register() {
             Creează cont
           </button>
         </form>
+        <label className="authCheck">
+  <input
+    type="checkbox"
+    checked={asHost}
+    onChange={(e) => setAsHost(e.target.checked)}
+  />
+  <span className="authCheckBox" />
+  <span className="authCheckText">
+    Vreau să public cazări (Host)
+  </span>
+</label>
+
+
 
         <p className="auth-footer">
           Ai deja cont? <Link to="/auth/login">Autentifică-te</Link>

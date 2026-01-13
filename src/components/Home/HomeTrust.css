@@ -1,0 +1,101 @@
+.htBlock{
+  padding: 14px 16px;
+}
+
+/* pe telefon mic: fără “margini” inutile */
+@media (max-width: 430px){
+  .htBlock{ padding: 12px 0; }
+}
+
+.htInner{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 430px){
+  .htInner{
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+.htIcon{
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+
+  border: 1px solid var(--border);
+  background: var(--soft);
+
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+@media (max-width: 430px){
+  .htIcon{
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+  }
+}
+
+.htText{ min-width: 0; }
+
+.htTitle{
+  font-weight: 900;
+  letter-spacing: var(--ls-tight);
+  color: var(--text-strong);
+
+  font-size: 13px;          /* uniformizat (mai mic) */
+  line-height: 1.2;
+}
+
+.htDesc{
+  margin-top: 3px;
+  color: var(--muted);
+  font-weight: 700;
+
+  font-size: 12.5px;        /* uniformizat (mai mic) */
+  letter-spacing: var(--ls-soft);
+  line-height: 1.45;
+}
+
+.htRight{
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.htPill{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 999px;
+
+  border: 1px solid var(--border);
+  background: var(--soft);
+
+  font-weight: 850;
+  font-size: 12px;          /* uniformizat */
+  letter-spacing: var(--ls-soft);
+  color: var(--text-strong);
+
+  white-space: nowrap;
+}
+
+@media (max-width: 430px){
+  /* dacă nu încape în dreapta, îl punem sub text fără să schimbi JSX */
+  .htInner{ flex-wrap: wrap; }
+  .htRight{
+    width: 100%;
+    margin-left: 0;
+  }
+  .htPill{
+    width: 100%;
+    height: 38px;
+  }
+}

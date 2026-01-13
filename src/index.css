@@ -1,127 +1,131 @@
 /* =========================================================
    GLOBAL DESIGN SYSTEM — PROIECT CAZARI BUCOVINA
+   Base font: compact / premium
+   Accent: Airbnb-like pink (#ff385c)
    ========================================================= */
 
-/* ---------- ROOT VARIABLES ---------- */
-
+/* ---------------------------------------------------------
+   ROOT TOKENS
+--------------------------------------------------------- */
 :root {
-  --font-ui: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  /* ---------- Font ---------- */
+  --font-ui: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
 
-  /* Backgrounds */
-  --color-bg-main: #ffffff;
-  --color-bg-soft: #f9faf8;
-  --color-bg-card: #eef1ed;
+  /* ---------- Font sizes (COMPACT) ---------- */
+  --fs-base: 14.5px;
+  --fs-sm: 13px;
+  --fs-xs: 12px;
 
-  /* Text */
-  --color-text-main: #1f2933;
-  --color-text-secondary: #6b7280;
+  --fs-h1: 1.9rem;
+  --fs-h2: 1.35rem;
+  --fs-h3: 1.02rem;
 
-  /* Primary */
-  --color-primary: #2f855a;
-  --color-primary-hover: #276749;
-  --color-primary-light: #9ae6b4;
-
+  /* ---------- Letter spacing ---------- */
   --ls-tight: -0.03em;
   --ls: -0.02em;
   --ls-soft: -0.01em;
 
-  /* Layout + spacing */
-  --header-h: 72px;
+  /* ---------- Colors (light pages) ---------- */
+  --ink: rgba(17, 24, 39, 0.92);
+  --ink-2: rgba(17, 24, 39, 0.78);
+  --muted: rgba(17, 24, 39, 0.60);
+  --muted-2: rgba(17, 24, 39, 0.46);
 
+  --bg: #ffffff;
+  --bg-soft: rgba(255,255,255,0.92);
+  --surface: rgba(255,255,255,0.84);
+  --card: rgba(255,255,255,0.88);
+
+  --border: rgba(17,24,39,0.10);
+  --border-2: rgba(17,24,39,0.14);
+
+  /* ---------- Accent ---------- */
+  --accent: #ff385c;
+  --accent-hover: #ff2b52;
+  --accent-soft: rgba(255,56,92,0.10);
+  --accent-soft-2: rgba(255,56,92,0.18);
+  --accent-border: rgba(255,56,92,0.28);
+
+  --selection: rgba(255,56,92,0.22);
+  --focus-ring: 0 0 0 4px rgba(255,56,92,0.10);
+
+  /* ---------- Shadows ---------- */
+  --shadow-sm: 0 6px 16px rgba(17,24,39,0.06);
+  --shadow-md: 0 14px 38px rgba(17,24,39,0.10);
+  --shadow-lg: 0 18px 60px rgba(17,24,39,0.10);
+
+  /* ---------- Radius ---------- */
+  --r-lg: 22px;
+  --r-md: 14px;
+  --r-sm: 12px;
+
+  /* ---------- Spacing ---------- */
   --space-xs: 0.35rem;
   --space-sm: 0.7rem;
   --space-md: 1.05rem;
   --space-lg: 1.7rem;
   --space-xl: 2.6rem;
 
-  /* Core palette (hs*) */
-  /*--bg: #f6f7fb;*/
-  --bg: #fffffb;
-  --card: #ffffff;
+  /* ---------- Layout ---------- */
+  --header-h: 72px;
 
-  --text: rgba(17, 24, 39, 0.92);
-  --text-strong: rgba(17, 24, 39, 0.96);
-  --muted: rgba(17, 24, 39, 0.72);
-  --muted2: rgba(17, 24, 39, 0.62);
-  --hint: rgba(17, 24, 39, 0.58);
+  /* ---------- Buttons ---------- */
+  --btn-h: 44px;
+  --btn-bg: rgba(17,24,39,0.04);
+  --btn-bg-hover: rgba(17,24,39,0.06);
+  --btn-border: rgba(17,24,39,0.10);
+  --btn-border-hover: rgba(17,24,39,0.16);
 
-  --border: rgba(17, 24, 39, 0.10);
-  --border2: rgba(17, 24, 39, 0.08);
-  --soft: rgba(17, 24, 39, 0.04);
-  --soft2: rgba(17, 24, 39, 0.03);
+  --btn-primary-bg: rgba(17,24,39,0.92);
+  --btn-primary-bg-hover: rgba(17,24,39,1);
+  --btn-primary-ink: rgba(234,236,240,1);
 
-  /* Accent (hsBadge) */
-  --accent: #ff385c;
-  --accent-hover: #ff2b52;
-  --accent-soft: rgba(255, 56, 92, 0.08);
-  --accent-border: rgba(255, 56, 92, 0.28);
 
-  
-    /* ...restul... */
-  
-    /* Solid dark button (HostSection vibe) */
-    
-      --btn-bg: rgba(17, 24, 39, 0.04);
-      --btn-bg-hover: rgba(17, 24, 39, 0.06);
-      --btn-border: rgba(17, 24, 39, 0.10);
-      --btn-border-hover: rgba(17, 24, 39, 0.16);
-    
-    
-  
-  
 
-  /* Shadows (hsCard / hsRightBox) */
-  --shadow-lg: 0 22px 60px rgba(0, 0, 0, 0.08), 0 2px 10px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 18px 50px rgba(0, 0, 0, 0.06), 0 2px 10px rgba(0, 0, 0, 0.03);
+  --admin-bg: rgba(10,10,12,0.82);
+  --admin-bg-2: rgba(10,10,12,0.92);
 
-  /* Radius (hs*) */
-  --r-lg: 22px;
-  --r-md: 14px;
-  --r-sm: 12px;
-  --shadow-sm: 0 6px 16px rgba(17, 24, 39, 0.06);
-  --shadow-md: 0 14px 38px rgba(17, 24, 39, 0.1);
-  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  --admin-border: rgba(255,255,255,0.10);
+  --admin-border-2: rgba(255,255,255,0.08);
 
-  /* Borders */
-  --border-soft: rgba(17, 24, 39, 0.08);
+  --admin-ink: rgba(255,255,255,0.92);
+  --admin-ink-strong: rgba(255,255,255,0.96);
+  --admin-muted: rgba(255,255,255,0.65);
+  --admin-muted-2: rgba(255,255,255,0.70);
 
-  /* Surfaces */
-  --surface: rgba(255, 255, 255, 0.78);
+  --admin-soft: rgba(255,255,255,0.05);
+  --admin-soft-2: rgba(255,255,255,0.08);
+  --admin-soft-3: rgba(255,255,255,0.10);
 
-  --color-star: #f5b301;        /* galben stea */
-  --color-heart: #ff385c;       /* roșu Airbnb-ish */
-  --color-heart-soft: rgba(255, 56, 92, 0.16);
-  --color-star-soft: rgba(245, 179, 1, 0.18);
-  
-    --color-star: #f5b301;
-    --color-heart: #ff385c;
-  
-  
-    --header-h: 72px;
+  --admin-shadow: 0 18px 50px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.04);
+  --admin-menu-shadow: 0 24px 70px rgba(0,0,0,0.55);
 
-  
+  --admin-focus: 0 0 0 4px rgba(255,56,92,0.16);
 }
 
-/* ---------- RESET & BASE ---------- */
+/* ---------------------------------------------------------
+   RESET & BASE
+--------------------------------------------------------- */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+}
+
 html {
   scroll-behavior: smooth;
 }
 
-
-* { box-sizing: border-box; }
-html, body { height: 100%; }
-
 body {
   margin: 0;
   font-family: var(--font-ui);
-  background: #ffffff;
-  color: var(--text);
+  font-size: var(--fs-base);
+  background: var(--bg);
+  color: var(--ink);
   letter-spacing: var(--ls-soft);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -139,56 +143,49 @@ a {
 }
 
 ::selection {
-  background: rgba(255, 56, 92, 0.22);
+  background: var(--selection);
 }
 
-/* =========================================================
-   TYPOGRAPHY SYSTEM (hs-like)
-   ========================================================= */
-
+/* ---------------------------------------------------------
+   TYPOGRAPHY
+--------------------------------------------------------- */
 .text-page-title {
-  font-size: 2.1rem;
-  line-height: 1.05;
-  font-weight: 780;
+  font-size: var(--fs-h1);
+  line-height: 1.08;
+  font-weight: 850;
   letter-spacing: var(--ls-tight);
   margin: 0 0 var(--space-md);
-  color: var(--text-strong);
 }
 
 .text-section-title {
-  font-size: 1.55rem;
+  font-size: var(--fs-h2);
   line-height: 1.15;
-  font-weight: 780;
+  font-weight: 820;
   letter-spacing: var(--ls);
   margin: 0 0 var(--space-sm);
-  color: var(--text-strong);
 }
 
 .text-card-title {
-  font-size: 1.1rem;
+  font-size: var(--fs-h3);
   line-height: 1.2;
-  font-weight: 780;
-  letter-spacing: var(--ls);
+  font-weight: 820;
   margin: 0 0 var(--space-xs);
-  color: var(--text-strong);
 }
 
 .text-body {
-  font-size: 1rem;
-  font-weight: 500;
-  letter-spacing: var(--ls-soft);
-  color: var(--text);
+  font-size: 0.98rem;
+  font-weight: 540;
+  color: var(--ink-2);
 }
 
 .text-muted {
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   color: var(--muted);
 }
 
-/* =========================================================
+/* ---------------------------------------------------------
    LAYOUT
-   ========================================================= */
-
+--------------------------------------------------------- */
 .container {
   max-width: 1400px;
   margin: 0 auto;
@@ -204,182 +201,96 @@ a {
 .app-main.withOffset { padding-top: var(--header-h); }
 .app-main.noOffset { padding-top: 0; }
 
-/* =========================================================
-   CARDS (hsCard default)
-   ========================================================= */
-
-.card {
-  background: var(--card);
-  border: 1px solid var(--border2);
-  border-radius: var(--r-lg);
-  box-shadow: var(--shadow-md);
-  padding: var(--space-md);
-}
-
-.card + .card {
-  margin-top: var(--space-lg);
-}
-
-/* Optional: subtle divider utility */
-.hr {
-  height: 1px;
-  background: var(--border);
-}
-
-/* =========================================================
-   FORMS & INPUTS (hs style)
-   ========================================================= */
-
+/* ---------------------------------------------------------
+   INPUTS
+--------------------------------------------------------- */
 .input {
   width: 100%;
   font-family: inherit;
   font-size: 0.95rem;
-  letter-spacing: var(--ls-soft);
-
-  padding: 0.85rem 0.95rem;
+  padding: 0.72rem 0.9rem;
   border-radius: var(--r-md);
   border: 1px solid var(--border);
-  background: #ffffff;
-  color: var(--text);
-
+  background: rgba(255,255,255,0.86);
+  color: var(--ink);
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color .15s ease, box-shadow .15s ease;
 }
 
 .input:focus {
-  border-color: rgba(17, 24, 39, 0.18);
-  box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.06);
+  border-color: var(--accent-border);
+  box-shadow: var(--focus-ring);
 }
 
 .input::placeholder {
-  color: rgba(17, 24, 39, 0.45);
+  color: rgba(17,24,39,0.45);
 }
 
-/* =========================================================
-   BUTTONS (hsBtn + accent support)
-   ========================================================= */
-
-/* =========================================================
-   BUTTONS (HostSection: solid dark default)
-   ========================================================= */
-
-  /* =========================================================
+/* ---------------------------------------------------------
    BUTTONS
-   ========================================================= */
-
-/* PRIMARY = hsBtn EXACT */
+--------------------------------------------------------- */
 .btn {
-  margin-top: 0;              /* nu forțăm spacing global */
-  width: auto;                /* full width doar unde vrei */
-  height: 48px;
-
-  border-radius: 14px;
-  border: 1px solid rgba(17, 24, 39, 0.10);
-  background: rgba(17, 24, 39, 0.04);
-
-  font-family: inherit;
-  font-size: 0.95rem;
-  font-weight: 780;
-  letter-spacing: -0.01em;
-  color: rgba(17, 24, 39, 0.92);
-
-  cursor: pointer;
+  height: var(--btn-h);
+  padding: 0 1rem;
+  border-radius: var(--r-md);
+  border: 1px solid var(--btn-border);
+  background: var(--btn-bg);
+  font-size: 0.92rem;
+  font-weight: 820;
+  color: var(--ink);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-
-  transition:
-    transform 0.12s ease,
-    background 0.12s ease,
-    border-color 0.12s ease;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform .12s ease, background .12s ease, border-color .12s ease;
 }
 
 .btn:hover {
   transform: translateY(-1px);
-  background: rgba(17, 24, 39, 0.06);
-  border-color: rgba(17, 24, 39, 0.16);
-}
-
-.btn:active {
-  transform: translateY(0px);
+  background: var(--btn-bg-hover);
+  border-color: var(--btn-border-hover);
 }
 
 .btn:disabled {
-  opacity: 0.6;
+  opacity: .55;
   cursor: not-allowed;
-  transform: none;
 }
 
-  
-  /* PRIMARY = solid dark (negru cu alb) */
-  /* =========================================================
-   BUTTONS
-   ========================================================= */
-
-/* PRIMARY = hsBtn EXACT */
 .btn-primary {
-  margin-top: 0;              /* nu forțăm spacing global */
-  width: auto;                /* full width doar unde vrei */
-  height: 48px;
-
-  border-radius: 14px;
-  border: 1px solid rgba(17, 24, 39, 0.10);
-  background: rgba(17, 24, 39, 0.92);
-
-  font-family: inherit;
-  font-size: 0.95rem;
-  font-weight: 780;
-  letter-spacing: -0.01em;
-  color: rgba(234, 236, 240, 1);
-
-  cursor: pointer;
+  height: var(--btn-h);
+  padding: 0 1rem;
+  border-radius: var(--r-md);
+  border: 1px solid rgba(17,24,39,0.10);
+  background: var(--btn-primary-bg);
+  font-size: 0.92rem;
+  font-weight: 840;
+  color: var(--btn-primary-ink);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-
-  transition:
-    transform 0.12s ease,
-    background 0.12s ease,
-    border-color 0.12s ease;
+  gap: 8px;
+  cursor: pointer;
 }
 
 .btn-primary:hover {
   transform: translateY(-1px);
-  background: rgba(17, 24, 39, 1);
-  border-color: rgba(17, 24, 39, 1);
+  background: var(--btn-primary-bg-hover);
 }
 
-.btn-primary:active {
-  transform: translateY(0px);
+/* Accent utility (optional) */
+.btn-accent {
+  border: 1px solid var(--accent-border);
+  background: var(--accent-soft);
 }
 
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
+.btn-accent:hover {
+  background: var(--accent-soft-2);
 }
 
-  
-  
- 
-  
-
-/* =========================================================
-   UI STATES
-   ========================================================= */
-
-.ui-loading,
-.ui-empty {
-  color: var(--muted);
-  font-style: italic;
-}
-
-/* =========================================================
+/* ---------------------------------------------------------
    UTILITIES
-   ========================================================= */
-
+--------------------------------------------------------- */
 .mt-sm { margin-top: var(--space-sm); }
 .mt-md { margin-top: var(--space-md); }
 .mt-lg { margin-top: var(--space-lg); }
@@ -388,28 +299,19 @@ a {
 .mb-md { margin-bottom: var(--space-md); }
 .mb-lg { margin-bottom: var(--space-lg); }
 
-.text-center { text-align: center; }
-
 .flex { display: flex; }
-.flex-between {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
 .gap-sm { gap: var(--space-sm); }
 .gap-md { gap: var(--space-md); }
 .gap-lg { gap: var(--space-lg); }
 
-/* =========================================================
-   GLOBAL MOBILE TUNING (Galaxy S24 / ~360–430px)
-   Add this at the END of index.css
-   ========================================================= */
-
+/* ---------------------------------------------------------
+   MOBILE TUNING
+--------------------------------------------------------- */
 @media (max-width: 430px) {
   :root {
-    --space-xs: 0.25rem;
-    --space-sm: 0.5rem;
+    --fs-base: 14px;
+    --space-sm: 0.55rem;
     --space-md: 0.85rem;
     --space-lg: 1.4rem;
     --space-xl: 2.1rem;
@@ -421,44 +323,16 @@ a {
     padding-right: 0.85rem;
   }
 
-  body {
-    -webkit-text-size-adjust: 100%;
-    text-rendering: optimizeLegibility;
-  }
-
-  .section {
-    padding-top: var(--space-lg);
-    padding-bottom: var(--space-lg);
-  }
-
-  /* Titles: still premium */
-  .text-page-title { font-size: 1.85rem; line-height: 1.12; }
-  .text-section-title { font-size: 1.35rem; line-height: 1.18; }
-  .text-card-title { font-size: 1.05rem; }
-  .text-body { font-size: 0.98rem; }
-  .text-muted { font-size: 0.9rem; }
-
-  .input {
-    padding: 0.78rem 0.9rem;
-    font-size: 1rem;
-  }
-
-  .btn {
-    height: 48px;
-    padding: 0 1rem;
-    font-size: 0.95rem;
-  }
+  .text-page-title { font-size: 1.75rem; }
+  .text-section-title { font-size: 1.25rem; }
 }
 
-/* =========================================================
-   Fix for "100vh" on mobile (dynamic toolbar)
-   Use 100dvh where it matters
-   ========================================================= */
+/* ---------------------------------------------------------
+   100dvh FIX (mobile browsers)
+--------------------------------------------------------- */
 @supports (height: 100dvh) {
-  @media (max-width: 430px) {
-    .hero,
-    .profile-page {
-      min-height: 100dvh;
-    }
+  .hero,
+  .profile-page {
+    min-height: 100dvh;
   }
 }

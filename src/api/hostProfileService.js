@@ -1,6 +1,6 @@
 import { apiFetch } from "./client";
 
-// ---- named exports (compat) ----
+// ---- host profile service client ----
 export async function getMyHostProfile() {
   return apiFetch("/host/me", { method: "GET" });
 }

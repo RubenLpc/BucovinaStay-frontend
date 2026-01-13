@@ -1,118 +1,111 @@
 .hero {
-    position: relative;
-    min-height: 100vh;
-    overflow: hidden;
-  
-    /* IMPORTANT: fără background aici */
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* IMAGINEA */
+.hero-image {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transform: scale(1.08);
+  filter: brightness(0.92) saturate(1.15);
+}
+
+/* OVERLAY */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.35) 0%,
+    rgba(0, 0, 0, 0.15) 45%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+}
+
+/* CONȚINUT */
+.hero-content {
+  position: relative;
+  z-index: 2;
+
+  min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  padding: calc(var(--header-h) + 28px) 1.5rem 40px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.4rem;
+
+  color: #fff;
+}
+
+.hero-text h1 {
+  margin: 0;
+
+  /* DISPLAY TITLE — excepție intenționată */
+  font-size: clamp(2.6rem, 5.4vw, 3.9rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+
+  font-weight: 950;
+  color: #fff;
+}
+
+.hero-text h1 span {
+  display: block;
+  font-weight: 650;
+  opacity: 0.9;
+}
+
+
+.hero-text p {
+  margin: 0;
+  font-size: 0.98rem; /* ~text-body din DS */
+  max-width: 52ch;
+  opacity: 0.92;
+  line-height: 1.55;
+  letter-spacing: var(--ls-soft);
+}
+
+/* ================= HERO – SMALL MOBILE (360–430px) ================= */
+@media (max-width: 430px) {
+  .hero {
+    min-height: 100svh;
   }
-  
-  /* IMAGINEA */
-  .hero-image {
-    position: absolute;
-    inset: 0;
-    z-index: 0; /* 🔑 */
-  
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  
-    transform: scale(1.08);
-    filter: brightness(0.92) saturate(1.15);
-  }
-  
-  /* OVERLAY */
-  .hero-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 1; /* 🔑 */
-  
-    background: linear-gradient(
-      180deg,
-      rgba(0, 0, 0, 0.35) 0%,
-      rgba(0, 0, 0, 0.15) 45%,
-      rgba(0, 0, 0, 0.55) 100%
-    );
-  }
-  
-  /* CONȚINUT */
+
   .hero-content {
-    position: relative;
-    z-index: 2; /* 🔑 */
-  
-    min-height: 100vh;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-  
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 2.2rem;
-  
-    color: #ffffff;
+    min-height: 100svh;
+    padding: calc(var(--header-h) + 18px) 1rem 28px;
+    gap: 1.05rem;
   }
-  
 
   .hero-text h1 {
-    font-size: clamp(3.2rem, 6vw, 4.6rem);
-    font-weight: 700;
-    line-height: 1.02;
-    letter-spacing: -0.02em;
+    font-size: clamp(1.65rem, 7.6vw, 2.25rem);
+    line-height: 1.08;
   }
-  
-  .hero-text h1 span {
-    display: block;
-    font-weight: 500;
-    opacity: 0.9;
-  }
-  
 
   .hero-text p {
-    font-size: 1.1rem;
-    max-width: 520px;
-    opacity: 0.9;
-  }
-  
-  .hero-content {
-    padding-top: 6rem;
-  }
-  
-
-  /* ================= HERO – SMALL MOBILE (S24 / 360-430px) ================= */
-@media (max-width: 430px){
-
-  .hero{
-    /* mai stabil decât 100vh pe mobile */
-    min-height: 100svh;
-  }
-
-  .hero-content{
-    min-height: 100svh;
-
-    padding: 0 1rem;
-    padding-top: 5.2rem; /* puțin sub header-ul fixed */
-    gap: 1.4rem;
-  }
-
-  .hero-text h1{
-    font-size: clamp(2.15rem, 9vw, 2.8rem);
-    line-height: 1.05;
-  }
-
-  .hero-text p{
-    font-size: 0.98rem;
+    font-size: 0.92rem; /* compact, în stilul tău */
     max-width: 100%;
-    line-height: 1.45;
+    line-height: 1.5;
   }
 
-  /* imaginea: focus mai bun pe mobil */
-  .hero-image{
+  .hero-image {
     transform: scale(1.18);
     background-position: 55% 45%;
     filter: brightness(0.9) saturate(1.1);
   }
 
-  .hero-overlay{
+  .hero-overlay {
     background: linear-gradient(
       180deg,
       rgba(0, 0, 0, 0.42) 0%,
@@ -122,11 +115,16 @@
   }
 }
 
-
-@supports (height: 100dvh){
-  @media (max-width: 430px){
-    .hero, .hero-content{
-      min-height: 100dvh;
-    }
+/* dvh fix */
+@supports (height: 100dvh) {
+  .hero,
+  .hero-content {
+    min-height: 100dvh;
+  }
+}
+@media (max-width: 430px) {
+  .hero-text h1 {
+    font-size: clamp(1.95rem, 9vw, 2.6rem);
+    line-height: 1.06;
   }
 }

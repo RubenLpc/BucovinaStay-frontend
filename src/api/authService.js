@@ -69,9 +69,16 @@ async function updateMe(payload) {
     return user;
   }
 
+async function changePassword(payload) {
+    return apiFetch("/auth/change-password", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  }
 export const authService = {
   login,
   register,
   getMe,
   updateMe,
+  changePassword,
 };

@@ -1,16 +1,14 @@
 /* =========================================================
    StayCard — Horizontal (HS THEME / Production)
+   Uses index.css tokens (ink/muted/border-2/accent...)
    ========================================================= */
-
-/* (opțional) Dacă vrei: scoate complet acest :root din componentă.
-   Keep everything driven by global design system vars. */
 
    .stayCardH{
     display:grid;
     grid-template-columns: 260px 1fr;
     gap: 14px;
   
-    border: 1px solid var(--border2);
+    border: 1px solid var(--border-2);
     border-radius: var(--r-lg);
   
     background: rgba(255,255,255,0.94);
@@ -26,16 +24,14 @@
   .stayCardH:hover{
     transform: translateY(-2px);
     border-color: rgba(17,24,39,0.14);
-    background: #fff;
+    background: rgba(255,255,255,0.98);
     box-shadow: var(--shadow-md);
   }
   
   .stayCardH:focus-visible{
     outline: none;
     border-color: rgba(255,56,92,0.38);
-    box-shadow:
-      0 0 0 4px rgba(255,56,92,0.10),
-      var(--shadow-md);
+    box-shadow: var(--focus-ring), var(--shadow-md);
   }
   
   /* ---------- MEDIA ---------- */
@@ -54,11 +50,15 @@
     transform: scale(1.01);
   }
   
+  /* (era gol) — overlay subtil pt. contrast badge + rating */
   .stayMediaOverlay{
     position:absolute;
     inset:0;
-   
     pointer-events:none;
+    background:
+      radial-gradient(900px 260px at 12% 0%, rgba(255,255,255,0.55), transparent 55%),
+      linear-gradient(to top, rgba(17,24,39,0.22), rgba(17,24,39,0) 60%);
+    opacity: 0.55;
   }
   
   .stayBadges{
@@ -76,11 +76,12 @@
     align-items:center;
     padding: 7px 10px;
     border-radius: 999px;
-    font-size: 12px;
-    font-weight: 780;
-    letter-spacing: -0.01em;
   
-    color: #fff;
+    font-size: 0.76rem;
+    font-weight: 850;
+    letter-spacing: var(--ls-soft);
+  
+    color: rgba(255,255,255,0.95);
     background: rgba(17,24,39,0.55);
     border: 1px solid rgba(255,255,255,0.18);
     backdrop-filter: blur(10px);
@@ -106,8 +107,9 @@
   
     box-shadow: 0 14px 30px rgba(0,0,0,0.16);
   
-    font-weight: 780;
-    letter-spacing: -0.01em;
+    font-weight: 850;
+    letter-spacing: var(--ls-soft);
+    font-size: 0.82rem;
   }
   
   /* ⭐ STEA GALBENĂ */
@@ -118,13 +120,11 @@
   
   .stayRatingNum{
     color: rgba(17,24,39,0.96);
-    letter-spacing: -0.01em;
   }
   
   .stayRatingCount{
     color: rgba(17,24,39,0.62);
-    font-weight: 780;
-    letter-spacing: -0.01em;
+    font-weight: 850;
   }
   
   /* ---------- CONTENT ---------- */
@@ -147,10 +147,10 @@
   
   .stayTitle{
     margin:0;
-    font-size: 18px;
-    font-weight: 780;
-    letter-spacing: -0.02em;
-    color: var(--text-strong);
+    font-size: 1.02rem;          /* mai mic */
+    font-weight: 900;
+    letter-spacing: var(--ls);
+    color: var(--ink);
   
     display: -webkit-box;
     -webkit-line-clamp: 1;
@@ -163,10 +163,11 @@
     display:flex;
     align-items:center;
     gap: 10px;
+  
     color: var(--muted);
     font-weight: 700;
-    letter-spacing: -0.01em;
-    font-size: 13px;
+    letter-spacing: var(--ls-soft);
+    font-size: 0.86rem;
     min-width: 0;
   }
   
@@ -186,19 +187,19 @@
     min-width: 0;
   }
   
-  /* Type pill — accent (roșu) subtil */
+  /* Type pill — accent subtil */
   .stayTypePill{
     flex: 0 0 auto;
-    padding: 8px 10px;
+    padding: 7px 10px;
     border-radius: 999px;
   
-    border: 1px solid rgba(255,56,92,0.28);
+    border: 1px solid var(--accent-border);
     background: rgba(255,56,92,0.10);
-    color: rgba(17,24,39,0.92);
+    color: var(--ink);
   
-    font-weight: 780;
-    letter-spacing: -0.01em;
-    font-size: 12px;
+    font-weight: 850;
+    letter-spacing: var(--ls-soft);
+    font-size: 0.76rem;
     white-space: nowrap;
   }
   
@@ -206,7 +207,7 @@
   .stayMetaRow{
     display:flex;
     align-items:flex-start;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
   }
   
@@ -221,9 +222,10 @@
     border: 1px solid rgba(17,24,39,0.10);
     background: rgba(255,255,255,0.74);
   
-    font-weight: 780;
-    letter-spacing: -0.01em;
+    font-weight: 850;
+    letter-spacing: var(--ls-soft);
     color: rgba(17,24,39,0.82);
+    font-size: 0.82rem;
   }
   
   .stayAmenityRow{
@@ -244,12 +246,12 @@
     border: 1px solid rgba(17,24,39,0.10);
     background: rgba(255,255,255,0.74);
   
-    font-weight: 780;
-    letter-spacing: -0.01em;
-    font-size: 12px;
+    font-weight: 850;
+    letter-spacing: var(--ls-soft);
+    font-size: 0.76rem;
     color: rgba(17,24,39,0.82);
   
-    transition: border-color .12s ease, background .12s ease, transform .12s ease;
+    transition: border-color .12s ease, background .12s ease, transform .12s ease, box-shadow .12s ease;
   }
   
   .amenityChip:hover{
@@ -258,9 +260,13 @@
     transform: translateY(-1px);
   }
   
-  .amenityChip.isMuted{
-    opacity: 0.75;
+  .amenityChip:focus-visible{
+    outline: none;
+    border-color: var(--accent-border);
+    box-shadow: var(--focus-ring);
   }
+  
+  .amenityChip.isMuted{ opacity: 0.75; }
   
   .amenityLbl{
     display:inline-block;
@@ -289,27 +295,28 @@
   }
   
   .stayPriceValue{
-    font-weight: 780;
-    letter-spacing: -0.02em;
-    font-size: 18px;
-    color: var(--text-strong);
+    font-weight: 900;
+    letter-spacing: var(--ls);
+    font-size: 1.02rem;
+    color: var(--ink);
   }
   
   .stayPriceUnit{
     color: rgba(17,24,39,0.62);
     font-weight: 700;
-    letter-spacing: -0.01em;
-    font-size: 13px;
+    letter-spacing: var(--ls-soft);
+    font-size: 0.84rem;
   }
   
   .stayPriceHint{
     margin-top: 4px;
     color: rgba(17,24,39,0.58);
     font-weight: 700;
-    letter-spacing: -0.01em;
-    font-size: 12px;
+    letter-spacing: var(--ls-soft);
+    font-size: 0.76rem;
   }
   
+  /* CTA */
   .stayCta{
     border: none;
     border-radius: 14px;
@@ -321,14 +328,16 @@
     justify-content:center;
     gap: 10px;
   
-    font-weight: 780;
-    letter-spacing: -0.01em;
+    font-weight: 900;
+    letter-spacing: var(--ls-soft);
+    font-size: 0.84rem;
+  
     transition: transform .12s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
   }
   
   /* CTA — outline / hsBtn vibe */
   .stayCtaGlass{
-    color: rgba(17,24,39,0.92);
+    color: var(--ink);
     background: rgba(255,255,255,0.92);
     border: 1px solid rgba(17,24,39,0.10);
     backdrop-filter: blur(12px);
@@ -342,36 +351,62 @@
     transform: translateY(-1px);
   }
   
-  .stayCtaGlass:active{
-    transform: translateY(0px);
-  }
+  .stayCtaGlass:active{ transform: translateY(0px); }
   
   .stayCtaGlass:focus-visible{
     outline: none;
-    box-shadow:
-      0 0 0 4px rgba(17,24,39,0.06),
-      0 18px 40px rgba(0,0,0,0.12);
     border-color: rgba(17,24,39,0.18);
+    box-shadow: var(--focus-ring), 0 18px 40px rgba(0,0,0,0.12);
   }
   
   /* ---------- Responsive ---------- */
   @media (max-width: 860px){
-    .stayCardH{
-      grid-template-columns: 1fr;
-    }
-    .stayContent{
-      padding: 14px;
-    }
-    .stayMedia{
-      min-height: 210px;
-    }
+    .stayCardH{ grid-template-columns: 1fr; }
+    .stayContent{ padding: 14px; }
+    .stayMedia{ min-height: 210px; }
+  
     .stayFooter{
       flex-direction: column;
       align-items: stretch;
     }
+  
     .stayCta{
       width: 100%;
-      justify-content:center;
+      justify-content: center;
     }
+  }
+  
+  /* SMALL MOBILE (360–430px) */
+  @media (max-width: 430px){
+    .stayCardH{
+      border-radius: 18px;
+      gap: 12px;
+    }
+  
+    .stayMedia{ min-height: 190px; }
+  
+    .stayBadges{ top: 10px; left: 10px; }
+    .stayRatingPill{ left: 10px; bottom: 10px; }
+  
+    .stayContent{ padding: 12px; gap: 9px; }
+  
+    .stayTitle{ font-size: 0.98rem; }
+    .staySubRow{ font-size: 0.84rem; gap: 8px; }
+  
+    .stayMetaRow{ gap: 8px; }
+    .stayMetaItem{ padding: 7px 9px; border-radius: 12px; }
+  
+    .amenityChip{ padding: 7px 9px; }
+    .amenityLbl{ max-width: 100px; }
+  
+    .stayPriceValue{ font-size: 0.98rem; }
+    .stayCta{ padding: 10px 12px; }
+  }
+  
+  /* VERY SMALL (<= 360px) */
+  @media (max-width: 360px){
+    .stayRatingPill{ font-size: 0.8rem; }
+    .stayBadge{ font-size: 0.74rem; }
+    .stayTitle{ font-size: 0.95rem; }
   }
   

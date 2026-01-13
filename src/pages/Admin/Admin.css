@@ -1,0 +1,1445 @@
+/* =========================================================
+   ADMIN — aligned to index.css (HS Design System)
+   Uses: --bg/--surface/--card/--border/--border-2/--ink/--muted
+         --accent/--accent-soft/--accent-border/--focus-ring
+         --shadow-sm/--shadow-md/--shadow-lg
+         --r-lg/--r-md/--r-sm  + font scale vars
+   ========================================================= */
+
+/* Admin uses HostDashboard tokens (hdPage / hdCard / hdBtn etc) */
+
+.adMainWrap{
+  padding: 12px 18px 28px;
+}
+
+
+/* spacing so content doesn't stick to navbar */
+.adPagePad{
+  padding-top: 10px;
+}
+
+/* remove native select arrow */
+.hdSelect{
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.hdSelect{
+  padding-right: 64px; /* spațiu pt săgeată */
+  background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>\
+<polyline points='6 9 12 15 18 9'/>\
+</svg>");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 18px;
+}
+
+
+.adTop{
+  display:flex;
+  align-items:flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 10px 6px 14px;
+}
+
+/* crumb / kicker */
+.adCrumb{
+  color: var(--muted);
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: var(--fs-xs);
+}
+
+.adTitleRow{
+  display:flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.adHint{
+  color: var(--muted);
+  font-weight: 800;
+  font-size: var(--fs-sm);
+}
+
+/* tabs pill */
+.adTabs{
+  display:flex;
+  gap: 10px;
+  padding: 6px;
+
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.adTab{
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+
+  border: 1px solid transparent;
+  background: transparent;
+
+  color: var(--ink-2);
+  font-weight: 900;
+  letter-spacing: var(--ls-soft);
+  font-size: var(--fs-sm);
+
+  cursor: pointer;
+  transition: transform .12s ease, background .12s ease, border-color .12s ease;
+}
+
+.adTab:hover{
+  transform: translateY(-1px);
+  background: var(--btn-bg);
+  border-color: var(--btn-border);
+}
+
+.adTab.isActive{
+  border: 1px solid var(--accent-border);
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+
+/* search wrap */
+.adSearchWrap{
+  height: 36px;
+  display:flex;
+  align-items:center;
+  gap: 8px;
+
+  padding: 0 12px;
+  border-radius: 999px;
+
+  border: 1px solid var(--border-2);
+  background: var(--bg-soft);
+  box-shadow: var(--shadow-sm);
+}
+
+.adSearchWrap:focus-within{
+  border-color: var(--accent-border);
+  box-shadow: var(--focus-ring);
+}
+
+.adSearch{
+  border: 0 !important;
+  background: transparent !important;
+
+  height: 34px !important;
+  padding: 0 !important;
+
+  outline: none !important;
+  width: 100%;
+
+  font: inherit;
+  font-weight: 750;
+  color: var(--ink);
+}
+
+/* table heads */
+.adTableHead,
+.adListingsHead{
+  margin-top: 10px;
+
+  display:grid;
+  gap: 12px;
+  padding: 10px 6px;
+
+  color: var(--muted-2);
+  font-weight: 950;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.2px;
+}
+
+.adTableHead{ grid-template-columns: 2.2fr 1fr 1fr 1.6fr; }
+.adListingsHead{ grid-template-columns: 2.2fr 0.9fr 1.4fr 1.6fr; }
+
+.adTableHead > :last-child,
+.adListingsHead > :last-child{ justify-self: end; }
+
+.adRows{
+  margin-top: 6px;
+  display:flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.adRow{
+  display:grid;
+  gap: 12px;
+  padding: 12px 6px;
+
+  border-radius: var(--r-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+
+  transition: transform .12s ease, box-shadow .2s ease, border-color .12s ease, background .12s ease;
+}
+
+.adRow:hover{
+  transform: translateY(-1px);
+  border-color: var(--accent-border);
+  background: var(--card);
+  box-shadow: var(--shadow-md);
+}
+
+.adUserRow{ grid-template-columns: 2.2fr 1fr 1fr 1.6fr; }
+.adListingRow{ grid-template-columns: 2.2fr 0.9fr 1.4fr 1.6fr; }
+
+.adRow > :last-child{ justify-self: end; }
+
+.adUserCell, .adHostCell{ min-width: 0; }
+
+.adUserName, .adHostName{
+  font-weight: 950;
+  color: var(--ink);
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  font-size: var(--fs-base);
+}
+
+.adUserMeta, .adHostMeta{
+  margin-top: 2px;
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  font-weight: 800;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* action buttons alignment fix (icons centered) */
+.hdBtn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap: 8px;
+  line-height: 1;
+}
+
+.hdActionsCell{
+  display:flex;
+  gap: 8px;
+  justify-content:flex-end;
+  align-items:center;
+  flex-wrap: wrap;
+}
+
+/* small helper for disabled actions tooltip feel */
+.adHintLine{
+  margin-top: 8px;
+  color: var(--muted);
+  font-weight: 750;
+  font-size: var(--fs-xs);
+}
+
+/* chart card */
+.adChartGrid{
+  display:grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 14px;
+}
+
+/* spacing so content doesn't stick to navbar */
+.adPage .hdMain{
+  padding-top: 10px;
+}
+
+/* Settings layout */
+.adSettingsGrid{
+  gap: 14px;
+}
+
+.adForm{
+  margin-top: 10px;
+  display: grid;
+  gap: 12px;
+}
+
+.adRowLine{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 14px;
+
+  padding: 12px;
+  border-radius: var(--r-md);
+
+  background: var(--btn-bg);
+  border: 1px solid var(--border);
+}
+
+.adRowTitle{
+  font-weight: 950;
+  color: var(--ink);
+  font-size: var(--fs-base);
+}
+
+.adRowHint{
+  margin-top: 4px;
+  font-weight: 750;
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+
+.adRowRight input[type="checkbox"]{
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+.adField{
+  display:grid;
+  gap: 6px;
+}
+
+.adFieldLabel{
+  font-weight: 950;
+  color: var(--ink);
+  font-size: var(--fs-sm);
+}
+
+.adFieldHint{
+  font-weight: 750;
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+
+.adInput{
+  height: 40px;
+  border-radius: var(--r-md);
+
+  border: 1px solid var(--border-2);
+  background: var(--bg-soft);
+
+  font: inherit;
+  font-weight: 800;
+  padding: 0 12px;
+  outline: none;
+}
+
+.adInput:focus{
+  border-color: var(--accent-border);
+  box-shadow: var(--focus-ring);
+}
+
+.adTextarea{
+  width: 100%;
+  border-radius: var(--r-md);
+
+  border: 1px solid var(--border-2);
+  background: var(--bg-soft);
+
+  font: inherit;
+  font-weight: 750;
+  padding: 10px 12px;
+
+  outline: none;
+  resize: vertical;
+}
+
+.adTextarea:focus{
+  border-color: var(--accent-border);
+  box-shadow: var(--focus-ring);
+}
+
+.adActions{
+  display:flex;
+  justify-content:flex-end;
+  margin-top: 6px;
+}
+
+/* =========================================================
+   REVIEWS head + row
+   ========================================================= */
+
+.adReviewsHead{
+  margin-top: 10px;
+  display:grid;
+  grid-template-columns: 2.2fr 1fr 1fr 1.4fr;
+  gap: 12px;
+
+  padding: 10px 6px;
+  color: var(--muted-2);
+  font-weight: 950;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.2px;
+}
+
+.adReviewRow{
+  grid-template-columns: 2.2fr 1fr 1fr 1.4fr;
+}
+
+.adReviewCell{ min-width: 0; }
+
+.adReviewTop{
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.adReviewTitle{
+  font-weight: 950;
+  color: var(--ink);
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  max-width: 420px;
+  font-size: var(--fs-base);
+}
+
+.adDot{
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--border-2);
+  flex: 0 0 auto;
+}
+
+.adReviewUser{
+  font-weight: 900;
+  color: var(--ink-2);
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  font-size: var(--fs-sm);
+}
+
+.adReviewMeta{
+  margin-top: 2px;
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  font-weight: 800;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.adReviewComment{
+  margin-top: 8px;
+  color: var(--ink-2);
+  font-weight: 750;
+  font-size: var(--fs-sm);
+  line-height: 1.25rem;
+
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.adReviewComment.isHidden{
+  opacity: 0.55;
+}
+
+.adStars{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+
+  font-weight: 950;
+  color: var(--ink-2);
+  font-size: var(--fs-sm);
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+/* Tablet */
+
+/* =========================================================
+   RESPONSIVE — upgraded (mobile-first sane)
+   Goals:
+   - remove side padding on phone
+   - avoid "table grid" on phone -> stack cards
+   - tabs become scrollable, not squeezed
+   - actions stay usable
+   ========================================================= */
+
+/* Tablet */
+@media (max-width: 980px){
+  .adTop{
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin: 8px 4px 12px;
+  }
+
+  /* Tabs: allow horizontal scroll instead of squeezing */
+  .adTabs{
+    width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 8px;
+  }
+  .adTabs::-webkit-scrollbar{ display:none; }
+
+  /* Search: full width */
+  .adSearchWrap{ width: 100%; }
+
+  .adChartGrid{ grid-template-columns: 1fr; }
+
+  /* keep 3 cols on tablet, hide last */
+  .adTableHead{ grid-template-columns: 2fr 1fr 1fr; }
+  .adUserRow{ grid-template-columns: 2fr 1fr 1fr; }
+  .adTableHead div:nth-child(4),
+  .adUserRow > :nth-child(4){ display:none; }
+
+  .adListingsHead{ grid-template-columns: 2fr 1fr 1fr; }
+  .adListingRow{ grid-template-columns: 2fr 1fr 1fr; }
+  .adListingsHead div:nth-child(4),
+  .adListingRow > :nth-child(4){ display:none; }
+
+  .adReviewsHead{ grid-template-columns: 2fr 1fr 1fr; }
+  .adReviewRow{ grid-template-columns: 2fr 1fr 1fr; }
+  .adReviewsHead div:nth-child(4),
+  .adReviewRow > :nth-child(4){ display:none; }
+}
+
+/* Mobile */
+@media (max-width: 760px){
+  /* ✅ remove side padding so it doesn't feel cramped */
+  .adMainWrap{
+    padding: 10px 0 20px;
+  }
+
+  /* top block uses tiny side padding only */
+  .adTop{
+    margin: 8px 0 12px;
+    padding: 0 12px;
+    gap: 10px;
+  }
+
+  .adCrumb{ font-size: 11.5px; }
+
+  .adHint{
+    font-size: 12px;
+    font-weight: 750;
+  }
+
+  /* tabs: scroll */
+  .adTabs{
+    padding: 6px;
+    gap: 6px;
+    margin: 0;
+  }
+
+  .adTab{
+    height: 34px;
+    padding: 0 12px;
+    font-size: 12px;
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+
+  /* search full width */
+  .adSearchWrap{
+    height: 36px;
+    width: 100%;
+  }
+
+  /* head rows: hide entirely on mobile (table header doesn't help) */
+  .adTableHead,
+  .adListingsHead,
+  .adReviewsHead{
+    display: none;
+  }
+
+  /* list: add side padding */
+  .adRows{
+    padding: 0 12px;
+    gap: 10px;
+  }
+
+  /* ✅ turn table rows into stacked cards */
+  .adRow{
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 18px;
+  }
+
+  /* Make primary text compact */
+  .adUserName, .adHostName, .adReviewTitle{
+    font-size: 14px;
+  }
+
+  .adUserMeta, .adHostMeta, .adReviewMeta{
+    font-size: 11.5px;
+  }
+
+  /* Action area becomes bottom row */
+  .hdActionsCell{
+    justify-content: flex-start;
+    gap: 8px;
+    margin-top: 2px;
+  }
+
+  /* if hdBtn exists, keep it compact */
+  .hdBtn{
+    height: 34px;
+    padding: 0 10px;
+    border-radius: 12px;
+    font-size: 12px;
+  }
+}
+
+/* Small mobile (<=430px) */
+@media (max-width: 430px){
+  /* ✅ true edge-to-edge feel (like apps) */
+  .adMainWrap{
+    padding: 8px 0 18px;
+  }
+
+  .adTop{
+    padding: 0 10px;
+  }
+
+  .adCrumb{
+    letter-spacing: 0.14em;
+    font-size: 11px;
+  }
+
+  /* tabs a bit tighter */
+  .adTabs{
+    padding: 6px;
+    border-radius: 18px;
+  }
+
+  .adTab{
+    height: 33px;
+    padding: 0 11px;
+    font-size: 11.8px;
+  }
+
+  /* list padding smaller */
+  .adRows{
+    padding: 0 0;
+  }
+
+  .adRow{
+    padding: 12px;
+    border-radius: 18px;
+  }
+
+  /* Reviews: comment clamp more */
+  .adReviewComment{
+    font-size: 12.3px;
+    line-height: 1.15rem;
+    -webkit-line-clamp: 3;
+  }
+
+  /* actions wrap nicely */
+  .hdActionsCell{
+    flex-wrap: wrap;
+  }
+}
+
+/* Very small (<=360px) */
+@media (max-width: 360px){
+  .adTop{ padding: 0 8px; }
+  .adRows{ padding: 0 0; }
+
+  .adTab{
+    padding: 0 10px;
+    font-size: 11.5px;
+  }
+
+  .hdBtn{
+    height: 33px;
+    padding: 0 9px;
+    font-size: 11.5px;
+  }
+}
+/* =========================================================
+   AdminUsers — Clean Mobile (desktop unchanged)
+   Scope: .adUsers
+   ========================================================= */
+
+/* default: desktop/tablet */
+.adUsers .adUserMobileHead,
+.adUsers .adUserMobileBadges{ display:none; }
+
+/* ---------------- MOBILE ---------------- */
+@media (max-width: 760px){
+
+  /* gutters: app-like */
+  .adMainWrap{ padding: 8px 0 18px; }
+  .adUsers.hdCard.hdTable{ padding: 0; }
+  .adUsers .hdCardTop{ padding: 10px 10px 12px; }
+  .adUsers .adRows{ padding: 0 0 0; gap: 10px; }
+
+  /* hide table head */
+  .adUsers .adTableHead{ display:none; }
+
+  /* row layout: user left, actions right, badges full width */
+  .adUsers .adRow.adUserRow{
+    grid-template-columns: 1fr auto !important;
+    grid-template-rows: auto auto;
+    align-items: start;
+    column-gap: 10px;
+    row-gap: 10px;
+    padding: 12px;
+    border-radius: 18px;
+  }
+
+  /* show mobile actions head */
+  .adUsers .adUserMobileHead{
+    display:flex;
+    justify-content:flex-end;
+    align-items:flex-start;
+  }
+
+  /* show badges under header */
+  .adUsers .adUserMobileBadges{
+    display:flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    grid-column: 1 / -1;
+  }
+
+  /* hide desktop role/status/actions cells on mobile */
+  .adUsers .adRow.adUserRow > .hdCell,
+  .adUsers .hdActionsCell{
+    display:none;
+  }
+
+  /* user text */
+  .adUsers .adUserName{ font-size: 15px; line-height: 1.15; }
+  .adUsers .adUserMeta{ font-size: 12px; line-height: 1.1rem; }
+
+  /* kebab */
+  .adUsers .adKebab{ position: relative; }
+  .adUsers .adKebab > summary{
+    list-style: none;
+    cursor: pointer;
+  }
+  .adUsers .adKebab > summary::-webkit-details-marker{ display:none; }
+
+  .adUsers .adKebabBtn{
+    height: 40px;
+    min-width: 44px;
+    padding: 0 12px;
+    border-radius: 14px;
+  }
+
+  .adUsers .adMenu{
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px);
+  
+    min-width: 210px;
+  
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  
+    box-shadow:
+      0 12px 28px rgba(0,0,0,.12),
+      0 2px 6px rgba(0,0,0,.08);
+  
+    padding: 8px;
+    z-index: 200;
+  }
+  
+
+  .adUsers .adMenuTitle{
+    padding: 8px 10px 6px;
+    font-weight: 950;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .adUsers .adMenuSep{
+    height: 1px;
+    background: var(--border);
+    margin: 6px 6px;
+  }
+
+  .adUsers .adMenuItem{
+    width:100%;
+    text-align:left;
+    padding: 10px 10px;
+    border-radius: 10px;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-weight: 850;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .adUsers .adMenuItem:hover{ background: var(--btn-bg); }
+  .adUsers .adMenuItem:disabled{ opacity:.5; cursor:not-allowed; }
+
+  .adUsers .adMenuItem.isActive{
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-border);
+  }
+}
+
+@media (max-width: 430px){
+  .adUsers .hdCardTop{ padding: 10px 8px 12px; }
+  .adUsers .adRows{ padding: 0 0 0; }
+}
+
+@media (max-width: 760px){
+  .adUsers .adRow.adUserRow{ position: relative; z-index: 0; }
+
+  .adUsers .adRow.adUserRow:has(details[open]){
+    z-index: 500; /* peste celelalte carduri */
+  }
+
+  .adUsers .adMenu{ z-index: 600; }
+}
+
+
+/* =========================================================
+   hdCardTop responsive (scoped to Users)
+   Desktop stays the same
+   ========================================================= */
+
+/* Tablet: toolbar pe rânduri, fără înghesuială */
+@media (max-width: 980px){
+  .adUsers .hdCardTop{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+
+  /* stânga (label+hint) rămâne sus */
+  .adUsers .hdCardTop > div:first-child{
+    display:flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  /* toolbar full width */
+  .adUsers .hdToolbar{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .adUsers .hdFilters .hdSelect{
+    width: 100%;
+  }
+
+  .adUsers .adSearchWrap{
+    width: 100%;
+  }
+}
+
+/* Mobile: control panel stack (dropdown apoi search), edge-to-edge */
+@media (max-width: 760px){
+  .adUsers .hdCardTop{
+    padding: 10px 10px 12px;
+  }
+
+  /* optional: ascunde label+hint din card (ai deja titlul mare sus în AdminPage) */
+  .adUsers .hdCardTop > div:first-child{
+    display:none;
+  }
+
+  .adUsers .hdToolbar{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .adUsers .hdFilters,
+  .adUsers .hdFilters .hdSelect{
+    width: 100%;
+  }
+
+  .adUsers .hdFilters .hdSelect{
+    height: 40px;
+    border-radius: 999px;
+  }
+
+  .adUsers .adSearchWrap{
+    height: 40px;
+    width: 100%;
+    border-radius: 999px;
+  }
+}
+
+/* Small mobile: și mai tight */
+@media (max-width: 430px){
+  .adUsers .hdCardTop{
+    padding: 10px 8px 12px;
+  }
+}
+
+
+/* =========================================================
+   AdminListings — Clean Mobile (desktop unchanged)
+   Scope: .adListings
+   Goal: no lateral page padding on mobile + kebab actions
+   ========================================================= */
+
+   .adListings .adListingMobileHead,
+   .adListings .adListingMobileBadges{ display:none; }
+   
+   /* MOBILE */
+   @media (max-width: 760px){
+   
+     /* no page side padding */
+     .adMainWrap{ padding: 10px 0 20px; }
+   
+     /* table header hidden */
+     .adListings .adListingsHead{ display:none; }
+   
+     /* no list side padding */
+     .adListings .adRows{
+       padding: 0;
+       margin-top: 8px;
+       gap: 10px;
+     }
+   
+     /* cards go full width */
+     .adListings .adRow.adListingRow{
+       grid-template-columns: 1fr auto !important;
+       align-items: start;
+       column-gap: 10px;
+       row-gap: 10px;
+   
+       padding: 12px;          /* internal padding */
+       border-radius: 18px;
+       margin: 0;              /* edge-to-edge */
+     }
+   
+     /* show kebab head right */
+     .adListings .adListingMobileHead{
+       display:flex;
+       justify-content:flex-end;
+       align-items:flex-start;
+     }
+   
+     /* show badges below (optional) */
+     .adListings .adListingMobileBadges{
+       display:flex;
+       gap: 8px;
+       flex-wrap: wrap;
+       grid-column: 1 / -1;
+     }
+   
+     /* hide desktop columns on mobile */
+     .adListings .adRow.adListingRow > .hdCell,
+     .adListings .hdActionsCell{
+       display:none;
+     }
+   
+     /* keep property block full width under header */
+     .adListings .hdProp{
+       grid-column: 1 / -1;
+     }
+   
+     /* thumb a bit smaller on mobile */
+     .adListings .hdThumb{
+       width: 60px;
+       height: 46px;
+       border-radius: 12px;
+     }
+   
+     /* title/meta readable */
+     .adListings .hdPropName{ font-size: 15px; line-height: 1.15; }
+     .adListings .hdPropMeta{ font-size: 12px; }
+   
+     /* kebab/menu (reuse style, scoped) */
+     .adListings .adKebab{ position: relative; }
+     .adListings .adKebab > summary{ list-style:none; cursor:pointer; }
+     .adListings .adKebab > summary::-webkit-details-marker{ display:none; }
+   
+     .adListings .adKebabBtn{
+       height: 40px;
+       min-width: 44px;
+       padding: 0 12px;
+       border-radius: 14px;
+     }
+   
+     .adListings .adMenu{
+       position:absolute;
+       right: 0;
+       top: calc(100% + 10px);
+       min-width: 210px;
+   
+       border-radius: 16px;
+       border: 1px solid var(--border);
+       background: var(--surface);
+   
+       box-shadow:
+         0 12px 28px rgba(0,0,0,.12),
+         0 2px 6px rgba(0,0,0,.08);
+   
+       padding: 8px;
+       z-index: 600;
+     }
+   
+     .adListings .adMenuSep{
+       height: 1px;
+       background: var(--border-2);
+       margin: 8px 6px;
+     }
+   
+     .adListings .adMenuItem{
+       width:100%;
+       text-align:left;
+       padding: 10px 10px;
+       border-radius: 10px;
+       border: 0;
+       background: transparent;
+       font: inherit;
+       font-weight: 850;
+       color: var(--ink);
+       cursor: pointer;
+     }
+     .adListings .adMenuItem:hover{ background: var(--btn-bg); }
+     .adListings .adMenuItem:disabled{ opacity:.5; cursor:not-allowed; }
+   
+     /* stacking fix: menu over other cards */
+     .adListings .adRow.adListingRow{ position: relative; z-index: 0; }
+     .adListings .adRow.adListingRow:has(details[open]){ z-index: 500; }
+   
+     /* avoid transform stacking weirdness on mobile */
+     .adRow:hover{ transform: none; }
+   }
+   
+   /* small mobile: still no lateral padding */
+   @media (max-width: 430px){
+     .adMainWrap{ padding: 8px 0 18px; }
+     .adListings .adRow.adListingRow{ padding: 12px; border-radius: 18px; }
+   }
+   
+
+   @media (max-width: 980px){
+    .adListings .hdCardTop{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+  
+    .adListings .hdToolbar{
+      width: 100%;
+      display:grid;
+      grid-template-columns: 220px 1fr;
+      gap: 10px;
+      align-items:center;
+    }
+  
+    .adListings .hdSelect{ width:100%; }
+    .adListings .adSearchWrap{ width:100%; }
+  }
+  
+  @media (max-width: 760px){
+    .adListings .hdCardTop > div:first-child{ display:none; }
+  
+    .adListings .hdToolbar{
+      width:100%;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+  
+    .adListings .hdSelect{
+      height: 40px;
+      border-radius: 999px;
+      width:100%;
+    }
+  
+    .adListings .adSearchWrap{
+      height: 40px;
+      border-radius: 999px;
+      width:100%;
+    }
+  }
+  
+
+  /* =========================================================
+   AdminReviews — Clean Mobile (desktop unchanged)
+   Scope: .adReviews
+   Goal: no lateral padding on mobile + kebab actions
+   ========================================================= */
+
+/* default: desktop/tablet */
+.adReviews .adReviewMobileHead,
+.adReviews .adReviewMobileBadges { display: none; }
+
+/* ---------------- MOBILE ---------------- */
+@media (max-width: 760px){
+
+  /* page gutters: zero lateral */
+  .adMainWrap { padding: 10px 0 20px; }
+
+  /* wrapper card */
+  .adReviews.hdCard.hdTable { padding: 0; }
+
+  /* hide table head on mobile */
+  .adReviews .adReviewsHead { display: none; }
+
+  /* list: full width, no side padding */
+  .adReviews .adRows {
+    padding: 0;
+    margin-top: 8px;
+    gap: 10px;
+  }
+
+  /* row: 2 columns (content + kebab) */
+  .adReviews .adRow.adReviewRow{
+    grid-template-columns: 1fr auto !important;
+    align-items: start;
+    column-gap: 10px;
+    row-gap: 10px;
+
+    padding: 12px;
+    border-radius: 18px;
+    margin: 0;
+  }
+
+  /* show kebab right */
+  .adReviews .adReviewMobileHead{
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+  }
+
+  /* show badges full width under header */
+  .adReviews .adReviewMobileBadges{
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    grid-column: 1 / -1;
+  }
+
+  /* hide desktop cols + desktop actions on mobile */
+  .adReviews .adRow.adReviewRow > .hdCell,
+  .adReviews .hdActionsCell{
+    display: none;
+  }
+
+  /* keep review text full width */
+  .adReviews .adReviewCell{
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+
+  /* typography tweaks */
+  .adReviews .adReviewTitle { font-size: 15px; line-height: 1.15; max-width: 100%; }
+  .adReviews .adReviewMeta { font-size: 12px; }
+  .adReviews .adReviewComment { font-size: 12.8px; line-height: 1.15rem; -webkit-line-clamp: 3; }
+
+  /* kebab/menu (scoped) */
+  .adReviews .adKebab { position: relative; }
+  .adReviews .adKebab > summary { list-style: none; cursor: pointer; }
+  .adReviews .adKebab > summary::-webkit-details-marker{ display:none; }
+
+  .adReviews .adKebabBtn{
+    height: 40px;
+    min-width: 44px;
+    padding: 0 12px;
+    border-radius: 14px;
+  }
+
+  .adReviews .adMenu{
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px);
+    min-width: 210px;
+
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+
+    box-shadow:
+      0 12px 28px rgba(0,0,0,.12),
+      0 2px 6px rgba(0,0,0,.08);
+
+    padding: 8px;
+    z-index: 600;
+  }
+
+  .adReviews .adMenuSep{
+    height: 1px;
+    background: var(--border-2);
+    margin: 8px 6px;
+  }
+
+  .adReviews .adMenuItem{
+    width: 100%;
+    text-align: left;
+    padding: 10px 10px;
+    border-radius: 10px;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-weight: 850;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .adReviews .adMenuItem:hover{ background: var(--btn-bg); }
+  .adReviews .adMenuItem:disabled{ opacity: .5; cursor: not-allowed; }
+
+  /* stacking: menu above other cards */
+  .adReviews .adRow.adReviewRow { position: relative; z-index: 0; }
+  .adReviews .adRow.adReviewRow:has(details[open]) { z-index: 500; }
+
+  /* prevent hover transform stacking issues on touch */
+  .adRow:hover { transform: none; }
+}
+
+/* small mobile: still no lateral padding */
+@media (max-width: 430px){
+  .adMainWrap{ padding: 8px 0 18px; }
+  .adReviews .adRow.adReviewRow{ padding: 12px; border-radius: 18px; }
+}
+
+/* =========================================================
+   hdCardTop responsive (scoped to Reviews)
+   ========================================================= */
+   @media (max-width: 980px){
+    .adReviews .hdCardTop{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+  
+    .adReviews .hdToolbar{
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+  
+    .adReviews .hdFilters{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+  
+    .adReviews .hdFilters .hdSelect{ width: 100%; }
+  
+    /* sort button full width on tablet */
+    .adReviews .hdFilters .hdBtn{ width: 100%; justify-content: center; }
+  }
+  
+  @media (max-width: 760px){
+    /* optional: hide label/hint inside card (ai titlul în AdminPage) */
+    .adReviews .hdCardTop > div:first-child{ display: none; }
+  
+    .adReviews .hdCardTop{ padding: 10px 10px 12px; }
+  
+    .adReviews .hdFilters{
+      grid-template-columns: 1fr;
+    }
+  
+    .adReviews .hdFilters .hdSelect{
+      height: 40px;
+      border-radius: 999px;
+    }
+  
+    .adReviews .hdFilters .hdBtn{
+      height: 40px;
+      border-radius: 999px;
+      width: 100%;
+      justify-content: center;
+    }
+  
+    .adReviews .adSearchWrap{
+      height: 40px;
+      width: 100%;
+      border-radius: 999px;
+    }
+  }
+  
+  @media (max-width: 430px){
+    .adReviews .hdCardTop{ padding: 10px 8px 12px; }
+  }
+  
+
+  @media (max-width: 760px){
+    /* header row: title + kebab */
+    .adReviews .adRow.adReviewRow{
+      grid-template-columns: 1fr auto !important;
+      grid-template-areas:
+        "content kebab"
+        "badges badges";
+      align-items: start;
+    }
+  
+    .adReviews .adReviewCell{ grid-area: content; }
+    .adReviews .adReviewMobileHead{ grid-area: kebab; }
+  
+    .adReviews .adReviewMobileBadges{
+      grid-area: badges;
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+  
+    /* title stronger, user smaller */
+    .adReviews .adReviewTitle{
+      font-size: 16px;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+  
+    .adReviews .adReviewUserLine{
+      margin-top: 6px;
+      font-weight: 900;
+      color: var(--ink-2);
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  
+    .adReviews .adReviewMeta{
+      margin-top: 4px;
+      font-size: 12px;
+    }
+  
+    .adReviews .adReviewComment{
+      margin-top: 10px;
+    }
+  }
+  
+
+  @media (max-width: 760px){
+    .adReviews .adReviewMobileBadges .adStars{
+      display:inline-flex;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      font-size: 12px;
+      font-weight: 850;
+    }
+  }
+  
+  @media (max-width: 760px){
+    .hdSelect{
+      padding-right: 48px;
+      background-position: right 18px center;
+    }
+  }
+  
+  .hdSelect:focus{
+    background-image: url("data:image/svg+xml;utf8,\
+  <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111827' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>\
+  <polyline points='6 9 12 15 18 9'/>\
+  </svg>");
+  }
+  
+  @media (max-width: 760px){
+    .adListings .adRow.adListingRow{
+      display:grid;
+      grid-template-columns: 1fr auto !important;
+      grid-template-areas:
+        "prop head"
+        "badges badges";
+      align-items:start;
+      column-gap: 10px;
+      row-gap: 10px;
+    }
+  
+    .adListings .hdProp{ grid-area: prop; }
+    .adListings .adListingMobileHead{ grid-area: head; }
+    .adListings .adListingMobileBadges{ grid-area: badges; }
+  
+    /* kebab align top nicely */
+    .adListings .adListingMobileHead{
+      display:flex;
+      justify-content:flex-end;
+      align-items:flex-start;
+      padding-top: 2px;
+    }
+  
+    /* badges closer + nicer spacing */
+    .adListings .adListingMobileBadges{
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items:center;
+      margin-top: -2px; /* lipeste putin de content */
+    }
+  
+    /* thumb/title alignment polish */
+    .adListings .hdThumb{
+      width: 64px;
+      height: 48px;
+      border-radius: 14px;
+    }
+  }
+  
+
+  @media (max-width: 760px){
+    .adListings .adKebabBtn{
+      height: 38px;
+      min-width: 42px;
+      padding: 0 10px;
+      border-radius: 14px;
+    }
+  }
+  
+
+  /* --- Mobile: ascundem tabs din centru, folosim dropdown --- */
+.tnTabsBtn{ display:none; }
+
+/* pe mobil, tab-urile din centru dispar, apare dropdown */
+@media (max-width: 620px){
+  .tnCenter{ display:none; }
+  .tnTabsBtn{ display:grid; }
+}
+
+/* optional: arată item-ul activ în meniu */
+.tnMenuItem.isActive{
+  border-color: rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.08);
+}
+
+
+.tnTabsBtn{ display:none; }
+
+@media (max-width: 620px){
+  .tnCenter{ display:none; }
+  .tnTabsBtn{ display:grid; }
+}
+
+/* icon perfect centrat */
+.tnTabsBtn svg{
+  display:block;
+}

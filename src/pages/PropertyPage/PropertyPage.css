@@ -1,23 +1,22 @@
 /* =========================
    PROPERTY PAGE THEME
-   (match hsWrap/hsCard/hsBtn look)
+   (match system tokens: index.css)
    ========================= */
 
-   .ppShell {
-    /*background: #f6f7fb;*/
-    background: #ffffff;
-    color: rgba(17, 24, 39, 0.92);
+   .ppShell{
+    background: var(--bg);
+    color: var(--ink);
     min-height: 100vh;
   }
   
-  .ppContainer {
+  .ppContainer{
     max-width: 1120px;
     margin: 0 auto;
     padding: 22px 16px 56px;
   }
   
   /* ---------- Header ---------- */
-  .ppHeader {
+  .ppHeader{
     display: flex;
     justify-content: space-between;
     gap: 18px;
@@ -25,121 +24,126 @@
     margin-bottom: 18px;
   }
   
-  .ppHeaderLeft {
-    min-width: 0;
-  }
+  .ppHeaderLeft{ min-width: 0; }
   
-  .ppTitle {
+  .ppTitle{
     margin: 0;
     font-size: 34px;
     line-height: 1.05;
-    font-weight: 780;
-    letter-spacing: -0.03em;
+    font-weight: 850;
+    letter-spacing: var(--ls-tight);
+    color: var(--ink);
   }
   
-  .ppMetaRow {
+  .ppMetaRow{
     margin-top: 10px;
     display: flex;
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
-    color: rgba(17, 24, 39, 0.72);
-    font-size: 14px;
+    color: var(--muted);
+    font-size: 0.92rem;
+    min-width: 0;
   }
   
-  .ppMeta {
+  .ppMeta{
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    min-width: 0;
   }
   
-  .ppMetaIcon {
+  .ppMetaIcon{
     transform: translateY(1px);
     opacity: 0.9;
   }
   
-  .ppDot {
-    opacity: 0.55;
-  }
+  .ppDot{ opacity: 0.55; }
+  .ppMuted{ color: var(--muted); }
   
-  .ppMuted {
-    color: rgba(17, 24, 39, 0.72);
-  }
-  
-  .ppLinkLike {
+  .ppLinkLike{
     border: none;
     background: transparent;
     padding: 0;
     font: inherit;
-    color: rgba(17, 24, 39, 0.82);
+    color: var(--ink-2);
     text-decoration: underline;
     text-underline-offset: 3px;
     cursor: pointer;
+    min-width: 0;
   }
   
-  .ppHeaderActions {
+  .ppLinkLike:hover{
+    color: var(--ink);
+  }
+  
+  .ppHeaderActions{
     display: flex;
     gap: 10px;
     align-items: center;
     flex-shrink: 0;
   }
   
-  .ppActionBtn {
+  .ppActionBtn{
     height: 44px;
     padding: 0 14px;
-    border-radius: 14px;
-    border: 1px solid rgba(17, 24, 39, 0.10);
+    border-radius: var(--r-md);
+    border: 1px solid var(--border);
     background: rgba(17, 24, 39, 0.04);
-    color: rgba(17, 24, 39, 0.92);
-    font-weight: 780;
-    letter-spacing: -0.01em;
+    color: var(--ink);
+    font-weight: 840;
+    letter-spacing: var(--ls-soft);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+    transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
     user-select: none;
   }
   
-  .ppActionBtn:hover {
+  .ppActionBtn:hover{
     transform: translateY(-1px);
     background: rgba(17, 24, 39, 0.06);
     border-color: rgba(17, 24, 39, 0.16);
   }
   
-  .ppActionBtn:active {
-    transform: translateY(0px);
-  }
+  .ppActionBtn:active{ transform: translateY(0px); }
   
-  .ppActionBtn:disabled {
+  .ppActionBtn:disabled{
     opacity: 0.65;
     cursor: not-allowed;
   }
   
-  .ppActionBtn.isActive {
-    border-color: rgba(255, 56, 92, 0.28);
-    background: rgba(255, 56, 92, 0.08);
-    color: rgba(17, 24, 39, 0.92);
+  .ppActionBtn:focus-visible{
+    outline: none;
+    border-color: var(--accent-border);
+    box-shadow: var(--focus-ring);
+  }
+  
+  .ppActionBtn.isActive{
+    border-color: var(--accent-border);
+    background: var(--accent-soft);
+    color: var(--ink);
   }
   
   /* ---------- Gallery ---------- */
-  .ppGalleryWrap {
-    margin-top: 10px;
-  }
+  .ppGalleryWrap{ margin-top: 10px; }
   
-  .ppGallery {
+  .ppGallery{
     position: relative;
     display: grid;
     grid-template-columns: 1.45fr 0.85fr;
     gap: 12px;
-    border-radius: 22px;
+  
+    border-radius: var(--r-lg);
     overflow: hidden;
+  
     border: 1px solid rgba(17, 24, 39, 0.08);
-    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.08), 0 2px 10px rgba(0, 0, 0, 0.04);
-    background: #fff;
+    box-shadow: var(--shadow-lg);
+    background: rgba(255,255,255,0.96);
   }
   
-  .ppGalleryMain {
+  .ppGalleryMain{
     border: 0;
     padding: 0;
     background: transparent;
@@ -149,14 +153,19 @@
     min-height: 340px;
   }
   
-  .ppGalleryMain img {
+  .ppGalleryMain:focus-visible{
+    outline: none;
+    box-shadow: inset 0 0 0 3px rgba(255,56,92,0.25);
+  }
+  
+  .ppGalleryMain img{
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
   }
   
-  .ppGallerySide {
+  .ppGallerySide{
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
@@ -164,7 +173,7 @@
     background: rgba(17, 24, 39, 0.02);
   }
   
-  .ppGalleryThumb {
+  .ppGalleryThumb{
     border: 0;
     padding: 0;
     background: transparent;
@@ -172,9 +181,21 @@
     overflow: hidden;
     border-radius: 16px;
     border: 1px solid rgba(17, 24, 39, 0.08);
+    transition: transform .12s ease, border-color .12s ease;
   }
   
-  .ppGalleryThumb img {
+  .ppGalleryThumb:hover{
+    transform: translateY(-1px);
+    border-color: rgba(17, 24, 39, 0.16);
+  }
+  
+  .ppGalleryThumb:focus-visible{
+    outline: none;
+    border-color: var(--accent-border);
+    box-shadow: var(--focus-ring);
+  }
+  
+  .ppGalleryThumb img{
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -182,49 +203,60 @@
     aspect-ratio: 4 / 3;
   }
   
-  .ppAllPhotosBtn {
+  .ppAllPhotosBtn{
     position: absolute;
     right: 12px;
     bottom: 12px;
+  
     height: 44px;
     padding: 0 14px;
-    border-radius: 14px;
+    border-radius: var(--r-md);
     border: 1px solid rgba(17, 24, 39, 0.10);
+  
     background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(10px);
-    font-weight: 780;
-    letter-spacing: -0.01em;
+  
+    font-weight: 840;
+    letter-spacing: var(--ls-soft);
     cursor: pointer;
+  
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+  
+    transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
   }
   
-  .ppAllPhotosBtn:hover {
+  .ppAllPhotosBtn:hover{
     transform: translateY(-1px);
     background: rgba(255, 255, 255, 0.98);
     border-color: rgba(17, 24, 39, 0.16);
   }
   
-  .ppGalleryEmpty {
-    border-radius: 22px;
+  .ppAllPhotosBtn:focus-visible{
+    outline: none;
+    border-color: var(--accent-border);
+    box-shadow: var(--focus-ring);
+  }
+  
+  .ppGalleryEmpty{
+    border-radius: var(--r-lg);
     border: 1px solid rgba(17, 24, 39, 0.08);
-    background: #fff;
-    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.06), 0 2px 10px rgba(0, 0, 0, 0.03);
+    background: rgba(255,255,255,0.96);
+    box-shadow: var(--shadow-md);
     padding: 28px;
   }
   
-  .ppGalleryEmptyInner {
+  .ppGalleryEmptyInner{
     display: inline-flex;
     gap: 10px;
     align-items: center;
-    color: rgba(17, 24, 39, 0.72);
-    font-weight: 650;
+    color: var(--muted);
+    font-weight: 720;
   }
   
   /* ---------- Grid ---------- */
-  .ppGrid {
+  .ppGrid{
     margin-top: 18px;
     display: grid;
     grid-template-columns: 1.45fr 0.95fr;
@@ -232,11 +264,9 @@
     align-items: start;
   }
   
-  .ppColLeft {
-    min-width: 0;
-  }
+  .ppColLeft{ min-width: 0; }
   
-  .ppColRight {
+  .ppColRight{
     position: sticky;
     top: 80px;
     align-self: start;
@@ -244,229 +274,234 @@
   }
   
   /* ---------- Sections (Left) ---------- */
-  .ppSection {
-    background: #fff;
-    border-radius: 22px;
+  .ppSection{
+    background: rgba(255,255,255,0.96);
+    border-radius: var(--r-lg);
     border: 1px solid rgba(17, 24, 39, 0.08);
-    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.06), 0 2px 10px rgba(0, 0, 0, 0.03);
+    box-shadow: var(--shadow-md);
     padding: 20px 20px 18px;
     margin-bottom: 18px;
   }
   
-  .ppH2 {
+  .ppH2{
     margin: 0;
-    font-size: 20px;
-    font-weight: 780;
-    letter-spacing: -0.02em;
+    font-size: 1.22rem;
+    font-weight: 850;
+    letter-spacing: var(--ls);
+    color: var(--ink);
   }
   
-  .ppFactsRow {
+  .ppFactsRow{
     margin-top: 12px;
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
   }
   
-  .ppFact {
+  .ppFact{
     display: inline-flex;
     align-items: center;
     gap: 10px;
     padding: 10px 12px;
     border-radius: 14px;
-    border: 1px solid rgba(17, 24, 39, 0.10);
+    border: 1px solid var(--border);
     background: rgba(17, 24, 39, 0.04);
-    font-size: 14px;
-    color: rgba(17, 24, 39, 0.82);
+    font-size: 0.92rem;
+    color: var(--ink-2);
   }
   
-  .ppBadges {
+  .ppBadges{
     margin-top: 12px;
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
   }
   
-  .ppBadge {
+  .ppBadge{
     display: inline-flex;
     align-items: center;
     padding: 8px 12px;
     border-radius: 999px;
-    border: 1px solid rgba(17, 24, 39, 0.10);
+    border: 1px solid var(--border);
     background: rgba(17, 24, 39, 0.04);
-    font-weight: 700;
-    font-size: 13px;
-    color: rgba(17, 24, 39, 0.82);
+    font-weight: 760;
+    font-size: 0.88rem;
+    color: var(--ink-2);
   }
   
-  .ppHighlights {
+  .ppHighlights{
     margin-top: 14px;
     display: grid;
     gap: 10px;
   }
   
-  .ppHighlightItem {
+  .ppHighlightItem{
     display: grid;
     grid-template-columns: 22px 1fr;
     gap: 12px;
     padding: 12px 12px;
     border-radius: 16px;
-    border: 1px solid rgba(17, 24, 39, 0.10);
+    border: 1px solid var(--border);
     background: rgba(17, 24, 39, 0.03);
   }
   
-  .ppHighlightTitle {
-    font-weight: 780;
-    letter-spacing: -0.01em;
+  .ppHighlightTitle{
+    font-weight: 850;
+    letter-spacing: var(--ls-soft);
+    color: var(--ink);
   }
   
-  .ppHighlightDesc {
+  .ppHighlightDesc{
     margin-top: 4px;
-    color: rgba(17, 24, 39, 0.72);
-    font-size: 13.5px;
+    color: var(--muted);
+    font-size: 0.88rem;
     line-height: 1.45;
   }
   
-  .ppDivider {
+  .ppDivider{
     height: 1px;
-    background: rgba(17, 24, 39, 0.10);
+    background: var(--border);
     margin: 16px 0;
   }
   
-  .ppDesc {
+  .ppDesc{
     margin: 0;
-    color: rgba(17, 24, 39, 0.82);
-    font-size: 15px;
+    color: var(--ink-2);
+    font-size: 0.98rem;
     line-height: 1.65;
   }
   
   /* Buttons */
-  .ppOutlineBtn {
+  .ppOutlineBtn{
     margin-top: 12px;
-    height: 48px;
+    height: 44px; /* align with global compact */
     padding: 0 14px;
-    border-radius: 14px;
-    border: 1px solid rgba(17, 24, 39, 0.10);
+    border-radius: var(--r-md);
+    border: 1px solid var(--border);
     background: rgba(17, 24, 39, 0.04);
-    font-weight: 780;
-    letter-spacing: -0.01em;
+    font-weight: 840;
+    letter-spacing: var(--ls-soft);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+    transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
   }
   
-  .ppOutlineBtn:hover {
+  .ppOutlineBtn:hover{
     transform: translateY(-1px);
     background: rgba(17, 24, 39, 0.06);
     border-color: rgba(17, 24, 39, 0.16);
   }
   
-  .ppOutlineBtn:active {
-    transform: translateY(0px);
+  .ppOutlineBtn:focus-visible{
+    outline: none;
+    border-color: var(--accent-border);
+    box-shadow: var(--focus-ring);
   }
   
-  .ppOutlineBtnFull {
-    width: 100%;
-  }
+  .ppOutlineBtn:active{ transform: translateY(0px); }
+  .ppOutlineBtnFull{ width: 100%; }
   
   /* ---------- Amenities ---------- */
-  .ppAmenitiesGrid {
+  .ppAmenitiesGrid{
     margin-top: 14px;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
   }
   
-  .ppAmenity {
+  .ppAmenity{
     display: flex;
     align-items: center;
     gap: 12px;
     padding: 12px 12px;
     border-radius: 16px;
-    border: 1px solid rgba(17, 24, 39, 0.10);
+    border: 1px solid var(--border);
     background: rgba(17, 24, 39, 0.03);
-    color: rgba(17, 24, 39, 0.82);
+    color: var(--ink-2);
   }
   
-  .ppTinyHint {
+  .ppTinyHint{
     margin-top: 10px;
     color: rgba(17, 24, 39, 0.58);
-    font-size: 12.5px;
+    font-size: 0.86rem;
   }
   
   /* ---------- Reviews summary ---------- */
-  .ppReviewSummary {
+  .ppReviewSummary{
     margin-top: 14px;
     display: grid;
     gap: 12px;
   }
   
-  .ppReviewScore {
+  .ppReviewScore{
     padding: 14px 14px;
     border-radius: 18px;
-    border: 1px solid rgba(17, 24, 39, 0.10);
+    border: 1px solid var(--border);
     background: rgba(17, 24, 39, 0.03);
   }
   
-  .ppBigScore {
+  .ppBigScore{
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    font-size: 28px;
-    font-weight: 780;
-    letter-spacing: -0.02em;
+    font-size: 1.7rem;
+    font-weight: 850;
+    letter-spacing: var(--ls);
+    color: var(--ink);
   }
   
-  .ppScoreLaurel {
+  .ppScoreLaurel{
     font-size: 18px;
     transform: translateY(-2px);
   }
   
-  .ppReviewNote {
+  .ppReviewNote{
     display: grid;
     grid-template-columns: 22px 1fr;
     gap: 12px;
     padding: 14px 14px;
     border-radius: 18px;
-    border: 1px solid rgba(17, 24, 39, 0.10);
+    border: 1px solid var(--border);
     background: rgba(17, 24, 39, 0.03);
   }
   
-  .ppEmptyBlock {
+  .ppEmptyBlock{
     margin-top: 14px;
     padding: 16px;
     border-radius: 18px;
-    border: 1px solid rgba(17, 24, 39, 0.10);
+    border: 1px solid var(--border);
     background: rgba(17, 24, 39, 0.03);
   }
   
-  .ppEmptyTitle {
-    font-weight: 780;
+  .ppEmptyTitle{
+    font-weight: 850;
     margin-bottom: 6px;
+    color: var(--ink);
   }
   
   /* ---------- Map ---------- */
-  .ppMapWrap {
+  .ppMapWrap{
     margin-top: 12px;
-    border-radius: 22px;
+    border-radius: var(--r-lg);
     overflow: hidden;
     border: 1px solid rgba(17, 24, 39, 0.08);
-    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.06), 0 2px 10px rgba(0, 0, 0, 0.03);
-    background: #fff;
+    box-shadow: var(--shadow-md);
+    background: rgba(255,255,255,0.96);
     position: relative;
   }
   
-  .ppMapWrap iframe {
+  .ppMapWrap iframe{
     width: 100%;
     height: 320px;
     border: 0;
     display: block;
   }
   
-  .ppMapOverlayNote {
+  .ppMapOverlayNote{
     position: absolute;
     left: 12px;
     bottom: 12px;
@@ -475,165 +510,171 @@
     border: 1px solid rgba(17, 24, 39, 0.10);
     background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(10px);
-    font-size: 12px;
-    color: rgba(17, 24, 39, 0.72);
+    font-size: 0.82rem;
+    color: var(--muted);
   }
   
-  /* ---------- Right card (Booking/Contact) ---------- */
-  .ppBookingCard {
-    background: #fff;
-    border-radius: 22px;
+  /* ---------- Right card (Contact) ---------- */
+  .ppBookingCard{
+    background: rgba(255,255,255,0.96);
+    border-radius: var(--r-lg);
     border: 1px solid rgba(17, 24, 39, 0.08);
-    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.08), 0 2px 10px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--shadow-lg);
     padding: 18px 18px 16px;
   }
   
-  .ppBookingTop {
-    padding-bottom: 14px;
-  }
+  .ppBookingTop{ padding-bottom: 14px; }
   
-  .ppPriceRow {
+  .ppPriceRow{
     display: flex;
     align-items: baseline;
     gap: 10px;
   }
   
-  .ppPrice {
-    font-size: 26px;
-    font-weight: 780;
-    letter-spacing: -0.02em;
+  .ppPrice{
+    font-size: 1.55rem;
+    font-weight: 850;
+    letter-spacing: var(--ls);
+    color: var(--ink);
   }
   
-  .ppBookingRating {
+  .ppBookingRating{
     margin-top: 10px;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    color: rgba(17, 24, 39, 0.72);
-    font-size: 14px;
+    color: var(--muted);
+    font-size: 0.92rem;
   }
   
-  .ppContactBlock {
+  .ppContactBlock{
     margin-top: 8px;
     padding: 14px;
     border-radius: 18px;
-    border: 1px solid rgba(17, 24, 39, 0.10);
+    border: 1px solid var(--border);
     background: rgba(17, 24, 39, 0.03);
   }
   
-  .ppContactTitle {
-    font-weight: 780;
-    letter-spacing: -0.01em;
+  .ppContactTitle{
+    font-weight: 850;
+    letter-spacing: var(--ls-soft);
+    color: var(--ink);
   }
   
-  .ppContactSubtitle {
+  .ppContactSubtitle{
     margin-top: 8px;
-    color: rgba(17, 24, 39, 0.72);
-    font-size: 13.5px;
+    color: var(--muted);
+    font-size: 0.88rem;
     line-height: 1.45;
   }
   
-  .ppContactButtons {
+  .ppContactButtons{
     margin-top: 14px;
     display: grid;
     gap: 10px;
   }
   
-  .ppPrimaryBtn {
-    height: 48px;
-    border-radius: 14px;
-    border: 1px solid rgba(17, 24, 39, 0.10);
+  .ppPrimaryBtn{
+    height: 44px; /* compact */
+    border-radius: var(--r-md);
+    border: 1px solid var(--border);
     background: rgba(17, 24, 39, 0.04);
-    font-weight: 780;
-    letter-spacing: -0.01em;
+    font-weight: 840;
+    letter-spacing: var(--ls-soft);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+    transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
     text-decoration: none;
-    color: rgba(17, 24, 39, 0.92);
+    color: var(--ink);
   }
   
-  .ppPrimaryBtn:hover {
+  .ppPrimaryBtn:hover{
     transform: translateY(-1px);
     background: rgba(17, 24, 39, 0.06);
     border-color: rgba(17, 24, 39, 0.16);
   }
   
-  .ppPrimaryBtn:active {
-    transform: translateY(0px);
+  .ppPrimaryBtn:focus-visible{
+    outline: none;
+    border-color: var(--accent-border);
+    box-shadow: var(--focus-ring);
   }
   
-  .ppPrimaryBtnSolid {
-    background: #ff385c;
+  .ppPrimaryBtn:active{ transform: translateY(0px); }
+  
+  .ppPrimaryBtnSolid{
+    background: var(--accent);
     border-color: rgba(255, 56, 92, 0.35);
-    color: #fff;
+    color: rgba(255,255,255,0.96);
     box-shadow: 0 10px 18px rgba(255, 56, 92, 0.18);
   }
   
-  .ppPrimaryBtnSolid:hover {
-    background: #ff2b52;
-  }
+  .ppPrimaryBtnSolid:hover{ background: var(--accent-hover); }
   
-  .ppGhostBtn {
-    height: 48px;
-    border-radius: 14px;
-    border: 1px solid rgba(17, 24, 39, 0.10);
+  .ppGhostBtn{
+    height: 44px; /* compact */
+    border-radius: var(--r-md);
+    border: 1px solid var(--border);
     background: rgba(255, 255, 255, 0.92);
-    font-weight: 780;
-    letter-spacing: -0.01em;
+    font-weight: 840;
+    letter-spacing: var(--ls-soft);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+    transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
     text-decoration: none;
-    color: rgba(17, 24, 39, 0.92);
+    color: var(--ink);
   }
   
-  .ppGhostBtn:hover {
+  .ppGhostBtn:hover{
     transform: translateY(-1px);
     background: rgba(255, 255, 255, 0.98);
     border-color: rgba(17, 24, 39, 0.16);
   }
   
-  .ppContactHint {
+  .ppGhostBtn:focus-visible{
+    outline: none;
+    border-color: var(--accent-border);
+    box-shadow: var(--focus-ring);
+  }
+  
+  .ppContactHint{
     margin-top: 12px;
     display: flex;
     gap: 10px;
     align-items: flex-start;
     color: rgba(17, 24, 39, 0.62);
-    font-size: 12.5px;
+    font-size: 0.86rem;
     line-height: 1.45;
   }
   
-  .ppBookingDivider {
+  .ppBookingDivider{
     height: 1px;
-    background: rgba(17, 24, 39, 0.10);
+    background: var(--border);
     margin: 16px 0;
   }
   
-  .ppMiniRecap {
+  .ppMiniRecap{
     display: grid;
     gap: 10px;
-    color: rgba(17, 24, 39, 0.82);
-    font-size: 14px;
+    color: var(--ink-2);
+    font-size: 0.92rem;
   }
   
-  .ppMiniRow {
+  .ppMiniRow{
     display: flex;
     justify-content: space-between;
     gap: 14px;
   }
   
-  .ppMiniRow b {
-    font-weight: 780;
-  }
+  .ppMiniRow b{ font-weight: 850; color: var(--ink); }
   
   /* ---------- Modal ---------- */
-  .ppModalOverlay {
+  .ppModalOverlay{
     position: fixed;
     inset: 0;
     z-index: 80;
@@ -642,7 +683,7 @@
     padding: 18px;
   }
   
-  .ppModalBackdrop {
+  .ppModalBackdrop{
     position: fixed;
     inset: 0;
     background: rgba(17, 24, 39, 0.55);
@@ -650,60 +691,60 @@
     cursor: pointer;
   }
   
-  .ppModal {
+  .ppModal{
     position: relative;
     z-index: 81;
     width: min(980px, calc(100vw - 28px));
-    background: #fff;
-    border-radius: 22px;
+    background: rgba(255,255,255,0.98);
+    border-radius: var(--r-lg);
     border: 1px solid rgba(17, 24, 39, 0.08);
     box-shadow: 0 22px 60px rgba(0, 0, 0, 0.16);
     overflow: hidden;
   }
   
-  .ppModal-lg {
-    width: min(860px, calc(100vw - 28px));
-  }
+  .ppModal-lg{ width: min(860px, calc(100vw - 28px)); }
+  .ppModal-xl{ width: min(1100px, calc(100vw - 28px)); }
   
-  .ppModal-xl {
-    width: min(1100px, calc(100vw - 28px));
-  }
-  
-  .ppModalClose {
+  .ppModalClose{
     position: absolute;
     top: 12px;
     right: 12px;
     width: 42px;
     height: 42px;
-    border-radius: 14px;
-    border: 1px solid rgba(17, 24, 39, 0.10);
+    border-radius: var(--r-md);
+    border: 1px solid var(--border);
     background: rgba(17, 24, 39, 0.04);
     cursor: pointer;
     display: grid;
     place-items: center;
-    transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+    transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
   }
   
-  .ppModalClose:hover {
+  .ppModalClose:hover{
     transform: translateY(-1px);
     background: rgba(17, 24, 39, 0.06);
     border-color: rgba(17, 24, 39, 0.16);
   }
   
-  .ppModalTitle {
+  .ppModalClose:focus-visible{
+    outline: none;
+    border-color: var(--accent-border);
+    box-shadow: var(--focus-ring);
+  }
+  
+  .ppModalTitle{
     margin: 0;
     padding: 18px 18px 0;
-    font-size: 20px;
-    font-weight: 780;
-    letter-spacing: -0.02em;
+    font-size: 1.22rem;
+    font-weight: 850;
+    letter-spacing: var(--ls);
+    color: var(--ink);
   }
   
-  .ppModalBody {
-    padding: 18px;
-  }
+  .ppModalBody{ padding: 18px; }
   
   /* Photo modal */
-  .ppPhotoModalHeader {
+  .ppPhotoModalHeader{
     display: flex;
     align-items: baseline;
     justify-content: space-between;
@@ -711,26 +752,26 @@
     margin-bottom: 14px;
   }
   
-  .ppPhotoModalTitle {
-    font-size: 20px;
-    font-weight: 780;
-    letter-spacing: -0.02em;
+  .ppPhotoModalTitle{
+    font-size: 1.22rem;
+    font-weight: 850;
+    letter-spacing: var(--ls);
   }
   
-  .ppPhotoGrid {
+  .ppPhotoGrid{
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 12px;
   }
   
-  .ppPhotoCell {
+  .ppPhotoCell{
     border-radius: 18px;
     overflow: hidden;
     border: 1px solid rgba(17, 24, 39, 0.08);
-    background: #fff;
+    background: rgba(255,255,255,0.96);
   }
   
-  .ppPhotoCell img {
+  .ppPhotoCell img{
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -738,38 +779,35 @@
   }
   
   /* Amenity modal list */
-  .ppAmenityList {
-    display: grid;
-    gap: 10px;
-  }
+  .ppAmenityList{ display: grid; gap: 10px; }
   
-  .ppAmenityRow {
+  .ppAmenityRow{
     display: flex;
     align-items: center;
     gap: 12px;
     padding: 12px 12px;
     border-radius: 16px;
-    border: 1px solid rgba(17, 24, 39, 0.10);
+    border: 1px solid var(--border);
     background: rgba(17, 24, 39, 0.03);
   }
   
   /* Full description modal */
-  .ppFullDesc p {
+  .ppFullDesc p{
     margin: 0;
-    color: rgba(17, 24, 39, 0.82);
-    font-size: 15px;
+    color: var(--ink-2);
+    font-size: 0.98rem;
     line-height: 1.7;
   }
   
-  .ppFullDescMeta {
+  .ppFullDescMeta{
     margin-top: 14px;
     display: grid;
     gap: 10px;
-    color: rgba(17, 24, 39, 0.72);
-    font-size: 14px;
+    color: var(--muted);
+    font-size: 0.92rem;
   }
   
-  .ppFullDescLine {
+  .ppFullDescLine{
     display: inline-flex;
     align-items: center;
     gap: 10px;
@@ -779,8 +817,8 @@
   .ppSkeletonTitle,
   .ppSkeletonGallery,
   .ppSkeletonBlock,
-  .ppSkeletonCard {
-    border-radius: 22px;
+  .ppSkeletonCard{
+    border-radius: var(--r-lg);
     border: 1px solid rgba(17, 24, 39, 0.08);
     background: linear-gradient(
       90deg,
@@ -792,150 +830,186 @@
     animation: ppShimmer 1.2s infinite;
   }
   
-  .ppSkeletonTitle {
+  .ppSkeletonTitle{
     height: 48px;
     width: min(680px, 100%);
     margin-bottom: 14px;
   }
   
-  .ppSkeletonGallery {
+  .ppSkeletonGallery{
     height: 420px;
     width: 100%;
     margin-bottom: 18px;
   }
   
-  .ppSkeletonBlock {
+  .ppSkeletonBlock{
     height: 220px;
     width: 100%;
     margin-bottom: 18px;
   }
   
-  .ppSkeletonCard {
+  .ppSkeletonCard{
     height: 320px;
     width: 100%;
   }
   
-  @keyframes ppShimmer {
+  @keyframes ppShimmer{
     0% { background-position: 0% 0; }
     100% { background-position: 200% 0; }
   }
   
-  .ppErrorCard {
-    background: #fff;
-    border-radius: 22px;
+  .ppErrorCard{
+    background: rgba(255,255,255,0.96);
+    border-radius: var(--r-lg);
     border: 1px solid rgba(17, 24, 39, 0.08);
-    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.06), 0 2px 10px rgba(0, 0, 0, 0.03);
+    box-shadow: var(--shadow-md);
     padding: 22px;
   }
   
-  .ppErrorCard h2 {
+  .ppErrorCard h2{
     margin: 0 0 8px;
-    font-size: 20px;
-    font-weight: 780;
-    letter-spacing: -0.02em;
+    font-size: 1.22rem;
+    font-weight: 850;
+    letter-spacing: var(--ls);
   }
   
-  .ppErrorCard p {
+  .ppErrorCard p{
     margin: 0;
-    color: rgba(17, 24, 39, 0.72);
+    color: var(--muted);
     line-height: 1.6;
   }
   
-  /* ---------- Responsive ---------- */
-  @media (max-width: 980px) {
-    .ppGrid { grid-template-columns: 1fr; }
-    .ppColRight { position: static; }
-    .ppGallery { grid-template-columns: 1fr; }
-    .ppGallerySide { grid-template-columns: repeat(4, 1fr); }
-    .ppGalleryMain { min-height: 300px; }
-  }
-  
-  @media (max-width: 560px) {
-    .ppTitle { font-size: 30px; }
-    .ppSection { padding: 16px; }
-    .ppBookingCard { padding: 16px; }
-    .ppPhotoGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .ppAmenitiesGrid { grid-template-columns: 1fr; }
-    .ppGallerySide { grid-template-columns: repeat(2, 1fr); }
-  }
-  
   /* =========================
-   PropertyPage Header — responsive fix (no structure changes)
-   ========================= */
-
-/* 1) Breakpoint: tablete/mobil */
-@media (max-width: 860px) {
-  .ppHeader{
-    flex-direction: column;
-    align-items: stretch;
-    gap: 14px;
+     RESPONSIVE
+     ========================= */
+  
+  /* 1) <= 980px: 1 col + gallery vertical */
+  @media (max-width: 980px){
+    .ppGrid{ grid-template-columns: 1fr; }
+    .ppColRight{ position: static; top: auto; }
+    .ppGallery{ grid-template-columns: 1fr; }
+    .ppGallerySide{ grid-template-columns: repeat(4, 1fr); }
+    .ppGalleryMain{ min-height: 300px; }
   }
-
-  .ppHeaderActions{
-    width: 100%;
-    justify-content: space-between;
-    gap: 10px;
+  
+  /* 2) <= 860px: header stack (your fix, kept & tokenized) */
+  @media (max-width: 860px){
+    .ppHeader{
+      flex-direction: column;
+      align-items: stretch;
+      gap: 14px;
+    }
+  
+    .ppHeaderActions{
+      width: 100%;
+      justify-content: space-between;
+      gap: 10px;
+    }
+  
+    .ppActionBtn{
+      flex: 1 1 0;
+      justify-content: center;
+      min-width: 0;
+      height: 44px;
+      padding: 0 12px;
+    }
+  
+    .ppActionBtn span{
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 12ch;
+    }
+  
+    .ppTitle{
+      font-size: 30px;
+      line-height: 1.08;
+    }
+  
+    .ppMetaRow{ gap: 8px; }
   }
-
-  /* butoane egale, să nu se înghesuie */
-  .ppActionBtn{
-    flex: 1 1 0;
-    justify-content: center;
-    min-width: 0;
-    height: 44px;
-    padding: 0 12px;
+  
+  /* 3) <= 560px: compact */
+  @media (max-width: 560px){
+    .ppTitle{ font-size: 28px; }
+  
+    .ppSection{ padding: 16px; }
+    .ppBookingCard{ padding: 16px; }
+  
+    .ppPhotoGrid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ppAmenitiesGrid{ grid-template-columns: 1fr; }
+  
+    .ppGallerySide{ grid-template-columns: repeat(2, 1fr); }
+  
+    .ppAllPhotosBtn{
+      height: 42px;
+      padding: 0 12px;
+      gap: 8px;
+    }
+  
+    .ppMapWrap iframe{ height: 280px; }
   }
-
-  /* textul din butoane să nu rupă layout-ul */
-  .ppActionBtn span{
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 12ch;
+  
+  /* 4) <= 480px: (your fix) + tighter container */
+  @media (max-width: 480px){
+    .ppContainer{ padding: 18px 12px 44px; }
+  
+    .ppTitle{ font-size: 26px; }
+  
+    .ppActionBtn{
+      height: 42px;
+      padding: 0 10px;
+      gap: 8px;
+    }
+  
+    .ppActionBtn span{ max-width: 9ch; }
   }
-
-  /* title mai mic un pic */
-  .ppTitle{
-    font-size: 30px;
-    line-height: 1.08;
+  
+  /* 5) <= 430px: Galaxy S24 / small phones */
+  @media (max-width: 430px){
+    .ppContainer{ padding: 16px 10px 40px; }
+  
+    .ppTitle{ font-size: 24px; }
+  
+    .ppGallery{
+      border-radius: 18px;
+      gap: 10px;
+    }
+  
+    .ppGallerySide{ padding: 8px; gap: 8px; }
+  
+    .ppGalleryMain{ min-height: 240px; }
+  
+    .ppSection,
+    .ppBookingCard,
+    .ppMapWrap,
+    .ppGalleryEmpty{
+      border-radius: 18px;
+    }
+  
+    .ppOutlineBtn,
+    .ppPrimaryBtn,
+    .ppGhostBtn{
+      height: 44px;
+      width: 100%;
+    }
+  
+    .ppContactButtons{
+      grid-template-columns: 1fr;
+    }
+  
+    .ppMapWrap iframe{ height: 240px; }
+  
+    .ppAllPhotosBtn{
+      right: 10px;
+      bottom: 10px;
+    }
   }
-
-  /* meta pe 2 rânduri ok */
-  .ppMetaRow{
-    gap: 8px;
+  
+  /* 6) <= 360px: very small phones */
+  @media (max-width: 360px){
+    .ppTitle{ font-size: 22px; }
+    .ppGalleryMain{ min-height: 210px; }
+    .ppMetaRow{ font-size: 0.88rem; }
   }
-}
-
-/* 2) Breakpoint: mobil mic */
-@media (max-width: 480px) {
-  .ppContainer{
-    padding: 18px 12px 44px;
-  }
-
-  .ppTitle{
-    font-size: 26px;
-  }
-
-  /* arată doar icon + text scurt (fără să schimbi JSX) */
-  .ppActionBtn{
-    height: 42px;
-    padding: 0 10px;
-    gap: 8px;
-  }
-
-  .ppActionBtn span{
-    max-width: 9ch;
-  }
-}
-
-/* 3) Bonus: dacă meta-ul devine prea lung (locație mare) */
-.ppMetaRow{
-  min-width: 0;
-}
-.ppMeta{
-  min-width: 0;
-}
-.ppMeta button.ppLinkLike,
-.ppMetaRow .ppMeta{
-  max-width: 100%;
-}
+  

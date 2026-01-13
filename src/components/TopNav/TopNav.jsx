@@ -2,7 +2,8 @@
 import React, { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./TopNav.css";
-import { User } from "lucide-react";
+import { useAuthStore } from "../../stores/authStore";
+import { Menu, X } from "lucide-react";
 
 
 function formatPlan(plan) {
@@ -20,10 +21,8 @@ function formatSubStatus(s) {
 
 const TABS = [
   { label: "Panou", path: "/host/dashboard" },
-
   { label: "Activitate", path: "/host/activity" },
   { label: "Adaugă", path: "/host/add" },
-
   { label: "Proprietăți", path: "/host/listings" },
   { label: "Rapoarte", path: "/host/reports" },
 ];
@@ -32,14 +31,19 @@ export default function TopNav({
   user,
   onOpenHostProfile,
   subscription,
-  onOpenSettings = () => {},
+  onOpenSettings, // optional override
   onOpenBilling = () => {},
   onUpgrade = () => {},
-  onLogout = () => {},
 }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuthStore();
+
+  const handleOpenSettings = () => {
+    if (typeof onOpenSettings === "function") return onOpenSettings();
+    navigate("/host/settings");
+  };
 
   const activeLabel = useMemo(() => {
     const hit = TABS.find((t) => location.pathname.startsWith(t.path));
@@ -66,9 +70,7 @@ export default function TopNav({
           role="button"
           tabIndex={0}
         >
-          <div className="tnLogo" aria-hidden="true">
-            ▲
-          </div>
+          <div className="tnLogo" aria-hidden="true">▲</div>
           <div className="tnBrandText">BucovinaStay</div>
         </div>
 
@@ -110,13 +112,14 @@ export default function TopNav({
           </button>
 
           <button
-            className="tnIconBtn"
-            type="button"
-            aria-label="Setări"
-            onClick={onOpenSettings}
-          >
-            ⚙️
-          </button>
+  className="tnIconBtn tnTabsBtn"
+  type="button"
+  aria-label="Meniu"
+  onClick={() => setOpen((v) => !v)}
+>
+  {open ? <X size={18} /> : <Menu size={18} />}
+</button>
+
 
           <div className="tnProfile">
             <button
@@ -143,6 +146,25 @@ export default function TopNav({
                       {plan} • {sub.label}
                     </div>
                   </div>
+                  <div className="tnMenuList">
+  {TABS.map((t) => (
+    <button
+      key={t.path}
+      className={`tnMenuItem ${location.pathname.startsWith(t.path) ? "isActive" : ""}`}
+      type="button"
+      onClick={() => {
+        setOpen(false);
+        navigate(t.path);
+      }}
+    >
+      {t.label}
+      <span className="tnMenuArrow">›</span>
+    </button>
+  ))}
+</div>
+
+<div className="tnMenuSep" />
+
 
                   <button
                     className="tnMenuItem"
@@ -154,12 +176,13 @@ export default function TopNav({
                   >
                     Abonament & facturare
                   </button>
+
                   <button
                     className="tnMenuItem"
                     type="button"
                     onClick={() => {
                       setOpen(false);
-                      onOpenSettings();
+                      handleOpenSettings();
                     }}
                   >
                     Setări
@@ -176,15 +199,16 @@ export default function TopNav({
                   >
                     Profil gazdă
                   </button>
+
                   <div className="tnMenuSep" />
-                  
 
                   <button
                     className="tnMenuItem danger"
                     type="button"
                     onClick={() => {
                       setOpen(false);
-                      onLogout();
+                      logout();
+                      navigate("/");
                     }}
                   >
                     Deconectare

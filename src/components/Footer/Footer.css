@@ -1,42 +1,77 @@
-.site-footer {
-    background: var(--color-bg-soft);
-    border-top: 1px solid var(--color-bg-card);
-    margin-top: var(--space-xl);
+.site-footer{
+  margin-top: var(--space-xl);
+  padding: var(--space-lg) 0;
+
+  background: rgba(255,255,255,0.92);
+  border-top: 1px solid var(--border-2);
+}
+
+.footer-inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: var(--space-md);
+}
+
+.footer-text{
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  font-weight: 700;
+  letter-spacing: var(--ls-soft);
+}
+
+.footer-links{
+  display:flex;
+  align-items:center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.footer-links a{
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  font-weight: 800;
+  letter-spacing: var(--ls-soft);
+
+  padding: 8px 10px;
+  border-radius: 999px;
+
+  transition: background .12s ease, color .12s ease, transform .12s ease;
+}
+
+.footer-links a:hover{
+  color: var(--ink);
+  background: rgba(17,24,39,0.04);
+  transform: translateY(-1px);
+}
+
+.footer-links a:focus-visible{
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border: 1px solid var(--accent-border);
+}
+
+/* Responsive */
+@media (max-width: 720px){
+  .footer-inner{
+    flex-direction: column;
+    text-align: center;
   }
-  
-  .footer-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: var(--space-md);
-    padding-bottom: var(--space-md);
-    gap: var(--space-md);
+
+  .footer-links{
+    justify-content: center;
+    gap: 10px;
   }
-  
-  .footer-text {
-    font-size: 0.9rem;
-    color: var(--color-text-secondary);
+}
+
+/* Small mobile */
+@media (max-width: 430px){
+  .site-footer{
+    padding: var(--space-md) 0;
   }
-  
-  .footer-links {
-    display: flex;
-    gap: var(--space-md);
+  .footer-text,
+  .footer-links a{
+    font-size: 12.5px;
   }
-  
-  .footer-links a {
-    font-size: 0.9rem;
-    color: var(--color-text-secondary);
-  }
-  
-  .footer-links a:hover {
-    color: var(--color-primary);
-  }
-  
-  /* Responsive */
-  @media (max-width: 720px) {
-    .footer-inner {
-      flex-direction: column;
-      text-align: center;
-    }
-  }
-  
+}

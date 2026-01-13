@@ -8,11 +8,11 @@ export default function Footer() {
           © {new Date().getFullYear()} BucovinaStay. Toate drepturile rezervate.
         </p>
 
-        <div className="footer-links">
+        <nav className="footer-links">
           <a href="/about">Despre</a>
           <a href="/contact">Contact</a>
           <a href="/terms">Termeni</a>
-        </div>
+        </nav>
       </div>
     </footer>
   );

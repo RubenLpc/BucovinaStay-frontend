@@ -1,0 +1,407 @@
+/* client/src/components/AdminTopNav/AdminTopNav.css */
+
+/* =========================================================
+   AdminTopNav — One-line mobile + dropdown tabs
+   Keeps dark navy background + role pill
+   ========================================================= */
+
+   .atnWrap{
+    position: sticky;
+    top: 0;
+    z-index: 80;
+    padding: var(--space-lg) var(--space-lg) 0;
+    background: transparent;
+    padding-top: calc(var(--space-lg) + env(safe-area-inset-top, 0px));
+  }
+  
+  .atnInner{
+    border-radius: 22px;
+    padding: 10px 12px;
+  
+    background: rgba(16, 18, 28, 0.86);
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: 0 18px 50px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.04);
+  
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  }
+  
+  /* ✅ One line layout */
+  .atnInnerOneLine{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  
+  /* BRAND */
+  .atnBrand{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    cursor:pointer;
+    min-width: 0;
+  }
+  
+  .atnLogo{
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+    display:grid;
+    place-items:center;
+  
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.16), rgba(255,255,255,0.06));
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.92);
+  }
+  
+  .atnBrandText{
+    color: rgba(255,255,255,0.94);
+    font-weight: 950;
+    letter-spacing: var(--ls-soft);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1.02rem;
+  }
+  
+  .atnBrandDim{
+    opacity: 0.82;
+    font-weight: 850;
+  }
+  
+  /* DESKTOP CENTER TABS */
+  .atnCenterDesktop{
+    flex: 1;
+    display:flex;
+    justify-content:center;
+    min-width: 0;
+  }
+  
+  .atnPill{
+    display:flex;
+    align-items:center;
+    gap: 6px;
+    padding: 6px;
+    border-radius: 999px;
+  
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+  
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .atnPill::-webkit-scrollbar{ display:none; }
+  
+  .atnTab{
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 0;
+    background: transparent;
+  
+    color: rgba(255,255,255,0.72);
+    font-weight: 900;
+    font-size: 13px;
+    letter-spacing: 0.2px;
+  
+    cursor:pointer;
+    user-select:none;
+  
+    transition: background .12s ease, color .12s ease, transform .12s ease;
+  }
+  
+  .atnTab:hover{
+    color: rgba(255,255,255,0.96);
+    transform: translateY(-1px);
+  }
+  
+  .atnTab.isActive{
+    background: rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.98);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06);
+    transform: none;
+  }
+  
+  /* RIGHT ICONS */
+  .atnRight{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  
+  /* Role pill stays top */
+  .atnRolePill{
+    height: 40px;
+    padding: 0 12px;
+    border-radius: 999px;
+  
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.06);
+  
+    display:inline-flex;
+    align-items:center;
+    gap: 10px;
+  
+    color: rgba(255,255,255,0.92);
+    cursor:pointer;
+  
+    font-weight: 950;
+    font-size: 12.5px;
+    letter-spacing: 0.2px;
+  
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    white-space: nowrap;
+  }
+  .atnRolePill:hover{
+    transform: translateY(-1px);
+    background: rgba(255,255,255,0.09);
+    border-color: rgba(255,255,255,0.18);
+  }
+  .atnRolePill:active{ transform: translateY(0px); }
+  
+  .atnRoleLbl{ opacity: 0.85; }
+  .atnRoleVal{ opacity: 0.98; }
+  .atnDotSep{
+    width: 5px;
+    height: 5px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.28);
+  }
+  
+  /* Icon buttons */
+  .atnIconBtn{
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+  
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.92);
+  
+    cursor:pointer;
+    display:grid;
+    place-items:center;
+  
+    position: relative;
+  
+    transition: transform .12s ease, background .12s ease, border-color .12s ease;
+  }
+  .atnIconBtn:hover{
+    transform: translateY(-1px);
+    background: rgba(255,255,255,0.09);
+    border-color: rgba(255,255,255,0.18);
+  }
+  .atnIconBtn:active{ transform: translateY(0px); }
+  
+  .atnNotifDot{
+    position:absolute;
+    top: 10px;
+    right: 12px;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(255,56,92,0.18);
+  }
+  
+  /* Avatar */
+  .atnProfile{ position: relative; }
+  .atnAvatarBtn{ border:0; padding:0; background:transparent; cursor:pointer; }
+  .atnAvatar{
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    display:grid;
+    place-items:center;
+  
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.16);
+    color: rgba(255,255,255,0.96);
+  
+    font-weight: 950;
+    font-size: 12px;
+    letter-spacing: 0.4px;
+  }
+  
+  /* Backdrop + Menu panel */
+  .atnBackdrop{
+    position: fixed;
+    inset: 0;
+    border: 0;
+    background: transparent;
+  }
+  
+  .atnMenu{
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px);
+    width: 280px;
+  
+    border-radius: 16px;
+    padding: 10px;
+  
+    background: rgba(16,18,28,0.94);
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 24px 70px rgba(0,0,0,0.55);
+  
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  
+  .atnMenuHead{
+    padding: 10px 10px 12px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 8px;
+  }
+  
+  .atnMenuHeadTop{
+    display:flex;
+    justify-content:flex-start;
+    margin-bottom: 10px;
+  }
+  
+  .atnRoleChip{
+    display:inline-flex;
+    align-items:center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.92);
+    font-weight: 900;
+    font-size: 12px;
+  }
+  .atnRoleChipDot{
+    width: 5px;
+    height: 5px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.25);
+  }
+  .atnRoleChip b{ color: rgba(255,255,255,0.98); }
+  
+  .atnMenuName{
+    color: rgba(255,255,255,0.96);
+    font-weight: 950;
+    font-size: 13px;
+  }
+  .atnMenuMeta{
+    margin-top: 4px;
+    color: rgba(255,255,255,0.70);
+    font-size: 12px;
+    font-weight: 800;
+  }
+  
+  .atnMenuList{
+    display:grid;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .atnMenuItem{
+    width: 100%;
+    height: 42px;
+    border-radius: 14px;
+  
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.90);
+  
+    cursor:pointer;
+    text-align:left;
+    padding: 0 12px;
+  
+    font-weight: 850;
+    font-size: 12.5px;
+  
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  
+    transition: transform .12s ease, background .12s ease, border-color .12s ease;
+  }
+  .atnMenuItem:hover{
+    transform: translateY(-1px);
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.14);
+  }
+  .atnMenuItem:active{ transform: translateY(0px); }
+  
+  .atnMenuItem.isActive{
+    border-color: rgba(255,56,92,0.28);
+    background: rgba(255,56,92,0.12);
+  }
+  
+  .atnMenuArrow{ margin-left: auto; opacity: 0.85; }
+  
+  .atnMenuSep{
+    height: 1px;
+    margin: 10px 6px;
+    background: rgba(255,255,255,0.10);
+  }
+  
+  .atnMenuItem.danger{
+    color: rgba(255,170,170,0.96);
+  }
+  
+  /* =========================================================
+     RESPONSIVE
+     ========================================================= */
+  
+  /* Tablet */
+  @media (max-width: 900px){
+    .atnWrap{
+      padding: var(--space-md) var(--space-md) 0;
+      padding-top: calc(var(--space-md) + env(safe-area-inset-top, 0px));
+    }
+    .atnRolePill{
+      display: none;
+    }
+  }
+  
+  /* ✅ Mobile: hide center tabs, keep single-line right */
+  @media (max-width: 620px){
+    .atnCenterDesktop{ display:none; }
+    
+
+    .atnWrap{
+      padding: 12px 12px 0;
+      padding-top: calc(12px + env(safe-area-inset-top, 0px));
+    }
+  
+    .atnInner{
+      border-radius: 20px;
+      padding: 10px;
+    }
+  
+    .atnLogo,
+    .atnIconBtn,
+    .atnAvatar{
+      width: 38px;
+      height: 38px;
+    }
+  
+    .atnBrandText{
+      font-size: 0.98rem;
+      max-width: 44vw; /* brand nu sparge layout-ul */
+    }
+  
+    .atnMenu{
+      width: min(92vw, 340px);
+    }
+  }
+  
+  /* Very small: simplifică role pill */
+  @media (max-width: 380px){
+    .atnRoleLbl{ display:none; }
+    .atnRolePill{ padding: 0 10px; gap: 8px; }
+    .atnBrandText{ max-width: 40vw; }
+  }
+  

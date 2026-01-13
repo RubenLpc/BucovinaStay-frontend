@@ -1,60 +1,76 @@
-/* client/src/components/TopNav/TopNav.css */
+/* =========================================================
+   TopNav — upgraded to match AdminTopNav style
+   File: client/src/components/TopNav/TopNav.css
+   Keeps your classnames (.tn*) so JSX stays the same.
+   ========================================================= */
 
-.tnWrap{
+   .tnWrap{
     position: sticky;
     top: 0;
-    z-index: 50;
-    padding: 18px 18px 0;
+    z-index: 80;
+    padding: var(--space-lg) var(--space-lg) 0;
     background: transparent;
+    padding-top: calc(var(--space-lg) + env(safe-area-inset-top, 0px));
   }
   
+  /* same “glass navy” panel like AdminTopNav */
   .tnInner{
-    height: 64px;
-    border-radius: 18px;
+    height: auto;
+    border-radius: 22px;
     padding: 10px 12px;
-    display: grid;
-    grid-template-columns: 220px 1fr auto;
+  
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
     gap: 12px;
   
-    background: rgba(10,10,12,0.82);
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow:
-      0 18px 50px rgba(0,0,0,0.55),
-      inset 0 1px 0 rgba(255,255,255,0.04);
-    backdrop-filter: blur(12px);
+    background: rgba(16, 18, 28, 0.86);
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: 0 18px 50px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.04);
+  
+    backdrop-filter: blur(14px) saturate(1.1);
+    -webkit-backdrop-filter: blur(14px) saturate(1.1);
   }
   
+  /* BRAND */
   .tnBrand{
     display:flex;
     align-items:center;
-    gap:10px;
-    padding-left: 6px;
+    gap: 10px;
+    cursor:pointer;
+    min-width: 0;
+    padding-left: 0; /* remove old offset */
   }
   
   .tnLogo{
-    width: 36px;
-    height: 36px;
-    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
     display:grid;
     place-items:center;
   
-    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
-    border: 1px solid rgba(255,255,255,0.10);
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.16), rgba(255,255,255,0.06));
+    border: 1px solid rgba(255,255,255,0.12);
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
-    color: rgba(255,255,255,0.9);
-    font-weight: 700;
+    color: rgba(255,255,255,0.92);
   }
   
   .tnBrandText{
-    color: rgba(255,255,255,0.92);
-    font-weight: 700;
-    letter-spacing: 0.2px;
+    color: rgba(255,255,255,0.94);
+    font-weight: 950;
+    letter-spacing: var(--ls-soft);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1.02rem;
   }
   
+  /* CENTER TABS (desktop) */
   .tnCenter{
+    flex: 1;
     display:flex;
-    align-items:center;
     justify-content:center;
+    min-width: 0;
   }
   
   .tnPill{
@@ -64,145 +80,169 @@
     padding: 6px;
     border-radius: 999px;
   
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+  
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
+  .tnPill::-webkit-scrollbar{ display:none; }
   
   .tnTab{
-    height: 34px;
+    height: 36px;
     padding: 0 14px;
     border-radius: 999px;
     border: 0;
-    cursor: pointer;
-  
     background: transparent;
-    color: rgba(255,255,255,0.70);
-    font-weight: 600;
+  
+    color: rgba(255,255,255,0.72);
+    font-weight: 900;
     font-size: 13px;
     letter-spacing: 0.2px;
+  
+    cursor:pointer;
+    user-select:none;
+  
+    transition: background .12s ease, color .12s ease, transform .12s ease;
   }
   
   .tnTab:hover{
-    color: rgba(255,255,255,0.92);
+    color: rgba(255,255,255,0.96);
+    transform: translateY(-1px);
   }
   
   .tnTab.isActive{
-    background: rgba(255,255,255,0.10);
-    color: rgba(255,255,255,0.95);
-    box-shadow:
-      0 8px 20px rgba(0,0,0,0.35),
-      inset 0 1px 0 rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.98);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06);
+    transform: none;
   }
   
+  /* RIGHT */
   .tnRight{
     display:flex;
     align-items:center;
     gap: 10px;
-    padding-right: 6px;
+    flex-shrink: 0;
+    padding-right: 0;
   }
   
-  /* Subscription */
+  /* Subscription pill = like role pill */
   .tnSubPill{
-    height: 36px;
+    height: 40px;
     padding: 0 12px;
     border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.10);
+  
+    border: 1px solid rgba(255,255,255,0.12);
     background: rgba(255,255,255,0.06);
-    color: rgba(255,255,255,0.88);
-    display:flex;
+  
+    display:inline-flex;
     align-items:center;
     gap: 10px;
-    cursor: pointer;
-    font-weight: 700;
-    font-size: 12px;
+  
+    color: rgba(255,255,255,0.92);
+    cursor:pointer;
+  
+    font-weight: 950;
+    font-size: 12.5px;
     letter-spacing: 0.2px;
+  
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    white-space: nowrap;
   }
   
   .tnSubPill:hover{
-    background: rgba(255,255,255,0.08);
+    transform: translateY(-1px);
+    background: rgba(255,255,255,0.09);
+    border-color: rgba(255,255,255,0.18);
   }
-  
-  .tnSubPlan{ opacity: .95; }
-  .tnSubStatus{ opacity: .80; font-weight: 650; }
+  .tnSubPill:active{ transform: translateY(0px); }
   
   .tnDotSep{
     width: 5px;
     height: 5px;
     border-radius: 999px;
-    background: rgba(255,255,255,0.35);
+    background: rgba(255,255,255,0.28);
   }
   
-  .tone-good{ box-shadow: inset 0 0 0 1px rgba(120,255,180,0.08); }
-  .tone-warn{ box-shadow: inset 0 0 0 1px rgba(255,210,120,0.10); }
-  .tone-muted{ box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06); }
+  .tnSubPlan{ opacity: 0.98; }
+  .tnSubStatus{ opacity: 0.82; font-weight: 850; }
   
   /* Buttons */
   .tnPrimaryBtn{
-    height: 36px;
+    height: 40px;
     padding: 0 14px;
     border-radius: 999px;
+  
     border: 1px solid rgba(255,255,255,0.12);
     background: rgba(255,255,255,0.10);
     color: rgba(255,255,255,0.95);
-    font-weight: 800;
-    font-size: 12px;
-    cursor: pointer;
-  }
   
-  .tnPrimaryBtn:hover{
-    background: rgba(255,255,255,0.13);
+    font-weight: 900;
+    font-size: 12.5px;
+    cursor: pointer;
+  
+    transition: transform .12s ease, background .12s ease, border-color .12s ease;
   }
+  .tnPrimaryBtn:hover{
+    transform: translateY(-1px);
+    background: rgba(255,255,255,0.13);
+    border-color: rgba(255,255,255,0.18);
+  }
+  .tnPrimaryBtn:active{ transform: translateY(0px); }
   
   .tnIconBtn{
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: 999px;
-    border: 1px solid rgba(255,255,255,0.10);
-    background: rgba(255,255,255,0.05);
-    color: rgba(255,255,255,0.9);
+  
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.06);
+    color: rgba(255,255,255,0.92);
+  
     cursor: pointer;
     display:grid;
     place-items:center;
     position: relative;
-  }
   
-  .tnIconBtn:hover{
-    background: rgba(255,255,255,0.08);
+    transition: transform .12s ease, background .12s ease, border-color .12s ease;
   }
+  .tnIconBtn:hover{
+    transform: translateY(-1px);
+    background: rgba(255,255,255,0.09);
+    border-color: rgba(255,255,255,0.18);
+  }
+  .tnIconBtn:active{ transform: translateY(0px); }
   
   .tnNotifDot{
-    position: absolute;
-    top: 9px;
-    right: 9px;
-    width: 7px;
-    height: 7px;
+    position:absolute;
+    top: 10px;
+    right: 12px;
+    width: 6px;
+    height: 6px;
     border-radius: 999px;
-    background: rgba(120,255,180,0.95);
-    box-shadow: 0 0 0 2px rgba(10,10,12,0.85);
+    background: var(--accent);
+    box-shadow: 0 0 0 3px rgba(255,56,92,0.18);
   }
   
   /* Profile dropdown */
   .tnProfile{ position: relative; }
-  
-  .tnAvatarBtn{
-    border: 0;
-    padding: 0;
-    background: transparent;
-    cursor: pointer;
-  }
+  .tnAvatarBtn{ border:0; padding:0; background:transparent; cursor:pointer; }
   
   .tnAvatar{
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: 999px;
     display:grid;
     place-items:center;
   
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.12);
-    color: rgba(255,255,255,0.95);
-    font-weight: 850;
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.16);
+    color: rgba(255,255,255,0.96);
+  
+    font-weight: 950;
     font-size: 12px;
     letter-spacing: 0.4px;
   }
@@ -210,70 +250,136 @@
   .tnBackdrop{
     position: fixed;
     inset: 0;
-    background: transparent;
     border: 0;
+    background: transparent;
   }
   
   .tnMenu{
     position: absolute;
     right: 0;
-    top: 48px;
-    width: 240px;
+    top: calc(100% + 10px);
+    width: 280px;
+  
     border-radius: 16px;
     padding: 10px;
   
-    background: rgba(10,10,12,0.92);
-    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(16,18,28,0.94);
+    border: 1px solid rgba(255,255,255,0.12);
     box-shadow: 0 24px 70px rgba(0,0,0,0.55);
-    backdrop-filter: blur(14px);
+  
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
   }
   
   .tnMenuHead{
     padding: 10px 10px 12px;
-    border-radius: 12px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
     margin-bottom: 8px;
   }
   
   .tnMenuName{
     color: rgba(255,255,255,0.96);
-    font-weight: 850;
+    font-weight: 950;
     font-size: 13px;
   }
   
   .tnMenuMeta{
     margin-top: 4px;
-    color: rgba(255,255,255,0.65);
+    color: rgba(255,255,255,0.70);
     font-size: 12px;
-    font-weight: 650;
+    font-weight: 800;
   }
   
   .tnMenuItem{
     width: 100%;
-    height: 40px;
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.06);
-    background: rgba(255,255,255,0.03);
-    color: rgba(255,255,255,0.86);
-    cursor: pointer;
-    text-align: left;
-    padding: 0 12px;
-    font-weight: 700;
-    font-size: 12.5px;
-  }
+    height: 42px;
+    border-radius: 14px;
   
-  .tnMenuItem:hover{
-    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.90);
+  
+    cursor:pointer;
+    text-align:left;
+    padding: 0 12px;
+  
+    font-weight: 850;
+    font-size: 12.5px;
+  
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  
+    transition: transform .12s ease, background .12s ease, border-color .12s ease;
   }
+  .tnMenuItem:hover{
+    transform: translateY(-1px);
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.14);
+  }
+  .tnMenuItem:active{ transform: translateY(0px); }
   
   .tnMenuSep{
     height: 1px;
-    margin: 8px 4px;
-    background: rgba(255,255,255,0.08);
+    margin: 10px 6px;
+    background: rgba(255,255,255,0.10);
   }
   
-  .tnMenuItem.danger{
-    color: rgba(255,160,160,0.95);
+  .tnMenuItem.danger{ color: rgba(255,170,170,0.96); }
+  
+  /* =========================================================
+     RESPONSIVE
+     ========================================================= */
+  
+  /* Tablet */
+  @media (max-width: 900px){
+    .tnWrap{
+      padding: var(--space-md) var(--space-md) 0;
+      padding-top: calc(var(--space-md) + env(safe-area-inset-top, 0px));
+    }
   }
+  
+  /* Mobile: hide center tabs, keep single line (like admin) */
+  @media (max-width: 620px){
+    .tnCenter{ display:none; }
+  
+    .tnWrap{
+      padding: 12px 12px 0;
+      padding-top: calc(12px + env(safe-area-inset-top, 0px));
+    }
+  
+    .tnInner{
+      border-radius: 20px;
+      padding: 10px;
+    }
+  
+    .tnLogo,
+    .tnIconBtn,
+    .tnAvatar{
+      width: 38px;
+      height: 38px;
+    }
+  
+    .tnBrandText{
+      font-size: 0.98rem;
+      max-width: 44vw; /* nu sparge layout */
+    }
+  
+    .tnMenu{
+      width: min(92vw, 340px);
+    }
+    .tnInner{
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+    
+    /* optional: ascunde subscription pill pe mobil (ca role pill la admin) */
+    .tnSubPill{ display:none; }
+  }
+  
+ 
+
+  
   

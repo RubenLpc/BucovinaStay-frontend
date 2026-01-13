@@ -1,122 +1,98 @@
-.ai-bar {
+.ai-bar{
   margin-top: 1.6rem;
   max-width: 520px;
 
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
+  display:flex;
+  align-items:center;
+  gap: .8rem;
 
-  padding: 0.7rem 0.8rem 0.7rem 1rem;
+  padding: .7rem .8rem .7rem 1rem;
 
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255,255,255,0.22);     /* ok pt hero (dark bg) */
+  border: 1px solid rgba(255,255,255,0.26);
+  border-radius: 999px;
+
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
 }
 
-.ai-icon {
-  font-size: 1.1rem;
-}
+.ai-icon-wrapper{ position:relative; display:flex; align-items:center; }
+.ai-icon-wrapper svg{ color: rgba(255,255,255,0.92); }
 
-.ai-bar input {
+.ai-bar input{
   flex: 1;
   background: transparent;
   border: none;
   outline: none;
 
+  font: inherit;
   font-size: 0.95rem;
-  color: white;
+  color: #fff;
+  letter-spacing: var(--ls-soft);
 }
 
-.ai-bar input::placeholder {
-  color: rgba(255, 255, 255, 0.8);
+.ai-bar input::placeholder{
+  color: rgba(255,255,255,0.78);
 }
 
-.ai-bar button {
-  padding: 0.45rem 1rem;
+/* ✅ accent din design system */
+.ai-bar button{
+  padding: .45rem 1rem;
   border-radius: 999px;
-  border: none;
+  border: 1px solid var(--accent-border);
 
-  background: #2f5d3a;
-  color: white;
-  font-weight: 600;
+  background: var(--accent);
+  color: #fff;
+
+  font-weight: 850;
+  letter-spacing: var(--ls-soft);
+
   cursor: pointer;
+  transition: transform .12s ease, filter .12s ease;
 }
 
-.ai-icon-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
+.ai-bar button:hover{ transform: translateY(-1px); filter: brightness(.98); }
+.ai-bar button:active{ transform: translateY(0); }
 
-.ai-icon-wrapper svg {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.ai-pulse {
-  position: absolute;
-  top: -2px;
-  right: -2px;
-
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #2f5d3a;
-
+.ai-pulse{
+  position:absolute;
+  top:-2px; right:-2px;
+  width:6px; height:6px;
+  border-radius:50%;
+  background: var(--accent);
   animation: pulse 1.8s infinite;
 }
 
-@keyframes pulse {
-  0%   { opacity: 0.4; transform: scale(1); }
-  50%  { opacity: 1;   transform: scale(1.4); }
-  100% { opacity: 0.4; transform: scale(1); }
+.ai-bar:focus-within{
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25), 0 0 0 4px rgba(255,56,92,0.10);
+  border-color: rgba(255,56,92,0.22);
 }
 
 
+@keyframes pulse{
+  0%{ opacity:.4; transform:scale(1); }
+  50%{ opacity:1; transform:scale(1.4); }
+  100%{ opacity:.4; transform:scale(1); }
+}
+
 /* ================= AI SEARCH – SMALL MOBILE ================= */
 @media (max-width: 430px){
-
   .ai-bar{
     margin-top: 1.1rem;
     max-width: 100%;
     width: 100%;
-
-    gap: 0.5rem;
-    padding: 0.55rem 0.6rem 0.55rem 0.75rem;
-
-    border-radius: 18px; /* mai modern pe mobil */
+    gap: .5rem;
+    padding: .55rem .6rem .55rem .75rem;
+    border-radius: 18px;
   }
 
-  .ai-icon{
-    font-size: 1rem;
-  }
-
-  .ai-bar input{
-    font-size: 0.9rem;
-  }
-
-  .ai-bar input::placeholder{
-    font-size: 0.88rem;
-  }
-
-  .ai-bar button{
-    padding: 0.4rem 0.75rem;
-    font-size: 0.85rem;
-  }
-
-  /* pulse mai discret */
-  .ai-pulse{
-    width: 5px;
-    height: 5px;
-  }
+  .ai-bar input{ font-size: .9rem; }
+  .ai-bar button{ padding: .4rem .75rem; font-size: .85rem; }
+  .ai-pulse{ width: 5px; height: 5px; }
 }
 
 @media (max-width: 360px){
-  .ai-bar button{
-    display: none;
-  }
+  .ai-bar button{ display:none; }
 }

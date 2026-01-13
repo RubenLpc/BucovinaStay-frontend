@@ -1,0 +1,210 @@
+/* Matches PropertyPage surfaces (ppSection / ppH2 already exist) */
+
+.hcBlock{
+  padding: 18px 18px 16px;
+}
+
+/* Head */
+.hcHead{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:12px;
+}
+
+.hcHeadLeft{ min-width:0; }
+
+.hcSub{
+  margin-top:6px;
+  color: rgba(17, 24, 39, 0.72);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-size: 13px; /* smaller */
+  line-height: 1.45;
+}
+
+/* Button */
+.hcSeeAll{
+  height: 38px;            /* smaller */
+  padding: 0 12px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(17, 24, 39, 0.10);
+  background: rgba(17, 24, 39, 0.04);
+
+  font-weight: 900;
+  font-size: 13px;         /* smaller */
+  letter-spacing: -0.01em;
+
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+  white-space:nowrap;
+  user-select: none;
+}
+
+.hcSeeAll:hover{
+  transform: translateY(-1px);
+  background: rgba(17, 24, 39, 0.06);
+  border-color: rgba(17, 24, 39, 0.16);
+}
+
+/* Row */
+.hcRow{
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+
+  padding: 6px 2px 10px;
+
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width:none;
+
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 2px;
+}
+
+.hcRow::-webkit-scrollbar{ display:none; }
+
+/* Pill */
+.hcPill{
+  flex: 0 0 auto;
+
+  height: 42px;            /* smaller */
+  padding: 0 12px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(17, 24, 39, 0.10);
+  background: rgba(255, 255, 255, 0.92);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  font-weight: 900;
+  font-size: 13px;         /* smaller */
+  letter-spacing: -0.01em;
+  color: rgba(17, 24, 39, 0.92);
+
+  cursor: pointer;
+  transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease, box-shadow 0.2s ease;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.06);
+
+  scroll-snap-align: start;
+}
+
+.hcPill:hover{
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.98);
+  border-color: rgba(17, 24, 39, 0.16);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.08);
+}
+
+.hcPill.isActive{
+  border-color: rgba(255, 56, 92, 0.28);
+  background: rgba(255, 56, 92, 0.10);
+}
+
+.hcIcon{
+  width: 26px;             /* smaller */
+  height: 26px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(17, 24, 39, 0.10);
+  background: rgba(17, 24, 39, 0.04);
+
+  display:grid;
+  place-items:center;
+}
+
+.hcLabel{ white-space:nowrap; }
+
+/* Hint */
+.hcHint{
+  margin-top: 6px;
+  color: rgba(17, 24, 39, 0.58);
+  font-size: 12px;         /* smaller */
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+/* =========================
+   Responsive
+   ========================= */
+
+/* Tablet / small */
+@media (max-width: 760px){
+  .hcBlock{
+    padding: 16px 14px 14px; /* less padding */
+  }
+
+  .hcHead{
+    gap: 10px;
+  }
+
+  /* allow wrap without breaking */
+  .hcSeeAll{
+    height: 36px;
+    font-size: 12.5px;
+  }
+
+  .hcRow{
+    gap: 8px;
+    padding: 6px 0 10px;
+  }
+
+  .hcPill{
+    height: 40px;
+    padding: 0 11px;
+    font-size: 12.5px;
+  }
+}
+
+/* Small mobile (360–430px) */
+@media (max-width: 430px){
+  /* pe mobil: fără “margini” în plus – lasă ppSection să decidă */
+  .hcBlock{
+    padding: 14px 12px 12px;
+  }
+
+  .hcHead{
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .hcSeeAll{
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hcSub{
+    font-size: 12.8px;
+  }
+
+  .hcRow{
+    padding: 6px 0 10px;
+    gap: 8px;
+  }
+
+  .hcPill{
+    height: 38px;
+    padding: 0 10px;
+    gap: 9px;
+  }
+
+  .hcIcon{
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* Very small (<=360px) */
+@media (max-width: 360px){
+  .hcBlock{ padding: 12px 10px 10px; }
+  .hcPill{ height: 36px; font-size: 12.3px; }
+  .hcSeeAll{ height: 35px; font-size: 12.3px; }
+}

@@ -1,10 +1,7 @@
 import React, { useMemo } from "react";
 import "./HostSection.css";
 import { ShieldCheck, Star, MessageSquareText, BadgeCheck } from "lucide-react";
-import defaultAvatar  from "../../assets/default_avatar.png";
-
-
-
+import defaultAvatar from "../../assets/default_avatar.png";
 
 function clamp(n, min, max) {
   return Math.max(min, Math.min(max, n));
@@ -16,23 +13,21 @@ function formatPct(v) {
   return `${Math.round(x)}%`;
 }
 
-export default function HostSection({ host,property, onMessage }) {
+export default function HostSection({ host, property, onMessage }) {
   const stats = useMemo(() => {
     const propReviews = Number(property?.reviewsCount || 0);
     const propRating = property?.ratingAvg ?? null;
-  
+
     return {
       reviews: host?.reviewsCount ?? propReviews ?? 0,
       rating: host?.rating ?? propRating ?? null,
       months: host?.monthsHosting ?? null,
     };
   }, [host, property]);
-  
 
   const isSuperHost = Boolean(host?.isSuperHost);
   const isVerified = Boolean(host?.verified);
   const DEFAULT_HOST_AVATAR = defaultAvatar;
-
 
   return (
     <section className="hsWrap">
@@ -43,15 +38,15 @@ export default function HostSection({ host,property, onMessage }) {
         <div className="hsCard">
           <div className="hsCardTop">
             <div className="hsAvatarWrap">
-            <img
-  className="hsAvatar"
-  src={host?.avatarUrl || DEFAULT_HOST_AVATAR}
-  alt={`Avatar ${host?.name || "Gazdă"}`}
-  loading="lazy"
-  onError={(e) => {
-    e.currentTarget.src = DEFAULT_HOST_AVATAR;
-  }}
-/>
+              <img
+                className="hsAvatar"
+                src={host?.avatarUrl || DEFAULT_HOST_AVATAR}
+                alt={`Avatar ${host?.name || "Gazdă"}`}
+                loading="lazy"
+                onError={(e) => {
+                  e.currentTarget.src = DEFAULT_HOST_AVATAR;
+                }}
+              />
 
               {isSuperHost ? (
                 <div className="hsBadge" title="Super-gazdă">
@@ -64,13 +59,19 @@ export default function HostSection({ host,property, onMessage }) {
               <div className="hsName">{host?.name || "Gazdă"}</div>
 
               <div className="hsSubtitle">
-                {isSuperHost ? "Super-gazdă" : "Gazdă"}
-                {isVerified ? (
-                  <span className="hsVerified" title="Verificat">
-                    <BadgeCheck size={16} />
+                {host?.isSuperHost && (
+                  <span className="hsBadgeInline super">
+                    <ShieldCheck size={14} />
+                    Super-gazdă
+                  </span>
+                )}
+
+                {host?.verified && (
+                  <span className="hsBadgeInline verified">
+                    <BadgeCheck size={14} />
                     Verificat
                   </span>
-                ) : null}
+                )}
               </div>
             </div>
 
@@ -95,8 +96,12 @@ export default function HostSection({ host,property, onMessage }) {
               <div className="hsDivider" />
 
               <div className="hsStat">
-                <div className="hsStatValue">{stats.months == null ? "—" : stats.months}</div>
-                <div className="hsStatLabel">Luni de experiență</div>
+                <div className="hsStatValue">
+                  {stats.months == null ? "—" : stats.months}
+                </div>
+                <div className="hsStatLabel">
+                  {stats.months === 1 ? "Lună ca gazdă" : "Luni ca gazdă"}
+                </div>
               </div>
             </div>
           </div>
@@ -108,7 +113,8 @@ export default function HostSection({ host,property, onMessage }) {
         <div className="hsRight">
           <div className="hsRightBox">
             <div className="hsRightTitle">
-              {host?.name || "Gazda"} {isSuperHost ? "este o Super-gazdă" : "este o gazdă"}
+              {host?.name || "Gazda"}{" "}
+              {isSuperHost ? "este o Super-gazdă" : "este o gazdă"}
             </div>
 
             <p className="hsRightText">
@@ -129,16 +135,28 @@ export default function HostSection({ host,property, onMessage }) {
               <div className="hsRow">
                 <span className="hsKey">Timp de răspuns:</span>
                 <span className="hsVal">
-  {host?.responseTimeText ||
-    (host?.responseTimeBucket === "within_hour"
-      ? "în mai puțin de o oră"
-      : host?.responseTimeBucket === "within_day"
-      ? "în aceeași zi"
-      : host?.responseTimeBucket === "few_days"
-      ? "în câteva zile"
-      : "—")}
-</span>
+                  {host?.responseTimeText ||
+                    (host?.responseTimeBucket === "within_hour"
+                      ? "în mai puțin de o oră"
+                      : host?.responseTimeBucket === "within_day"
+                      ? "în aceeași zi"
+                      : host?.responseTimeBucket === "few_days"
+                      ? "în câteva zile"
+                      : "—")}
+                </span>
               </div>
+              {Array.isArray(host?.languages) && host.languages.length > 0 ? (
+                <div className="hsRow hsRowStack">
+                  <span className="hsKey">Limbi vorbite:</span>
+                  <div className="hsLangs">
+                    {host.languages.slice(0, 8).map((l) => (
+                      <span key={l} className="hsLangChip">
+                        {String(l).toUpperCase()}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
             </div>
 
             <button className="hsBtn" onClick={() => onMessage?.()}>
@@ -158,7 +176,8 @@ export default function HostSection({ host,property, onMessage }) {
             ) : null}
 
             <div className="hsNote">
-              Pentru a-ți proteja plata, folosește întotdeauna platforma pentru a trimite bani și a comunica cu gazdele.
+              Pentru a-ți proteja plata, folosește întotdeauna platforma pentru
+              a trimite bani și a comunica cu gazdele.
             </div>
           </div>
         </div>

@@ -1,0 +1,137 @@
+/* ---------- Overlay ---------- */
+.ppModalOverlay{
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    display: grid;
+    place-items: center;
+  }
+  
+  /* click outside */
+  .ppModalBackdrop{
+    position: absolute;
+    inset: 0;
+    background: rgba(10,10,12,0.55);
+    backdrop-filter: blur(6px);
+    border: 0;
+  }
+  
+  /* ---------- Modal shell ---------- */
+  .ppModal{
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    border-radius: 18px;
+    padding: 18px;
+    background: rgba(255,255,255,0.92);
+    border: 1px solid rgba(17,24,39,0.14);
+    box-shadow:
+      0 40px 120px rgba(0,0,0,0.35),
+      inset 0 1px 0 rgba(255,255,255,0.6);
+    animation: ppModalIn 0.18s ease-out;
+  }
+  
+  /* larger variant */
+  .ppModal-lg{
+    max-width: 560px;
+  }
+  
+  /* ---------- Header ---------- */
+  .ppModalTitle{
+    font-size: 20px;
+    font-weight: 950;
+    letter-spacing: -0.2px;
+    color: rgba(17,24,39,0.92);
+    margin-bottom: 6px;
+  }
+  
+  /* ---------- Body ---------- */
+  .ppModalBody{
+    margin-top: 12px;
+  }
+  
+  /* hint text */
+  .ppTinyHint{
+    font-size: 12px;
+    font-weight: 800;
+    color: rgba(17,24,39,0.60);
+  }
+  
+  /* textarea polish (override inline ok too) */
+  .ppModal textarea{
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(17,24,39,0.12);
+    background: rgba(17,24,39,0.03);
+    font-weight: 700;
+    color: rgba(17,24,39,0.92);
+    outline: none;
+    resize: vertical;
+  }
+  
+  .ppModal textarea:focus{
+    border-color: rgba(255,56,92,0.35);
+    box-shadow: 0 0 0 4px rgba(255,56,92,0.10);
+    background: rgba(255,255,255,0.95);
+  }
+  
+  /* ---------- Buttons ---------- */
+  .ppGhostBtn{
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(17,24,39,0.12);
+    background: rgba(17,24,39,0.04);
+    color: rgba(17,24,39,0.92);
+    font-weight: 900;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  
+  .ppGhostBtn:hover{
+    background: rgba(17,24,39,0.08);
+  }
+  
+  /* primary */
+  .rrPrimaryBtn{
+    padding: 0 16px;
+    border: 1px solid rgba(17,24,39,0.12);
+    background: rgba(17,24,39,0.06);
+    color: rgba(17,24,39,0.40);
+    font-weight: 950;
+    cursor: not-allowed;
+  }
+  
+  .rrPrimaryBtnSolid{
+    cursor: pointer;
+    border: 1px solid rgba(255,56,92,0.28);
+    background: rgba(255,56,92,0.10);
+    color: rgba(17,24,39,0.92);
+  }
+  
+  .rrPrimaryBtnSolid:hover{
+    background: rgba(255,56,92,0.16);
+  }
+  
+  /* ---------- Animations ---------- */
+  @keyframes ppModalIn{
+    from{
+      opacity: 0;
+      transform: translateY(6px) scale(0.98);
+    }
+    to{
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  /* ---------- Mobile ---------- */
+  @media (max-width: 520px){
+    .ppModal{
+      margin: 0 14px;
+      padding: 16px;
+    }
+  }
+  

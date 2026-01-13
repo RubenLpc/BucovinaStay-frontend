@@ -107,6 +107,7 @@ export default function Header() {
                     onClick={() => {
                       logout();
                       setUserOpen(false);
+                      navigate("/");
                     }}
                   >
                     <LogOut size={16} />
