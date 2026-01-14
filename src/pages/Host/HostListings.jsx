@@ -630,13 +630,11 @@ export default function HostListings() {
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
                 >
-                  ← Înapoi
+                  Înapoi
                 </button>
 
                 <div className="hlPagerText">
                   Pagina <strong>{page}</strong> din <strong>{totalPages}</strong>
-                  <span className="sep">•</span>
-                  <span className="muted">{total} total</span>
                 </div>
 
                 <button
@@ -645,7 +643,7 @@ export default function HostListings() {
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
                 >
-                  Înainte →
+                  Înainte 
                 </button>
               </div>
             </>

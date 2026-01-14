@@ -6,6 +6,7 @@ export default function Hero({ onAISearch, aiLoading }) {
   return (
     <section className="hero">
       <div className="hero-image" style={{ backgroundImage: `url(${heroImage})` }} />
+       
       <div className="hero-overlay" />
 
       <div className="hero-content">

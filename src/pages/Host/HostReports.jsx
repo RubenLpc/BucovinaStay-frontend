@@ -464,7 +464,7 @@ export default function HostReports() {
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
               >
-                <ArrowLeft size={16} /> Înapoi
+                 Înapoi
               </button>
 
               <div className="hrPagerText">
@@ -477,7 +477,7 @@ export default function HostReports() {
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
               >
-                Înainte <ArrowRight size={16} />
+                Înainte 
               </button>
             </div>
           ) : null}

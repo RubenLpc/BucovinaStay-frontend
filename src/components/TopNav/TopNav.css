@@ -368,7 +368,7 @@
     }
   
     .tnMenu{
-      width: min(92vw, 340px);
+      width: min(87vw, 340px);
     }
     .tnInner{
       backdrop-filter: none;

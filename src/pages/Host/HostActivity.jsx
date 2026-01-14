@@ -5,17 +5,7 @@ import { useAuthStore } from "../../stores/authStore";
 import { getMyHostActivity } from "../../api/hostActivityService";
 import "./HostActivity.css";
 
-import {
-  Search,
-  Filter,
-  Clock3,
-  MousePointerClick,
-  Eye,
-  MessageSquareText,
-  Layers,
-  ArrowLeft,
-  ArrowRight,
-} from "lucide-react";
+import { Search, Filter, Clock3, MousePointerClick, Eye, MessageSquareText, Layers } from "lucide-react";
 
 function timeAgo(ts) {
   const d = new Date(ts || 0);
@@ -62,15 +52,14 @@ function eventIcon(type) {
   return Clock3;
 }
 
+const KPI_FALLBACK = { impressions: 0, clicks: 0, messages: 0, propertyActions: 0 };
+
 export default function HostActivity() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
 
-  if (!user) return null;
-  if (user.role !== "host" && user.role !== "admin") return null;
-
-  const [range, setRange] = useState("7d"); // 24h | 7d | 30d
-  const [type, setType] = useState("all"); // all | property_* | message_* | impression | click_*
+  const [range, setRange] = useState("7d");
+  const [type, setType] = useState("all");
   const [q, setQ] = useState("");
 
   const [page, setPage] = useState(1);
@@ -79,27 +68,31 @@ export default function HostActivity() {
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
-  const [kpi, setKpi] = useState({ impressions: 0, clicks: 0, messages: 0, propertyActions: 0 });
+  const [kpi, setKpi] = useState(KPI_FALLBACK);
 
   const totalPages = Math.max(1, Math.ceil((total || 0) / limit));
 
   useEffect(() => setPage(1), [range, type, q]);
 
   useEffect(() => {
+    if (!user) return;
+
     let alive = true;
     (async () => {
       try {
         setLoading(true);
         const data = await getMyHostActivity({ range, type, q, page, limit });
         if (!alive) return;
-        setItems(data.items || []);
-        setTotal(data.total || 0);
-        setKpi(data.kpi || { impressions: 0, clicks: 0, messages: 0, propertyActions: 0 });
+
+        setItems(Array.isArray(data?.items) ? data.items : []);
+        setTotal(Number(data?.total || 0));
+        setKpi(data?.kpi ? { ...KPI_FALLBACK, ...data.kpi } : KPI_FALLBACK);
       } catch (e) {
         if (!alive) return;
         toast.error("Nu am putut încărca activitatea", { description: e?.message || "Eroare" });
         setItems([]);
         setTotal(0);
+        setKpi(KPI_FALLBACK);
       } finally {
         if (alive) setLoading(false);
       }
@@ -108,7 +101,7 @@ export default function HostActivity() {
     return () => {
       alive = false;
     };
-  }, [range, type, q, page, limit]);
+  }, [user, range, type, q, page, limit]);
 
   const typeOptions = useMemo(
     () => [
@@ -126,56 +119,68 @@ export default function HostActivity() {
     []
   );
 
+  if (!user) return null;
+  if (user.role !== "host" && user.role !== "admin") return null;
+
   return (
     <div className="haPage">
       <div className="haMain">
         <header className="haHeader">
-          <div>
-            <div className="haCrumb">Gazdă</div>
-            <div className="haTitleRow">
-              <h1 className="haTitle">Activitate</h1>
-              <button className="haGhostLink" type="button" onClick={() => navigate("/host/listings")}>
-                Proprietăți →
-              </button>
+          <div className="haCrumb">Gazdă</div>
+
+          <div className="haTitleRow">
+            <h1 className="haTitle">Activitate</h1>
+
+            <button className="haGhostLink" type="button" onClick={() => navigate("/host/listings")}>
+              Proprietăți →
+            </button>
+          </div>
+
+          <div className="haSub">Evenimente recente: vizualizări, click-uri, mesaje și acțiuni pe anunțuri.</div>
+
+          <div className="haKpis">
+            <div className="haKpi">
+              <div className="haKpiTop">
+                <div className="haKpiLabel">Vizualizări</div>
+                <div className="haKpiIcon">
+                  <Eye size={18} />
+                </div>
+              </div>
+              <div className="haKpiVal">{kpi.impressions}</div>
+              <div className="haKpiHint">în perioada selectată</div>
             </div>
-            <div className="haSub">Evenimente recente: vizualizări, click-uri, mesaje și acțiuni pe anunțuri.</div>
 
-            <div className="haKpis">
-              <div className="haKpi">
-                <div className="haKpiTop">
-                  <div className="haKpiLabel">Vizualizări</div>
-                  <div className="haKpiIcon"><Eye size={18} /></div>
+            <div className="haKpi">
+              <div className="haKpiTop">
+                <div className="haKpiLabel">Click-uri</div>
+                <div className="haKpiIcon">
+                  <MousePointerClick size={18} />
                 </div>
-                <div className="haKpiVal">{kpi.impressions}</div>
-                <div className="haKpiHint">în perioada selectată</div>
               </div>
+              <div className="haKpiVal">{kpi.clicks}</div>
+              <div className="haKpiHint">telefon / WhatsApp / SMS</div>
+            </div>
 
-              <div className="haKpi">
-                <div className="haKpiTop">
-                  <div className="haKpiLabel">Click-uri</div>
-                  <div className="haKpiIcon"><MousePointerClick size={18} /></div>
+            <div className="haKpi">
+              <div className="haKpiTop">
+                <div className="haKpiLabel">Mesaje</div>
+                <div className="haKpiIcon">
+                  <MessageSquareText size={18} />
                 </div>
-                <div className="haKpiVal">{kpi.clicks}</div>
-                <div className="haKpiHint">telefon / WhatsApp / SMS</div>
               </div>
+              <div className="haKpiVal">{kpi.messages}</div>
+              <div className="haKpiHint">primite / trimise</div>
+            </div>
 
-              <div className="haKpi">
-                <div className="haKpiTop">
-                  <div className="haKpiLabel">Mesaje</div>
-                  <div className="haKpiIcon"><MessageSquareText size={18} /></div>
+            <div className="haKpi">
+              <div className="haKpiTop">
+                <div className="haKpiLabel">Acțiuni</div>
+                <div className="haKpiIcon">
+                  <Layers size={18} />
                 </div>
-                <div className="haKpiVal">{kpi.messages}</div>
-                <div className="haKpiHint">primite / trimise</div>
               </div>
-
-              <div className="haKpi">
-                <div className="haKpiTop">
-                  <div className="haKpiLabel">Acțiuni</div>
-                  <div className="haKpiIcon"><Layers size={18} /></div>
-                </div>
-                <div className="haKpiVal">{kpi.propertyActions}</div>
-                <div className="haKpiHint">publicare, pauză, ștergere</div>
-              </div>
+              <div className="haKpiVal">{kpi.propertyActions}</div>
+              <div className="haKpiHint">publicare, pauză, ștergere</div>
             </div>
           </div>
         </header>
@@ -185,7 +190,7 @@ export default function HostActivity() {
             <div className="haFilters">
               <div className="haSelect">
                 <Clock3 size={16} />
-                <select value={range} onChange={(e) => setRange(e.target.value)}>
+                <select value={range} onChange={(e) => setRange(e.target.value)} aria-label="Interval">
                   <option value="24h">24h</option>
                   <option value="7d">7 zile</option>
                   <option value="30d">30 zile</option>
@@ -194,9 +199,11 @@ export default function HostActivity() {
 
               <div className="haSelect">
                 <Filter size={16} />
-                <select value={type} onChange={(e) => setType(e.target.value)}>
+                <select value={type} onChange={(e) => setType(e.target.value)} aria-label="Tip eveniment">
                   {typeOptions.map((o) => (
-                    <option key={o.value} value={o.value}>{o.label}</option>
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -230,8 +237,7 @@ export default function HostActivity() {
           ) : items.length === 0 ? (
             <div className="haEmpty">
               <div className="haEmptyTitle">Nu există activitate încă</div>
-              <div className="haMuted"> <p className="haEmptyDesc">Publică o proprietate sau așteaptă primele vizualizări.</p></div>
-              
+              <p className="haEmptyDesc">Publică o proprietate sau așteaptă primele vizualizări.</p>
             </div>
           ) : (
             <>
@@ -277,7 +283,12 @@ export default function HostActivity() {
               </div>
 
               <div className="haPager">
-                <button className="haBtn ghost" type="button" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
+                <button
+                  className="haBtn ghost"
+                  type="button"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                >
                   Înapoi
                 </button>
 
@@ -285,8 +296,13 @@ export default function HostActivity() {
                   Pagina <b>{page}</b> din <b>{totalPages}</b>
                 </div>
 
-                <button className="haBtn ghost" type="button" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
-                  Înainte 
+                <button
+                  className="haBtn ghost"
+                  type="button"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                >
+                  Înainte
                 </button>
               </div>
             </>

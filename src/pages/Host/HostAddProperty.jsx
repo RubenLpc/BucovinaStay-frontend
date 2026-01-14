@@ -117,31 +117,25 @@ function isHostProfileComplete(profile) {
     return { ok: false, errors: { _global: "Profilul nu există încă." } };
   }
 
-  // Identity
+  // Required by your schema: displayName
   if (!profile.displayName || profile.displayName.trim().length < 2) {
     errors.displayName = "Display name (minim 2 caractere) este obligatoriu.";
   }
 
- 
+  // avatarUrl is OPTIONAL in your schema -> don't block creating properties
+   if (!profile.avatarUrl || !profile.avatarUrl.trim()) {
+     errors.avatarUrl = "Adaugă o poză (avatar).";
+   }
 
-  // Optional dar “pro” să fie obligatoriu:
-  if (!profile.avatar) {
-    errors.avatar = "Adaugă o poză (avatar).";
+  // bio is OPTIONAL in your schema -> don't block
+   if (!profile.bio || profile.bio.trim().length < 50) {
+     errors.bio = "Bio este obligatoriu (minim 50 caractere).";
   }
 
-  // Host type / firmă (dacă ai)
-  // if (!profile.hostType) errors.hostType = "Alege tipul: persoană fizică / firmă.";
-
-
-  // Descriere (dacă vrei să fie obligatorie)
-  if (!profile.bio) {
-    errors.bio = "Bio este obligatoriu (minim 50 caractere).";
-  }
-
- 
   const ok = Object.keys(errors).length === 0;
   return { ok, errors };
 }
+
 
 export default function HostAddProperty({ editId = null }) {
   const navigate = useNavigate();
@@ -201,8 +195,17 @@ export default function HostAddProperty({ editId = null }) {
     (async () => {
       setHpLoading(true);
       try {
-        const res = await hostProfileService.getMyHostProfile(); // <-- IMPORTANT
-        const hp = res?.hostProfile || null; // <-- IMPORTANT
+        const res = await hostProfileService.getMyHostProfile();
+const hp =
+  res?.hostProfile ||
+  res?.profile ||
+  res?.data?.hostProfile ||
+  res?.data?.profile ||
+  res ||
+  null;
+
+setHostProfile(hp);
+
 
         if (!alive) return;
         setHostProfile(hp);
@@ -1493,8 +1496,11 @@ export default function HostAddProperty({ editId = null }) {
         <HostProfileModal
           open={profileOpen}
           onClose={() => setProfileOpen(false)}
-          onSaved={(p) => setHostProfile(p)}
-        />
+          onSaved={(payload) => {
+            const hp = payload?.hostProfile || payload?.profile || payload;
+            setHostProfile(hp);
+          }}
+                  />
       </div>
     </div>
   );
