@@ -341,8 +341,7 @@ export default function HorizontalListings({
       </header>
 
       <div className="hl2-viewport">
-        <div className={`hl2-fade hl2-fadeLeft ${canLeft ? "on" : ""}`} aria-hidden="true" />
-        <div className={`hl2-fade hl2-fadeRight ${canRight ? "on" : ""}`} aria-hidden="true" />
+       
 
         <div
           ref={trackRef}

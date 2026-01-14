@@ -12,9 +12,9 @@
   --font-ui: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
 
   /* ---------- Font sizes (COMPACT) ---------- */
-  --fs-base: 14.5px;
-  --fs-sm: 13px;
-  --fs-xs: 12px;
+  --fs-base: 13.5px;
+  --fs-sm: 12px;
+  --fs-xs: 11px;
 
   --fs-h1: 1.9rem;
   --fs-h2: 1.35rem;

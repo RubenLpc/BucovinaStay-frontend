@@ -224,6 +224,15 @@
 .site-header.is-transparent .nav-link::after{
   background: rgba(255,255,255,0.9);
 }
+.btn.btn-ghost{
+  background: rgba(255,255,255,0.75);
+  border: 1px solid rgba(17,24,39,0.12);
+  color: rgba(17,24,39,0.92);
+}
+.btn.btn-ghost:hover{
+  border-color: rgba(255,56,92,0.28);
+  background: rgba(255,255,255,0.75);
+}
 
 /* responsive */
 @media (max-width: 720px){
@@ -251,4 +260,9 @@
     border: 1px solid rgba(17,24,39,0.10);
     box-shadow: 0 20px 50px rgba(0,0,0,0.18);
   }
+
+  .btn.btn-ghost{
+display: none;  }
 }
+
+

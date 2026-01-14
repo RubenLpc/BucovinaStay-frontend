@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
-import { Menu, User, LogOut } from "lucide-react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Menu, User, LogOut, LayoutDashboard, Shield } from "lucide-react";
 import { useAuthStore } from "../../stores/authStore";
 
 import "./Header.css";
@@ -8,33 +8,27 @@ import "./Header.css";
 export default function Header() {
   const rootRef = useRef(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const { user, isAuthenticated, logout } = useAuthStore();
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
 
-  // ✅ Transparent doar pe home, până la 60px scroll
   const [transparent, setTransparent] = useState(location.pathname === "/");
 
   useEffect(() => {
     const isHome = location.pathname === "/";
-
-    // pe orice pagină diferită de home -> mereu glass
     if (!isHome) {
       setTransparent(false);
       return;
     }
-
-    // pe home -> depinde de scroll
     const onScroll = () => setTransparent(window.scrollY < 60);
     onScroll();
-
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [location.pathname]);
 
-  /* close on outside click + ESC */
   useEffect(() => {
     const onDown = (e) => {
       if (rootRef.current && !rootRef.current.contains(e.target)) {
@@ -58,11 +52,19 @@ export default function Header() {
     };
   }, []);
 
-  const initials = user?.name
-    ?.split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
+  const initials =
+    user?.name
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase() || "U";
+
+  const isHost = user?.role === "host";
+  const isAdmin = user?.role === "admin";
+
+  const dashboardPath = isAdmin ? "/admin" : isHost ? "/host" : null;
+  const dashboardLabel = isAdmin ? "Admin" : "Dashboard";
+  const DashboardIcon = isAdmin ? Shield : LayoutDashboard;
 
   return (
     <header className={`site-header theme-light ${transparent ? "is-transparent" : ""}`}>
@@ -91,34 +93,62 @@ export default function Header() {
                 Autentificare
               </Link>
             ) : (
-              <div className="user-menu">
-                <button className="avatar-btn" onClick={() => setUserOpen((v) => !v)}>
-                  {initials}
-                </button>
-
-                <div className={`user-dropdown ${userOpen ? "open" : ""}`}>
-                  <Link to="/profile" onClick={() => setUserOpen(false)}>
-                    <User size={16} />
-                    Profil
-                  </Link>
-
-                  <button
-                    className="danger"
+              <>
+                {/* ✅ DASHBOARD shortcut (desktop) */}
+                {dashboardPath && (
+                  <Link
+                    to={dashboardPath}
+                    className="btn btn-ghost"
                     onClick={() => {
-                      logout();
+                      setMobileOpen(false);
                       setUserOpen(false);
-                      navigate("/");
                     }}
                   >
-                    <LogOut size={16} />
-                    Deconectare
+                    <DashboardIcon size={16} />
+                    {dashboardLabel}
+                  </Link>
+                )}
+
+                <div className="user-menu">
+                  <button className="avatar-btn" onClick={() => setUserOpen((v) => !v)} aria-label="User menu">
+                    {initials}
                   </button>
+
+                  <div className={`user-dropdown ${userOpen ? "open" : ""}`}>
+                    {/* ✅ Dashboard și în dropdown (mai ales util pe mobil/compact) */}
+                    {dashboardPath && (
+                      <Link
+                        to={dashboardPath}
+                        onClick={() => setUserOpen(false)}
+                      >
+                        <DashboardIcon size={16} />
+                        {dashboardLabel}
+                      </Link>
+                    )}
+
+                    <Link to="/profile" onClick={() => setUserOpen(false)}>
+                      <User size={16} />
+                      Profil
+                    </Link>
+
+                    <button
+                      className="danger"
+                      onClick={() => {
+                        logout();
+                        setUserOpen(false);
+                        navigate("/");
+                      }}
+                    >
+                      <LogOut size={16} />
+                      Deconectare
+                    </button>
+                  </div>
                 </div>
-              </div>
+              </>
             )}
 
             {/* MOBILE BUTTON */}
-            <button className="menu-toggle" onClick={() => setMobileOpen((v) => !v)}>
+            <button className="menu-toggle" onClick={() => setMobileOpen((v) => !v)} aria-label="Open menu">
               <Menu size={20} />
             </button>
 
@@ -130,6 +160,19 @@ export default function Header() {
               <NavLink to="/cazari" onClick={() => setMobileOpen(false)}>
                 Cazări
               </NavLink>
+
+              {/* ✅ Dashboard și în mobile menu */}
+              {isAuthenticated && dashboardPath && (
+                <NavLink to={dashboardPath} onClick={() => setMobileOpen(false)}>
+                  {dashboardLabel}
+                </NavLink>
+              )}
+
+              {!isAuthenticated && (
+                <NavLink to="/auth/login" onClick={() => setMobileOpen(false)}>
+                  Autentificare
+                </NavLink>
+              )}
             </div>
           </div>
         </div>
