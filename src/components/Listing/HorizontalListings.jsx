@@ -43,6 +43,67 @@ const FALLBACK_IMG =
   </svg>
 `);
 
+
+
+export const BADGE_META = {
+  top: {
+    label: "Top",
+    tone: "gold",
+    Icon: Crown,
+    description: "Evaluări excelente de la oaspeți",
+  },
+
+  spa: {
+    label: "Spa & Relax",
+    tone: "pink",
+    Icon: Sparkles,
+    description: "Dotări pentru relaxare (spa, saună, jacuzzi)",
+  },
+
+  new: {
+    label: "Nou",
+    tone: "blue",
+    Icon: Sparkles,
+    description: "Anunț publicat recent",
+  },
+
+  value: {
+    label: "Best value",
+    tone: "green",
+    Icon: BadgeCheck,
+    description: "Raport foarte bun calitate–preț",
+  },
+
+  view: {
+    label: "Priveliște",
+    tone: "violet",
+    Icon: Mountain,
+    description: "Vedere deosebită (munte / natură)",
+  },
+
+  family: {
+    label: "Familie",
+    tone: "teal",
+    Icon: Users,
+    description: "Potrivit pentru familii sau grupuri",
+  },
+
+  breakfast: {
+    label: "Mic dejun",
+    tone: "amber",
+    Icon: Coffee,
+    description: "Mic dejun inclus sau disponibil",
+  },
+
+  recommended: {
+    label: "Recomandat",
+    tone: "dark",
+    Icon: Sparkles,
+    description: "Selecție recomandată de platformă",
+  },
+};
+
+
 function safeImg(src) {
   if (!src) return FALLBACK_IMG;
   if (typeof src !== "string") return FALLBACK_IMG;
@@ -58,54 +119,153 @@ function percentile(sortedAsc, p) {
 
 function smartScore(l) {
   let s = 0;
-  const rating = typeof l.rating === "number" ? l.rating : 0;
-  s += rating * 22;
-  s += Math.max(0, 420 - (l.pricePerNight ?? 999)) * 0.08;
 
-  const a = l.amenities || [];
-  if (a.includes("wifi")) s += 3;
-  if (a.includes("parking")) s += 3;
-  if (a.includes("breakfast")) s += 3;
-  if (a.includes("spa") || a.includes("sauna")) s += 7;
-  if (a.includes("view")) s += 4;
-  if (a.includes("quiet")) s += 2;
-  if ((l.guests ?? 0) >= 4 || a.includes("family")) s += 2;
+  const rating = typeof l.rating === "number" ? l.rating : 0;
+  const reviews = typeof l.reviews === "number" ? l.reviews : 0;
+  const price = typeof l.pricePerNight === "number" ? l.pricePerNight : 9999;
+
+  // base: rating dominates, but reviews add confidence
+  // (rating 5 => +110)
+  s += rating * 22;
+
+  // confidence boost: more reviews => slightly higher
+  // cap to avoid overpowering rating
+  s += Math.min(18, Math.log10(1 + reviews) * 10);
+
+  // price: cheaper gets bonus, but don't punish premium too much
+  // baseline around 420 RON like you had; clamp so it doesn't explode
+  const priceBonus = Math.max(-12, Math.min(18, (420 - price) * 0.06));
+  s += priceBonus;
+
+  const a = Array.isArray(l.amenities) ? l.amenities : [];
+  const has = (k) => a.includes(k);
+
+  // --- High-intent "wow" amenities (strong) ---
+  if (has("hotTub")) s += 11;
+  if (has("sauna")) s += 8;
+  if (has("spa")) s += 7;
+  if (has("fireplace")) s += 5;
+
+  // --- Location / outdoor vibe ---
+  if (has("mountainView")) s += 6;
+  if (has("terrace")) s += 2;
+  if (has("garden")) s += 2;
+  if (has("bbq")) s += 2;
+
+  // --- Convenience ---
+  if (has("wifi")) s += 4;
+  if (has("parking") || has("freeStreetParking")) s += 3;
+  if (has("selfCheckIn")) s += 4;
+  if (has("privateEntrance")) s += 2;
+
+  // --- Kitchen quality (bundle scoring) ---
+  // Airbnb vibe: kitchen matters more if it's "complete"
+  const kitchenParts = ["fridge", "stove", "oven", "microwave", "coffeeMaker", "kettle", "dishesAndCutlery"];
+  const kitchenCount = kitchenParts.reduce((acc, k) => acc + (has(k) ? 1 : 0), 0);
+
+  if (has("kitchen")) s += 3;
+  if (kitchenCount >= 4) s += 3;     // decent kitchen
+  if (kitchenCount >= 6) s += 4;     // full kitchen
+
+  // --- Comfort / indoor ---
+  if (has("ac")) s += 3;
+  if (has("heating")) s += 2;
+  if (has("hotWater")) s += 1;
+  if (has("washer")) s += 2;
+  if (has("iron")) s += 1;
+  if (has("workspace")) s += 1;
+
+  // --- Entertainment ---
+  if (has("tv")) s += 1;
+  if (has("streaming")) s += 2;
+  if (has("boardGames")) s += 1;
+
+  // --- Family-friendly (derived, not stored as amenity) ---
+  const guests = typeof l.guests === "number" ? l.guests : (typeof l.capacity === "number" ? l.capacity : 0);
+  const familySignals =
+    (guests >= 4) ||
+    has("crib") ||
+    has("highChair") ||
+    has("washer") ||
+    has("kitchen");
+
+  if (familySignals) s += 2;
+  if ((has("crib") && has("highChair")) || guests >= 6) s += 2;
+
+  // --- Pets (small; niche) ---
+  if (has("petFriendly")) s += 1;
+
+  // --- Safety (trust signals) ---
+  // don't over-score, but small bump
+  const safetyKeys = ["smokeAlarm", "fireExtinguisher", "firstAidKit"];
+  const safetyCount = safetyKeys.reduce((acc, k) => acc + (has(k) ? 1 : 0), 0);
+  if (safetyCount >= 1) s += 1;
+  if (safetyCount >= 2) s += 2;
+
+  // mild penalty if too few essentials (optional)
+  const essentialSignals = ["towels", "bedLinen", "hairDryer", "essentials"];
+  const essentialCount = essentialSignals.reduce((acc, k) => acc + (has(k) ? 1 : 0), 0);
+  if (essentialCount === 0) s -= 1;
+
   return s;
 }
 
-const BADGE_META = {
-  top: { label: "Top", tone: "gold", Icon: Crown },
-  spa: { label: "Spa", tone: "pink", Icon: Flame },
-  new: { label: "Nou", tone: "blue", Icon: Sparkles },
-  value: { label: "Best value", tone: "green", Icon: BadgeCheck },
-  view: { label: "Priveliște", tone: "violet", Icon: Mountain },
-  family: { label: "Familie", tone: "teal", Icon: Leaf },
-  breakfast: { label: "Mic dejun", tone: "amber", Icon: Coffee },
-  recommended: { label: "Recomandat", tone: "dark", Icon: Sparkles },
-};
-
 function computeBadges(listing, ctx) {
-  if (Array.isArray(listing.badges) && listing.badges.length) return listing.badges.slice(0, 2);
+  // if host/admin manually set badges, respect them
+  if (Array.isArray(listing.badges) && listing.badges.length) {
+    return listing.badges.slice(0, 2);
+  }
 
-  const a = listing.amenities || [];
+  const a = Array.isArray(listing.amenities) ? listing.amenities : [];
+  const has = (k) => a.includes(k);
+
   const rating = typeof listing.rating === "number" ? listing.rating : null;
+  const reviews = typeof listing.reviews === "number" ? listing.reviews : 0;
+  const price = typeof listing.pricePerNight === "number" ? listing.pricePerNight : null;
 
   const out = [];
-  if (rating != null && rating >= 4.85) out.push("top");
-  if (out.length < 2 && (a.includes("spa") || a.includes("sauna"))) out.push("spa");
 
+  // 1) TOP: high rating + some reviews
+  if (rating != null && rating >= 4.85 && reviews >= 8) out.push("top");
+
+  // 2) SPA / WOW: hot tub or sauna or spa or fireplace
+  if (
+    out.length < 2 &&
+    (has("hotTub") || has("sauna") || has("spa") || has("fireplace"))
+  ) out.push("spa");
+
+  // 3) NEW: created recently (your existing logic)
   if (out.length < 2 && listing.createdAt) {
     const days = (ctx.now - new Date(listing.createdAt)) / (1000 * 60 * 60 * 24);
     if (days <= 14) out.push("new");
   }
 
-  if (out.length < 2 && (listing.pricePerNight ?? 999999) <= ctx.cheapThreshold) out.push("value");
-  if (out.length < 2 && a.includes("view")) out.push("view");
-  if (out.length < 2 && ((listing.guests ?? 0) >= 4 || a.includes("family"))) out.push("family");
-  if (out.length < 2 && ctx.smartPickIds.has(listing.id)) out.push("recommended");
+  // 4) VALUE: cheap vs local threshold
+  if (out.length < 2 && price != null && price <= ctx.cheapThreshold) out.push("value");
+
+  // 5) VIEW
+  if (out.length < 2 && has("mountainView")) out.push("view");
+
+  // 6) FAMILY (derived)
+  const guests =
+    typeof listing.guests === "number"
+      ? listing.guests
+      : (typeof listing.capacity === "number" ? listing.capacity : 0);
+
+  const familySignals =
+    guests >= 4 || has("crib") || has("highChair") || has("kitchen") || has("washer");
+
+  if (out.length < 2 && familySignals) out.push("family");
+
+  // 7) BREAKFAST
+  if (out.length < 2 && has("breakfast")) out.push("breakfast");
+
+  // 8) RECOMMENDED: your “smartPickIds” bucket
+  if (out.length < 2 && ctx.smartPickIds?.has?.(listing.id)) out.push("recommended");
 
   return out.slice(0, 2);
 }
+
 
 function formatMoney(v, currency = "RON") {
   if (typeof v !== "number") return "—";

@@ -160,7 +160,6 @@
 
 /* Pill role */
 .role-pill {
-  display: inline-flex;
   padding: 6px 10px;
   border-radius: 999px;
   width: fit-content;

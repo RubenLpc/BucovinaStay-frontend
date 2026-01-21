@@ -10,6 +10,8 @@ import { sendHostMessage } from "../../api/hostMessagesService";
 import { trackImpression, trackClick } from "../../api/analyticsService";
 import { getHostProfilePublic } from "../../api/hostProfileService";
 import defaultAvatar from "../../assets/default_avatar.png";
+import { AMENITY_BY_KEY } from "../../constants/amenitiesCatalog";
+
 
 import { toast } from "sonner";
 import "./PropertyPage.css";
@@ -193,7 +195,7 @@ export default function PropertyPage() {
   const title = p?.title || "Proprietate";
   const subtitle = isNonEmptyString(p?.subtitle) ? p.subtitle : "";
   const typeLabel = p?.type ? TYPE_LABELS[p.type] || p.type : "";
-  const locationLine = [p?.locality, p?.city, p?.county, p?.region]
+  const locationLine = [p?.locality, p?.city, p?.region]
     .filter(isNonEmptyString)
     .join(", ");
   const price = typeof p?.pricePerNight === "number" ? p.pricePerNight : null;
@@ -204,7 +206,7 @@ export default function PropertyPage() {
 
   const facilities = useMemo(() => {
     const arr = Array.isArray(p?.facilities) ? p.facilities : [];
-    return arr.filter((k) => AMENITY_META[k]); // doar ce știm să randăm
+    return arr.filter((k) => AMENITY_BY_KEY[k]);
   }, [p]);
 
   const coords = useMemo(() => {
@@ -343,16 +345,17 @@ export default function PropertyPage() {
     }
   };
 
-  async function handleSendMessage({ propertyId, message }) {
+  async function handleSendMessage({ propertyId, message, guestName, guestEmail, guestPhone }) {
     await sendHostMessage({
       propertyId,
       message,
-      // dacă guest nu e logat:
-      // guestName: "Ion",
-      // guestEmail: "ion@email.com",
+      guestName,
+      guestEmail,
+      guestPhone,
     });
     toast.success("Mesaj trimis");
   }
+  
 
   if (loading) {
     return (
@@ -616,13 +619,13 @@ export default function PropertyPage() {
 
                 <div className="ppAmenitiesGrid">
                   {displayedAmenities.map((key) => {
-                    const meta = AMENITY_META[key];
-                    if (!meta) return null;
-                    const Icon = meta.Icon;
+const meta = AMENITY_BY_KEY[key];
+if (!meta) return null;
+                    const Icon = meta?.Icon;
                     return (
                       <div className="ppAmenity" key={key}>
-                        <Icon size={20} />
-                        <span>{meta.label}</span>
+{Icon ? <Icon size={20} /> : null}
+<span>{meta?.label || key}</span>
                       </div>
                     );
                   })}
@@ -881,18 +884,20 @@ export default function PropertyPage() {
           size="lg"
         >
           <div className="ppAmenityList">
-            {facilities.map((key) => {
-              const meta = AMENITY_META[key];
-              if (!meta) return null;
-              const Icon = meta.Icon;
-              return (
-                <div className="ppAmenityRow" key={key}>
-                  <Icon size={20} />
-                  <span>{meta.label}</span>
-                </div>
-              );
-            })}
-          </div>
+  {facilities.map((key) => {
+    const meta = AMENITY_BY_KEY[key];
+    if (!meta) return null;
+    const Icon = meta.icon;
+
+    return (
+      <div className="ppAmenityRow" key={key}>
+        {Icon ? <Icon size={20} /> : null}
+        <span>{meta.label || key}</span>
+      </div>
+    );
+  })}
+</div>
+
         </Modal>
 
         <Modal

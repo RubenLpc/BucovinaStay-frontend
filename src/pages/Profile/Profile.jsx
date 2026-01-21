@@ -215,19 +215,11 @@ export default function Profile() {
               </button>
             )}
 
-            {!isEditing ? (
-              <button
-                className="btn profile-secondary"
-                type="button"
-                onClick={() => toast("În curând", { description: "Preferințele vor fi adăugate ulterior." })}
-              >
-                Preferințe
-              </button>
-            ) : (
+            {isEditing ?  (
               <button className="btn profile-secondary" type="button" onClick={cancelEdit}>
                 Renunță
               </button>
-            )}
+            ): null}
           </div>
         </div>
       </div>

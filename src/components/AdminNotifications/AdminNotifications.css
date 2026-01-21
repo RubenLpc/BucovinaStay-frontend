@@ -1,0 +1,209 @@
+/* =========================================================
+   ADMIN NOTIFICATIONS — aligned to index.css tokens
+   ========================================================= */
+
+   .anRoot{ position: fixed; inset: 0; z-index: 2400; }
+
+   .anBackdrop{
+     position: absolute; inset: 0; width: 100%;
+     border: 0; cursor: pointer;
+     background: rgba(0,0,0,.42);
+     backdrop-filter: blur(3px);
+   }
+   
+   /* Desktop dropdown anchored under admin header */
+   .anPanel{
+     position: absolute;
+     top: calc(var(--header-h) - 8px);
+     right: 14px;
+   
+     width: min(440px, calc(100vw - 24px));
+     max-height: min(72vh, 680px);
+   
+     display: flex;
+     flex-direction: column;
+   
+     background: var(--bg-soft);
+     border: 1px solid var(--border);
+     border-radius: var(--r-md);
+     box-shadow: var(--shadow-md);
+     overflow: hidden;
+   }
+   
+   /* Top */
+   .anTop{
+     display:flex; align-items:center; justify-content: space-between; gap: var(--space-sm);
+     padding: 14px 14px 10px;
+     border-bottom: 1px solid var(--border);
+     background: linear-gradient(to bottom, rgba(255,255,255,0.86), rgba(255,255,255,0.72));
+   }
+   .anTitle{
+     font-size: 15.5px;
+     font-weight: 950;
+     letter-spacing: var(--ls);
+     color: var(--ink);
+   }
+   .anClose{
+     width: 38px; height: 38px;
+     border-radius: var(--r-sm);
+     border: 1px solid var(--btn-border);
+     background: var(--btn-bg);
+     display: grid; place-items: center;
+     cursor: pointer;
+     transition: transform .12s ease, background .12s ease, border-color .12s ease;
+   }
+   .anClose:hover{ transform: translateY(-1px); background: var(--btn-bg-hover); border-color: var(--btn-border-hover); }
+   .anClose:focus-visible{ outline: none; box-shadow: var(--focus-ring); }
+   
+   /* Tabs + actions row */
+   .anTabs{
+     display:flex; align-items:center; gap: 10px;
+     padding: 10px 14px 12px;
+     border-bottom: 1px solid var(--border);
+     background: var(--surface);
+   }
+   .anTab{
+     height: 34px; padding: 0 12px;
+     border-radius: 999px;
+     border: 1px solid var(--btn-border);
+     background: var(--btn-bg);
+     font-weight: 900;
+     font-size: 12.5px;
+     color: var(--ink);
+     cursor: pointer;
+     transition: transform .12s ease, background .12s ease, border-color .12s ease;
+     white-space: nowrap;
+   }
+   .anTab:hover{ transform: translateY(-1px); background: var(--btn-bg-hover); border-color: var(--btn-border-hover); }
+   .anTab.isActive{ background: var(--accent-soft); border-color: var(--accent-border); }
+   .anTab:focus-visible{ outline: none; box-shadow: var(--focus-ring); }
+   
+   .anSpacer{ flex: 1; }
+   
+   .anIconAction{
+     width: 34px; height: 34px;
+     border-radius: 999px;
+     border: 1px solid var(--btn-border);
+     background: var(--btn-bg);
+     display: grid; place-items: center;
+     cursor: pointer;
+     transition: transform .12s ease, background .12s ease, border-color .12s ease;
+   }
+   .anIconAction:hover{ transform: translateY(-1px); background: var(--btn-bg-hover); border-color: var(--btn-border-hover); }
+   .anIconAction:disabled{ opacity: .55; cursor: not-allowed; }
+   .anIconAction:focus-visible{ outline: none; box-shadow: var(--focus-ring); }
+   
+   /* List */
+   .anList{
+     padding: 10px;
+     overflow: auto;
+     min-height: 220px; /* ajută empty state */
+     scrollbar-width: thin;
+   }
+   .anList::-webkit-scrollbar{ width: 10px; }
+   .anList::-webkit-scrollbar-thumb{
+     background: rgba(17,24,39,0.18);
+     border-radius: 999px;
+     border: 3px solid rgba(255,255,255,0.65);
+   }
+   
+   /* Item */
+   .anItem{
+     width: 100%;
+     display:flex; gap: 12px;
+     padding: 12px;
+     border-radius: var(--r-md);
+     border: 1px solid var(--border);
+     background: var(--card);
+     text-align: left;
+     margin-bottom: 10px;
+     cursor: pointer;
+     transition: transform .14s ease, box-shadow .14s ease, background .14s ease, border-color .14s ease;
+     will-change: transform;
+   }
+   @media (hover: hover) and (pointer: fine){
+     .anItem:hover{ transform: translateY(-1px); background: var(--surface); box-shadow: var(--shadow-sm); }
+   }
+   .anItem.isNew{ border-color: var(--accent-border); }
+   .anItem:focus-visible{ outline: none; box-shadow: var(--focus-ring); }
+   
+   /* Icon */
+   .anIcon{
+     width: 40px; height: 40px;
+     border-radius: var(--r-sm);
+     border: 1px solid var(--border);
+     background: var(--btn-bg);
+     display: grid; place-items: center;
+     flex: 0 0 auto;
+   }
+   
+   /* Body */
+   .anBody{ flex: 1; min-width: 0; position: relative; }
+   .anRow{ display:flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+   .anItemTitle{
+     font-weight: 950;
+     letter-spacing: var(--ls-soft);
+     color: var(--ink);
+     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+   }
+   .anTime{ font-size: var(--fs-xs); color: var(--muted-2); white-space: nowrap; }
+   .anText{
+     margin-top: 4px;
+     font-size: 13px;
+     color: var(--ink-2);
+     line-height: 1.35;
+     display: -webkit-box;
+     -webkit-line-clamp: 2;
+     -webkit-box-orient: vertical;
+     overflow: hidden;
+   }
+   
+   /* Badge */
+   .anBadge{
+     position: absolute; right: 0; bottom: 0;
+     font-size: var(--fs-xs);
+     font-weight: 950;
+     padding: 4px 8px;
+     border-radius: 999px;
+     background: var(--accent-soft);
+     border: 1px solid var(--accent-border);
+     color: var(--ink);
+   }
+   
+   /* Empty */
+   .anEmpty{ padding: 18px 14px; color: var(--muted); }
+   .anEmptyCenter{
+     min-height: 240px;
+     display: grid;
+     place-items: center;
+     text-align: center;
+     padding: 22px 16px;
+   }
+   .anEmptyIcon{ margin-bottom: 10px; opacity: .85; }
+   .anEmptyTitle{ font-weight: 950; color: var(--ink); }
+   .anEmptySub{ margin-top: 6px; color: var(--muted); }
+   
+   /* Mobile: full screen like YouTube */
+   @media (max-width: 560px){
+     .anPanel{
+       top: 0; right: 0;
+       width: 100vw; height: 100vh;
+       max-height: none;
+       border-radius: 0;
+     }
+     .anTop{
+       position: sticky; top: 0; z-index: 2;
+     }
+     .anTabs{
+       position: sticky;
+       top: 56px;
+       z-index: 2;
+     }
+   }
+   @media (max-width: 380px){
+     .anTabs{ gap: 8px; padding: 10px 10px 12px; }
+     .anTab{ padding: 0 10px; }
+     .anItem{ padding: 11px; gap: 10px; }
+     .anIcon{ width: 38px; height: 38px; }
+   }
+   

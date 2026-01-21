@@ -1,0 +1,117 @@
+.apWrap{
+    display:flex;
+    flex-direction:column;
+    gap: 14px;
+  }
+  
+  .apTop{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 12px;
+  }
+  
+  .apSearch{
+    flex: 1;
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(17,24,39,0.10);
+    background: rgba(17,24,39,0.03);
+  }
+  
+  .apSearch input{
+    width:100%;
+    border:none;
+    outline:none;
+    background: transparent;
+    color: var(--ink);
+    font-weight: 700;
+  }
+  
+  .apCount{
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(17,24,39,0.10);
+    background: var(--card);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .apGroup{
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+  }
+  
+  .apGroupTitle{
+    font-weight: 1000;
+    letter-spacing: -0.02em;
+  }
+  
+  .apGrid{
+    display:grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  
+  @media (min-width: 920px){
+    .apGrid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  
+  .apItem{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    padding: 12px 12px;
+    border-radius: 16px;
+    border: 1px solid rgba(17,24,39,0.10);
+    background: var(--card);
+    box-shadow: var(--shadow-sm);
+    cursor:pointer;
+    transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    text-align:left;
+  }
+  
+  .apItem:hover{
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(17,24,39,0.18);
+  }
+  
+  .apItem.active{
+    border-color: rgba(16,185,129,0.45);
+    box-shadow: 0 10px 26px rgba(16,185,129,0.10);
+  }
+  
+  .apIcon{
+    width: 34px;
+    height: 34px;
+    border-radius: 14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: rgba(17,24,39,0.05);
+    flex: 0 0 auto;
+  }
+  
+  .apLabel{
+    font-weight: 900;
+  }
+  
+  .apCheck{
+    margin-left:auto;
+    width: 28px;
+    height: 28px;
+    border-radius: 12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: rgba(16,185,129,0.14);
+  }
+  
+  .apCheck.ghost{
+    background: rgba(17,24,39,0.06);
+  }
+  

@@ -1,412 +1,351 @@
-/* =========================================================
-   StayCard — Horizontal (HS THEME / Production)
-   Uses index.css tokens (ink/muted/border-2/accent...)
-   ========================================================= */
+/* src/components/Stays/StayCard.css */
 
-   .stayCardH{
-    display:grid;
-    grid-template-columns: 260px 1fr;
-    gap: 14px;
-  
-    border: 1px solid var(--border-2);
-    border-radius: var(--r-lg);
-  
-    background: rgba(255,255,255,0.94);
-    backdrop-filter: blur(12px);
-  
-    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-    overflow: hidden;
-  
-    cursor: pointer;
-    transition: transform .12s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+/* Card tokens (safe defaults even if you don't have global tokens) */
+:root{
+  --sc-bg: rgba(255,255,255,0.92);
+  --sc-ink: #0b1220;
+  --sc-muted: rgba(2, 6, 23, 0.62);
+  --sc-border: rgba(2, 6, 23, 0.10);
+  --sc-shadow: 0 18px 40px rgba(2, 6, 23, 0.12);
+  --sc-shadow-hover: 0 22px 58px rgba(2, 6, 23, 0.18);
+  --sc-r: 22px;
+}
+
+.stayCardPro{
+  background: var(--sc-bg);
+  border: 1px solid var(--sc-border);
+  border-radius: var(--sc-r);
+  overflow: hidden;
+  box-shadow: var(--sc-shadow);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  cursor: pointer;
+  outline: none;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.stayCardPro:hover{
+  transform: translateY(-2px);
+  box-shadow: var(--sc-shadow-hover);
+  border-color: rgba(2, 6, 23, 0.16);
+}
+
+.stayCardPro:focus-visible{
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.18), var(--sc-shadow-hover);
+}
+
+.stayCardPro.isActive{
+  border-color: rgba(59,130,246,0.40);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.10), var(--sc-shadow-hover);
+}
+
+/* MEDIA */
+.stayCardMedia{
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: #f1f5f9;
+}
+
+.stayCardImg{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: scale(1.001);
+}
+
+.stayCardShade{
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(2,6,23,0.04) 0%, rgba(2,6,23,0.18) 45%, rgba(2,6,23,0.42) 100%);
+  pointer-events: none;
+}
+
+/* top-left badges */
+.stayCardBadges{
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  max-width: calc(100% - 76px); /* reserve space for fav */
+  z-index: 4;
+}
+
+.stayCardBadge{
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: rgba(255,255,255,0.92);
+  background: rgba(2,6,23,0.42);
+  border: 1px solid rgba(255,255,255,0.18);
+  backdrop-filter: blur(8px);
+}
+
+/* rating chip (bottom-left, Airbnb vibe) */
+.stayCardRatingChip{
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  color: rgba(255,255,255,0.92);
+  background: rgba(2,6,23,0.46);
+  border: 1px solid rgba(255,255,255,0.18);
+  backdrop-filter: blur(8px);
+}
+
+.stayCardRatingNum{
+  font-weight: 900;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.stayCardRatingCount{
+  font-size: 12px;
+  opacity: .9;
+}
+
+/* favorite button (top-right) */
+.stayCardFav{
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 5;
+
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+
+  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(2,6,23,0.44);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.22);
+
+  color: rgba(255,255,255,0.92);
+  cursor: pointer;
+  transition: transform .12s ease, background .15s ease, border-color .15s ease;
+}
+
+.stayCardFav:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,0.30);
+}
+
+.stayCardFav:active{
+  transform: scale(0.96);
+}
+
+.stayCardFav.isOn{
+  background: rgba(239, 68, 68, 0.55);
+  border-color: rgba(239, 68, 68, 0.45);
+}
+
+.stayCardFav.locked{
+  opacity: .92;
+}
+
+/* BODY */
+.stayCardBody{
+  padding: 14px 14px 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.stayCardTopRow{
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.stayCardTitleWrap{
+  min-width: 0;
+}
+
+.stayCardTitle{
+  font-weight: 950;
+  font-size: 16px;
+  line-height: 1.15;
+  color: var(--sc-ink);
+  letter-spacing: -0.2px;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.stayCardSub{
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  color: var(--sc-muted);
+  font-size: 13px;
+}
+
+.stayCardLoc{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.stayCardLoc svg{ opacity: .95; }
+
+.stayCardDot{
+  opacity: .55;
+}
+
+.stayCardType{
+  font-weight: 800;
+  color: rgba(2, 6, 23, 0.62);
+}
+
+/* Mid row */
+.stayCardMidRow{
+  display: grid;
+  gap: 10px;
+}
+
+.stayCardGuests{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(2,6,23,0.72);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.stayCardFacts{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.stayCardFact{
+  font-size: 12px;
+  font-weight: 850;
+  color: rgba(2, 6, 23, 0.72);
+  background: rgba(2, 6, 23, 0.05);
+  border: 1px solid rgba(2, 6, 23, 0.08);
+  padding: 7px 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stayCardFact.isMuted{
+  font-weight: 800;
+  color: rgba(2,6,23,0.50);
+  background: rgba(2,6,23,0.03);
+}
+
+/* Footer */
+.stayCardFooter{
+  margin-top: 2px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.stayCardPriceLine{
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.stayCardPriceVal{
+  font-size: 16px;
+  font-weight: 950;
+  color: var(--sc-ink);
+  letter-spacing: -0.2px;
+}
+
+.stayCardPriceUnit{
+  font-size: 12px;
+  color: rgba(2,6,23,0.56);
+  font-weight: 800;
+}
+
+.stayCardPriceHint{
+  margin-top: 4px;
+  font-size: 12px;
+  color: rgba(2,6,23,0.52);
+  font-weight: 700;
+}
+
+.stayCardCta{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 999px;
+
+  font-weight: 900;
+  font-size: 13px;
+
+  color: rgba(255,255,255,0.92);
+  background: rgba(2,6,23,0.92);
+  border: 1px solid rgba(2,6,23,0.22);
+
+  box-shadow: 0 10px 24px rgba(2,6,23,0.18);
+  cursor: pointer;
+  transition: transform .12s ease, filter .14s ease;
+}
+
+.stayCardCta:hover{
+  filter: brightness(1.04);
+  transform: translateY(-1px);
+}
+.stayCardCta:active{
+  transform: scale(0.98);
+}
+
+/* Small phones / very small widths */
+@media (max-width: 420px){
+  .stayCardBody{ padding: 12px; gap: 9px; }
+  .stayCardTitle{ font-size: 15px; }
+  .stayCardPriceVal{ font-size: 15px; }
+
+  .stayCardFav{
+    width: 38px;
+    height: 38px;
+    top: 10px;
+    right: 10px;
   }
-  
-  .stayCardH:hover{
-    transform: translateY(-2px);
-    border-color: rgba(17,24,39,0.14);
-    background: rgba(255,255,255,0.98);
-    box-shadow: var(--shadow-md);
+  .stayCardBadges{ left: 10px; top: 10px; max-width: calc(100% - 68px); }
+  .stayCardRatingChip{ left: 10px; bottom: 10px; padding: 7px 9px; }
+  .stayCardBadge{ padding: 6px 9px; font-size: 11.5px; }
+  .stayCardFact{ padding: 6px 9px; font-size: 11.5px; }
+  .stayCardCta{ height: 38px; padding: 0 11px; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .stayCardPro,
+  .stayCardFav,
+  .stayCardCta{
+    transition: none !important;
   }
-  
-  .stayCardH:focus-visible{
-    outline: none;
-    border-color: rgba(255,56,92,0.38);
-    box-shadow: var(--focus-ring), var(--shadow-md);
-  }
-  
-  /* ---------- MEDIA ---------- */
-  .stayMedia{
-    position: relative;
-    min-height: 190px;
-    height: 100%;
-    background: rgba(17,24,39,0.04);
-  }
-  
-  .stayImg{
-    width:100%;
-    height:100%;
-    object-fit: cover;
-    display:block;
-    transform: scale(1.01);
-  }
-  
-  /* (era gol) — overlay subtil pt. contrast badge + rating */
-  .stayMediaOverlay{
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-    background:
-      radial-gradient(900px 260px at 12% 0%, rgba(255,255,255,0.55), transparent 55%),
-      linear-gradient(to top, rgba(17,24,39,0.22), rgba(17,24,39,0) 60%);
-    opacity: 0.55;
-  }
-  
-  .stayBadges{
-    position:absolute;
-    top: 12px;
-    left: 12px;
-    display:flex;
-    gap:8px;
-    flex-wrap: wrap;
-    z-index: 2;
-  }
-  
-  .stayBadge{
-    display:inline-flex;
-    align-items:center;
-    padding: 7px 10px;
-    border-radius: 999px;
-  
-    font-size: 0.76rem;
-    font-weight: 850;
-    letter-spacing: var(--ls-soft);
-  
-    color: rgba(255,255,255,0.95);
-    background: rgba(17,24,39,0.55);
-    border: 1px solid rgba(255,255,255,0.18);
-    backdrop-filter: blur(10px);
-  }
-  
-  /* ⭐ Rating pill */
-  .stayRatingPill{
-    position:absolute;
-    bottom: 12px;
-    left: 12px;
-    z-index: 2;
-  
-    display:inline-flex;
-    align-items:center;
-    gap: 8px;
-  
-    padding: 8px 10px;
-    border-radius: 999px;
-  
-    background: rgba(255,255,255,0.92);
-    border: 1px solid rgba(255,255,255,0.35);
-    backdrop-filter: blur(10px);
-  
-    box-shadow: 0 14px 30px rgba(0,0,0,0.16);
-  
-    font-weight: 850;
-    letter-spacing: var(--ls-soft);
-    font-size: 0.82rem;
-  }
-  
-  /* ⭐ STEA GALBENĂ */
-  .stayRatingPill svg{
-    color: #fbbf24;
-    fill: #fbbf24;
-  }
-  
-  .stayRatingNum{
-    color: rgba(17,24,39,0.96);
-  }
-  
-  .stayRatingCount{
-    color: rgba(17,24,39,0.62);
-    font-weight: 850;
-  }
-  
-  /* ---------- CONTENT ---------- */
-  .stayContent{
-    padding: 14px 14px 14px 0;
-    display:flex;
-    flex-direction: column;
-    gap: 10px;
-    min-width: 0;
-  }
-  
-  .stayHeader{
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap: 12px;
-  }
-  
-  .stayTitleBlock{ min-width: 0; }
-  
-  .stayTitle{
-    margin:0;
-    font-size: 1.02rem;          /* mai mic */
-    font-weight: 900;
-    letter-spacing: var(--ls);
-    color: var(--ink);
-  
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  
-  .staySubRow{
-    margin-top: 6px;
-    display:flex;
-    align-items:center;
-    gap: 10px;
-  
-    color: var(--muted);
-    font-weight: 700;
-    letter-spacing: var(--ls-soft);
-    font-size: 0.86rem;
-    min-width: 0;
-  }
-  
-  .staySubtitle{
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-  
-  .staySep{ opacity: .55; }
-  
-  .stayLoc{
-    display:inline-flex;
-    align-items:center;
-    gap: 6px;
-    min-width: 0;
-  }
-  
-  /* Type pill — accent subtil */
-  .stayTypePill{
-    flex: 0 0 auto;
-    padding: 7px 10px;
-    border-radius: 999px;
-  
-    border: 1px solid var(--accent-border);
-    background: rgba(255,56,92,0.10);
-    color: var(--ink);
-  
-    font-weight: 850;
-    letter-spacing: var(--ls-soft);
-    font-size: 0.76rem;
-    white-space: nowrap;
-  }
-  
-  /* ---------- META ---------- */
-  .stayMetaRow{
-    display:flex;
-    align-items:flex-start;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  
-  .stayMetaItem{
-    display:inline-flex;
-    align-items:center;
-    gap: 8px;
-  
-    padding: 8px 10px;
-    border-radius: 14px;
-  
-    border: 1px solid rgba(17,24,39,0.10);
-    background: rgba(255,255,255,0.74);
-  
-    font-weight: 850;
-    letter-spacing: var(--ls-soft);
-    color: rgba(17,24,39,0.82);
-    font-size: 0.82rem;
-  }
-  
-  .stayAmenityRow{
-    display:flex;
-    align-items:center;
-    gap: 8px;
-    flex-wrap: wrap;
-    min-width: 0;
-  }
-  
-  .amenityChip{
-    display:inline-flex;
-    align-items:center;
-    gap: 8px;
-    padding: 8px 10px;
-    border-radius: 999px;
-  
-    border: 1px solid rgba(17,24,39,0.10);
-    background: rgba(255,255,255,0.74);
-  
-    font-weight: 850;
-    letter-spacing: var(--ls-soft);
-    font-size: 0.76rem;
-    color: rgba(17,24,39,0.82);
-  
-    transition: border-color .12s ease, background .12s ease, transform .12s ease, box-shadow .12s ease;
-  }
-  
-  .amenityChip:hover{
-    border-color: rgba(17,24,39,0.16);
-    background: rgba(255,255,255,0.90);
-    transform: translateY(-1px);
-  }
-  
-  .amenityChip:focus-visible{
-    outline: none;
-    border-color: var(--accent-border);
-    box-shadow: var(--focus-ring);
-  }
-  
-  .amenityChip.isMuted{ opacity: 0.75; }
-  
-  .amenityLbl{
-    display:inline-block;
-    max-width: 120px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  /* ---------- FOOTER ---------- */
-  .stayFooter{
-    margin-top: auto;
-    display:flex;
-    align-items:flex-end;
-    justify-content:space-between;
-    gap: 12px;
-  
-    padding-top: 8px;
-    border-top: 1px solid rgba(17,24,39,0.08);
-  }
-  
-  .stayPriceTop{
-    display:flex;
-    align-items: baseline;
-    gap: 8px;
-  }
-  
-  .stayPriceValue{
-    font-weight: 900;
-    letter-spacing: var(--ls);
-    font-size: 1.02rem;
-    color: var(--ink);
-  }
-  
-  .stayPriceUnit{
-    color: rgba(17,24,39,0.62);
-    font-weight: 700;
-    letter-spacing: var(--ls-soft);
-    font-size: 0.84rem;
-  }
-  
-  .stayPriceHint{
-    margin-top: 4px;
-    color: rgba(17,24,39,0.58);
-    font-weight: 700;
-    letter-spacing: var(--ls-soft);
-    font-size: 0.76rem;
-  }
-  
-  /* CTA */
-  .stayCta{
-    border: none;
-    border-radius: 14px;
-    padding: 10px 12px;
-    cursor: pointer;
-  
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap: 10px;
-  
-    font-weight: 900;
-    letter-spacing: var(--ls-soft);
-    font-size: 0.84rem;
-  
-    transition: transform .12s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
-  }
-  
-  /* CTA — outline / hsBtn vibe */
-  .stayCtaGlass{
-    color: var(--ink);
-    background: rgba(255,255,255,0.92);
-    border: 1px solid rgba(17,24,39,0.10);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 14px 30px rgba(0,0,0,0.08);
-  }
-  
-  .stayCtaGlass:hover{
-    background: rgba(255,255,255,0.98);
-    border-color: rgba(17,24,39,0.16);
-    box-shadow: 0 18px 40px rgba(0,0,0,0.12);
-    transform: translateY(-1px);
-  }
-  
-  .stayCtaGlass:active{ transform: translateY(0px); }
-  
-  .stayCtaGlass:focus-visible{
-    outline: none;
-    border-color: rgba(17,24,39,0.18);
-    box-shadow: var(--focus-ring), 0 18px 40px rgba(0,0,0,0.12);
-  }
-  
-  /* ---------- Responsive ---------- */
-  @media (max-width: 860px){
-    .stayCardH{ grid-template-columns: 1fr; }
-    .stayContent{ padding: 14px; }
-    .stayMedia{ min-height: 210px; }
-  
-    .stayFooter{
-      flex-direction: column;
-      align-items: stretch;
-    }
-  
-    .stayCta{
-      width: 100%;
-      justify-content: center;
-    }
-  }
-  
-  /* SMALL MOBILE (360–430px) */
-  @media (max-width: 430px){
-    .stayCardH{
-      border-radius: 18px;
-      gap: 12px;
-    }
-  
-    .stayMedia{ min-height: 190px; }
-  
-    .stayBadges{ top: 10px; left: 10px; }
-    .stayRatingPill{ left: 10px; bottom: 10px; }
-  
-    .stayContent{ padding: 12px; gap: 9px; }
-  
-    .stayTitle{ font-size: 0.98rem; }
-    .staySubRow{ font-size: 0.84rem; gap: 8px; }
-  
-    .stayMetaRow{ gap: 8px; }
-    .stayMetaItem{ padding: 7px 9px; border-radius: 12px; }
-  
-    .amenityChip{ padding: 7px 9px; }
-    .amenityLbl{ max-width: 100px; }
-  
-    .stayPriceValue{ font-size: 0.98rem; }
-    .stayCta{ padding: 10px 12px; }
-  }
-  
-  /* VERY SMALL (<= 360px) */
-  @media (max-width: 360px){
-    .stayRatingPill{ font-size: 0.8rem; }
-    .stayBadge{ font-size: 0.74rem; }
-    .stayTitle{ font-size: 0.95rem; }
-  }
-  
+  .stayCardPro:hover{ transform: none; }
+  .stayCardFav:hover{ transform: none; }
+  .stayCardCta:hover{ transform: none; }
+}

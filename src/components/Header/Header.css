@@ -170,8 +170,8 @@
   position: absolute;
   right: 0;
   top: calc(100% + 10px);
-  min-width: 180px;
-  padding: 6px;
+  min-width: 320px;   /* în loc de 180px */
+  max-width: 420px;   /* ca să nu fie imens */  padding: 6px;
   border-radius: 12px;
 
   background: rgba(255,255,255,0.92);
@@ -233,6 +233,78 @@
   border-color: rgba(255,56,92,0.28);
   background: rgba(255,255,255,0.75);
 }
+
+/* Favorites dropdown section */
+.ud-section{ padding: 8px 6px 8px; } /* în loc de 10px 10px 8px */
+.ud-title{
+  display:flex; align-items:center; gap:8px;
+  font-weight: 800; 
+  padding: 6px 4px 8px;
+}
+.ud-divider{ height: 1px; background: rgba(17,24,39,.10); margin: 6px 0; }
+
+.ud-empty{
+  padding: 8px 6px 10px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.ud-fav-list{ display:flex; flex-direction: column; gap: 6px; padding: 2px 2px 8px; }
+.ud-fav-item{
+  display:flex; align-items:center; gap: 10px;
+  padding: 8px 8px;
+  border-radius: 12px;
+  transition: transform .15s ease, background .15s ease;
+}
+.ud-fav-item:hover{
+  background: rgba(17,24,39,.04);
+  transform: none; /* sau translateY(-0.5px) */
+}
+
+.ud-fav-thumb{
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  background: rgba(17,24,39,.08);
+  background-size: cover;
+  background-position: center;
+  flex: 0 0 auto;
+}
+
+.ud-fav-meta{ min-width: 0; flex: 1; }
+.ud-fav-name{
+  font-weight: 900;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ud-fav-sub{
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ud-fav-arrow{ opacity: .55; }
+
+.ud-fav-all{
+  display:flex; align-items:center; justify-content: space-between; gap: 8px;
+  padding: 8px 8px;
+  border-radius: 12px;
+  font-weight: 900;
+  font-size: 13px;
+  background: rgba(17,24,39,.03);
+}
+.ud-fav-all:hover{ background: rgba(17,24,39,.05); }
+
+/* skeleton */
+.ud-skeleton{ padding: 4px 6px 10px; display:flex; flex-direction:column; gap:8px; }
+.ud-skel-row{ height: 10px; border-radius: 999px; background: rgba(17,24,39,.08); }
+.ud-skel-row:nth-child(2){ width: 85%; }
+.ud-skel-row:nth-child(3){ width: 70%; }
+
 
 /* responsive */
 @media (max-width: 720px){

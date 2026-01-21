@@ -81,7 +81,26 @@
   border-color: rgba(17,24,39,0.24);
   box-shadow: 0 0 0 4px rgba(47,133,90,0.12);
 }
+.mhGuestGrid{
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 860px){
+  .mhGuestGrid{ grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 640px){
+  .mhGuestGrid{ grid-template-columns: 1fr; }
+}
 
 @media (max-width: 640px) {
   .mhGuestGrid { grid-template-columns: 1fr; }
+}
+.mhReq {
+  color: var(--accent);
+  font-weight: 900;
+  margin-left: 2px;
 }

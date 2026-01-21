@@ -43,3 +43,27 @@ export async function removeFavorite(propertyId) {
     throw err;
   }
 }
+
+export async function getMyFavoritesPreview(limit = 6) {
+  try {
+    const data = await apiFetch(`/favorites/me/preview?limit=${limit}`, { method: "GET" });
+    return data.items || [];
+  } catch (err) {
+    toast.error("Eroare", {
+      description: err.message || "Nu am putut încărca preview-ul favoritelor.",
+    });
+    throw err;
+  }
+}
+
+export async function getMyFavoritesAll({ page = 1, limit = 24 } = {}) {
+  try {
+    const data = await apiFetch(`/favorites/me/all?page=${page}&limit=${limit}`, { method: "GET" });
+    return data; // {items,page,limit,total,totalPages}
+  } catch (err) {
+    toast.error("Eroare", {
+      description: err.message || "Nu am putut încărca favoritele.",
+    });
+    throw err;
+  }
+}

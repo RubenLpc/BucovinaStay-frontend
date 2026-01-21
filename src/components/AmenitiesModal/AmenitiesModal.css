@@ -1,0 +1,261 @@
+.amodalOverlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.55);
+    backdrop-filter: blur(10px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 18px;
+    z-index: 9999;
+  }
+  
+  .amodal{
+    width: min(920px, 100%);
+    max-height: min(78vh, 740px);
+    display:flex;
+    flex-direction:column;
+    border-radius: 22px;
+    background: var(--card);
+    color: var(--ink);
+    border: 1px solid rgba(17,24,39,0.12);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+  
+  .amodalHeader{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap: 12px;
+    padding: 16px 16px 12px;
+    border-bottom: 1px solid rgba(17,24,39,0.10);
+  }
+  
+  .amodalTitle{
+    font-weight: 1000;
+    letter-spacing: -0.02em;
+    font-size: 1.15rem;
+  }
+  
+  .amodalSub{
+    margin-top: 4px;
+    color: var(--muted);
+    font-weight: 700;
+    font-size: 0.92rem;
+  }
+  
+  .amodalClose{
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+    border: 1px solid rgba(17,24,39,0.10);
+    background: rgba(17,24,39,0.03);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+  }
+  .amodalClose:hover{ box-shadow: var(--shadow-sm); }
+  
+  .amodalSearchRow{
+    display:flex;
+    gap: 10px;
+    align-items:center;
+    padding: 12px 16px;
+  }
+  
+  .amodalSearch{
+    flex: 1;
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    padding: 12px 12px;
+    border-radius: 16px;
+    border: 1px solid rgba(17,24,39,0.12);
+    background: rgba(17,24,39,0.03);
+  }
+  .amodalSearch input{
+    width: 100%;
+    background: transparent;
+    border: 0;
+    outline: none;
+    color: var(--ink);
+    font-weight: 800;
+  }
+  
+  .amodalCounter{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    padding: 12px 12px;
+    border-radius: 16px;
+    border: 1px solid rgba(17,24,39,0.12);
+    background: rgba(17,24,39,0.02);
+    font-weight: 800;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  
+  .amodalTabs{
+    display:flex;
+    gap: 8px;
+    padding: 0 16px 12px;
+    overflow:auto;
+  }
+  
+  .amodalTab{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(17,24,39,0.10);
+    background: rgba(17,24,39,0.02);
+    font-weight: 900;
+    cursor:pointer;
+    white-space: nowrap;
+  }
+  .amodalTab.active{
+    border-color: var(--accent-border);
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .amodalBadge{
+    min-width: 22px;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 999px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: rgba(17,24,39,0.10);
+    font-size: 0.82rem;
+    font-weight: 1000;
+  }
+  .amodalTab.active .amodalBadge{
+    background: rgba(0,0,0,0.08);
+  }
+  
+  .amodalList{
+    padding: 6px 10px 12px;
+    overflow:auto;
+    flex: 1;
+  }
+  
+  .amodalItem{
+    width: 100%;
+    display:flex;
+    align-items:center;
+    gap: 12px;
+    padding: 12px 12px;
+    border-radius: 18px;
+    border: 1px solid rgba(17,24,39,0.10);
+    background: rgba(17,24,39,0.02);
+    cursor:pointer;
+    text-align:left;
+    margin: 8px 0;
+  }
+  .amodalItem:hover{
+    box-shadow: var(--shadow-sm);
+    border-color: rgba(17,24,39,0.18);
+  }
+  .amodalItem.checked{
+    border-color: var(--accent-border);
+    background: rgba(59,130,246,0.10); /* folosește accent, dar fără să impunem culoare exactă */
+  }
+  
+  .amodalItemIcon{
+    width: 38px;
+    height: 38px;
+    border-radius: 16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: rgba(17,24,39,0.06);
+    flex: 0 0 auto;
+  }
+  
+  .amodalItemText{
+    flex: 1;
+    display:flex;
+    flex-direction:column;
+    gap: 2px;
+  }
+  .amodalItemLabel{
+    font-weight: 1000;
+    letter-spacing: -0.01em;
+  }
+  .amodalItemMeta{
+    color: var(--muted);
+    font-weight: 700;
+    font-size: 0.86rem;
+  }
+  
+  .amodalCheck{
+    width: 44px;
+    height: 28px;
+    border-radius: 999px;
+    border: 1px solid rgba(17,24,39,0.14);
+    background: rgba(17,24,39,0.05);
+    display:flex;
+    align-items:center;
+    padding: 0 3px;
+    flex: 0 0 auto;
+  }
+  .amodalCheckDot{
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    background: rgba(17,24,39,0.18);
+    transform: translateX(0);
+    transition: transform 160ms ease, background 160ms ease;
+  }
+  .amodalCheck.on{
+    background: rgba(59,130,246,0.14);
+    border-color: var(--accent-border);
+  }
+  .amodalCheck.on .amodalCheckDot{
+    transform: translateX(16px);
+    background: var(--accent);
+  }
+  
+  .amodalEmpty{
+    padding: 22px 14px;
+    color: var(--muted);
+    font-weight: 800;
+  }
+  
+  .amodalFooter{
+    padding: 12px 16px;
+    border-top: 1px solid rgba(17,24,39,0.10);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 12px;
+  }
+  
+  .amodalFooterRight{
+    display:flex;
+    gap: 10px;
+  }
+  
+  .amodalBtn{
+    padding: 10px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(17,24,39,0.12);
+    background: rgba(17,24,39,0.03);
+    font-weight: 1000;
+    cursor:pointer;
+  }
+  .amodalBtn:hover{ box-shadow: var(--shadow-sm); }
+  
+  .amodalBtn.primary{
+    background: var(--accent);
+    color: white;
+    border-color: rgba(0,0,0,0.12);
+  }
+  .amodalBtn.ghost{
+    background: transparent;
+  }
+  

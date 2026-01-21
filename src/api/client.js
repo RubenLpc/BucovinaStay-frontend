@@ -1,5 +1,5 @@
-const API_URL = "https://bucovinastay-backend-2.onrender.com"  ;
-
+//const API_URL = "http://localhost:3000"; // schimbă după nevoie 
+const API_URL = "https://bucovinastay-frontend1.onrender.com"; 
 let maintenanceListeners = new Set();
 let maintenanceActive = false; // ✅ latch
 
@@ -27,26 +27,27 @@ async function safeJson(res) {
 
 export async function apiFetch(url, options = {}) {
   const token = localStorage.getItem("token");
+  
+  const headers = {
+    ...(options.headers || {}),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+
+  // setează Content-Type doar dacă NU e FormData
+  const isFormData =
+    typeof FormData !== "undefined" && options.body instanceof FormData;
+
+  if (!isFormData) headers["Content-Type"] = "application/json";
 
   const res = await fetch(API_URL + url, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token && { Authorization: `Bearer ${token}` }),
-      ...options.headers,
-    },
+    headers,
   });
 
   const data = await safeJson(res);
 
-  // ✅ maintenance handling
   if (res.status === 503) {
-    emitMaintenance({
-      message: data?.message,
-      supportEmail: data?.supportEmail,
-    });
-
-    // IMPORTANT: arunc un error special ca să-l poți ignora în catch
+    emitMaintenance({ message: data?.message, supportEmail: data?.supportEmail });
     const err = new Error("MAINTENANCE");
     err.code = "MAINTENANCE";
     err.payload = data;
@@ -54,12 +55,14 @@ export async function apiFetch(url, options = {}) {
   }
 
   if (!res.ok) {
-    throw new Error(data?.message || "Request failed");
+    // vezi și status ca să-ți fie clar
+    const err = new Error(data?.message || `Request failed (${res.status})`);
+    err.status = res.status;
+    err.payload = data;
+    throw err;
   }
 
-  // dacă a fost mentenanță și acum e ok, poți reseta latch
   if (maintenanceActive) maintenanceActive = false;
-
   return data;
 }
 

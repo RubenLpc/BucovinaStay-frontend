@@ -6,8 +6,6 @@ import {
   Save,
   Send,
   X,
-  ChevronLeft,
-  ChevronRight,
   MapPin,
   BedDouble,
   BadgePercent,
@@ -16,47 +14,27 @@ import {
   Sparkles,
   ShieldCheck,
   UserCircle2,
+  Home,
+  Users,
 } from "lucide-react";
 
 import { useAuthStore } from "../../stores/authStore";
 import { hostPropertyService } from "../../api/hostPropertyService";
 import { hostProfileService } from "../../api/hostProfileService";
 import HostProfileModal from "../../components/HostProfileModal/HostProfileModal";
+import "leaflet/dist/leaflet.css";
+import GeoPicker from "../../components/GeoPicker/GeoPicker";
+
+import AmenityPicker from "../../components/AmenityPicker/AmenityPicker";
+import { AMENITY_BY_KEY } from "../../constants/amenitiesCatalog";
+import AmenitiesModal from "../../components/AmenitiesModal/AmenitiesModal";
+
 
 import "./HostAddProperty.css";
 
-const TYPES = [
-  "pensiune",
-  "cabana",
-  "hotel",
-  "apartament",
-  "vila",
-  "tiny_house",
-];
+const TYPES = ["pensiune", "cabana", "hotel", "apartament", "vila", "tiny_house"];
 
-const FACILITIES = [
-  { key: "wifi", label: "Wi-Fi" },
-  { key: "parking", label: "Parcare" },
-  { key: "breakfast", label: "Mic dejun" },
-  { key: "petFriendly", label: "Pet friendly" },
-  { key: "spa", label: "SPA" },
-  { key: "kitchen", label: "Bucătărie" },
-  { key: "ac", label: "AC" },
-  { key: "sauna", label: "Saună" },
-  { key: "fireplace", label: "Șemineu" },
-];
 
-const STEPS = [
-  { id: "details", title: "Detalii", subtitle: "Titlu, tip, descriere" },
-  { id: "location", title: "Locație", subtitle: "Oraș, localitate, adresă" },
-  {
-    id: "pricing",
-    title: "Preț & facilități",
-    subtitle: "Preț/noapte, dotări",
-  },
-  { id: "photos", title: "Poze", subtitle: "Cover + galerie" },
-  { id: "review", title: "Review", subtitle: "Verifică și trimite" },
-];
 
 function clampNumber(val, min, max) {
   const n = Number(val);
@@ -109,39 +87,26 @@ function buildWarnings(form) {
   return w;
 }
 
-/** ce înseamnă “profil complet” pentru a permite creare proprietate */
+/** “profil complet” pentru a permite creare proprietate */
 function isHostProfileComplete(profile) {
   const errors = {};
+  if (!profile) return { ok: false, errors: { _global: "Profilul nu există încă." } };
 
-  if (!profile) {
-    return { ok: false, errors: { _global: "Profilul nu există încă." } };
-  }
-
-  // Required by your schema: displayName
   if (!profile.displayName || profile.displayName.trim().length < 2) {
     errors.displayName = "Display name (minim 2 caractere) este obligatoriu.";
   }
 
-  // avatarUrl is OPTIONAL in your schema -> don't block creating properties
-   if (!profile.avatarUrl || !profile.avatarUrl.trim()) {
-     errors.avatarUrl = "Adaugă o poză (avatar).";
-   }
-
-  // bio is OPTIONAL in your schema -> don't block
-   if (!profile.bio || profile.bio.trim().length < 50) {
-     errors.bio = "Bio este obligatoriu (minim 50 caractere).";
-  }
+  // dacă vrei să fie obligatorii, lasă-le; dacă nu, comentează-le complet:
+  // if (!profile.avatarUrl || !profile.avatarUrl.trim()) errors.avatarUrl = "Adaugă o poză (avatar).";
+  // if (!profile.bio || profile.bio.trim().length < 50) errors.bio = "Bio este obligatoriu (minim 50 caractere).";
 
   const ok = Object.keys(errors).length === 0;
   return { ok, errors };
 }
 
-
-export default function HostAddProperty({ editId = null }) {
+export default function HostAddPropertyScroll({ editId = null }) {
   const navigate = useNavigate();
   const { user } = useAuthStore();
-
-  const [step, setStep] = useState(0);
 
   const [saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -151,6 +116,9 @@ export default function HostAddProperty({ editId = null }) {
 
   const coverInputRef = useRef(null);
   const galleryInputRef = useRef(null);
+
+  const [amenitiesOpen, setAmenitiesOpen] = useState(false);
+
 
   // Host profile gating
   const [hostProfile, setHostProfile] = useState(null);
@@ -162,19 +130,16 @@ export default function HostAddProperty({ editId = null }) {
     subtitle: "",
     description: "",
     type: "pensiune",
-
     city: "",
     locality: "",
     addressLine: "",
-
     pricePerNight: 250,
     currency: "RON",
     capacity: 2,
-
     facilities: [],
-
     images: [],
     coverImage: null,
+    geo: null,
   });
 
   // Guard: only host/admin
@@ -188,7 +153,7 @@ export default function HostAddProperty({ editId = null }) {
     );
   }
 
-  // load host profile (required before creating properties)
+  // load host profile
   useEffect(() => {
     let alive = true;
 
@@ -196,23 +161,20 @@ export default function HostAddProperty({ editId = null }) {
       setHpLoading(true);
       try {
         const res = await hostProfileService.getMyHostProfile();
-const hp =
-  res?.hostProfile ||
-  res?.profile ||
-  res?.data?.hostProfile ||
-  res?.data?.profile ||
-  res ||
-  null;
-
-setHostProfile(hp);
-
+        const hp =
+          res?.hostProfile ||
+          res?.profile ||
+          res?.data?.hostProfile ||
+          res?.data?.profile ||
+          res ||
+          null;
 
         if (!alive) return;
         setHostProfile(hp);
 
         const ok = hp?.displayName?.trim()?.length >= 2;
         if (!ok) setProfileOpen(true);
-      } catch (e) {
+      } catch {
         if (!alive) return;
         setHostProfile(null);
       } finally {
@@ -227,8 +189,8 @@ setHostProfile(hp);
 
   const hpCheck = useMemo(() => isHostProfileComplete(hostProfile), [hostProfile]);
   const hostProfileOk = hpCheck.ok;
-  const hostProfileErrors = hpCheck.errors;
-  
+
+  // load property for edit
   useEffect(() => {
     if (!editId) return;
 
@@ -236,8 +198,7 @@ setHostProfile(hp);
     (async () => {
       try {
         const res = await hostPropertyService.getPropertyById(editId);
-        const p = res?.property || res; // depinde ce returnezi din backend
-
+        const p = res?.property || res;
         if (!alive || !p) return;
 
         setPropertyId(p._id);
@@ -247,21 +208,19 @@ setHostProfile(hp);
           subtitle: p.subtitle || "",
           description: p.description || "",
           type: p.type || "pensiune",
-
           city: p.city || "",
           locality: p.locality || "",
           addressLine: p.addressLine || "",
-
           pricePerNight: p.pricePerNight ?? 250,
           currency: p.currency || "RON",
           capacity: p.capacity ?? 2,
-
           facilities: Array.isArray(p.facilities) ? p.facilities : [],
-
           images: Array.isArray(p.images) ? p.images : [],
           coverImage: p.coverImage || p.images?.[0] || null,
+          geo: p.geo || null,
+
         });
-      } catch (e) {
+      } catch {
         toast.error("Nu am putut încărca proprietatea pentru edit.");
       }
     })();
@@ -272,23 +231,6 @@ setHostProfile(hp);
   }, [editId]);
 
   const completion = useMemo(() => countCompletion(form), [form]);
-
-  const stepValid = useMemo(() => {
-    if (step === 0)
-      return (
-        form.title.trim().length >= 3 && form.description.trim().length >= 20
-      );
-    if (step === 1) return form.city.trim().length >= 2;
-    if (step === 2)
-      return Number(form.pricePerNight) >= 0 && Number(form.capacity) >= 1;
-    if (step === 3) {
-      const hasCover = Boolean(form.coverImage?.url || form.images?.[0]?.url);
-      const enoughPhotos = (form.images?.length || 0) >= 5;
-      return hasCover && enoughPhotos;
-    }
-    return true;
-  }, [step, form]);
-
   const warnings = useMemo(() => buildWarnings(form), [form]);
   const allValid = warnings.length === 0;
 
@@ -297,9 +239,7 @@ setHostProfile(hp);
       const has = p.facilities.includes(key);
       return {
         ...p,
-        facilities: has
-          ? p.facilities.filter((x) => x !== key)
-          : [...p.facilities, key],
+        facilities: has ? p.facilities.filter((x) => x !== key) : [...p.facilities, key],
       };
     });
   };
@@ -309,19 +249,17 @@ setHostProfile(hp);
     subtitle: form.subtitle.trim(),
     description: form.description.trim(),
     type: form.type,
-
     city: form.city.trim(),
     locality: form.locality.trim(),
     addressLine: form.addressLine.trim(),
-
     pricePerNight: Number(form.pricePerNight),
     currency: form.currency,
     capacity: Number(form.capacity),
-
     facilities: form.facilities,
-
     images: form.images || [],
     coverImage: form.coverImage || form.images?.[0] || null,
+    geo: form.geo || null,
+
   });
 
   const ensureHostProfile = () => {
@@ -339,11 +277,10 @@ setHostProfile(hp);
     return true;
   };
 
-  // Save draft returns ID
+  // ---------- Save draft ----------
   const saveDraft = async (opts = { silent: false }) => {
     if (!ensureHostProfile()) return null;
 
-    // minimum quality for draft
     const canSave =
       form.title.trim().length >= 3 &&
       form.description.trim().length >= 20 &&
@@ -373,53 +310,36 @@ setHostProfile(hp);
         if (!opts.silent) toast.success("Draft salvat");
         return propertyId;
       }
-    } catch (e) {
+    } catch {
+      if (!opts.silent) toast.error("Nu am putut salva draft-ul.");
       return null;
     } finally {
       setSaving(false);
     }
   };
 
-  const submit = async () => {
-    if (!hostProfileOk) {
-      toast.error("Completează profilul de gazdă înainte.");
-      setProfileOpen(true);
-      return;
-    }
+  // ---------- Auto-save (debounced) ----------
+  const autosaveTimer = useRef(null);
+  const scheduleAutosave = () => {
+    if (!propertyId) return; // autosave doar după ce există draft
+    if (uploading || submitting) return;
 
-    if (!ensureHostProfile()) return;
+    window.clearTimeout(autosaveTimer.current);
+    autosaveTimer.current = window.setTimeout(() => {
+      saveDraft({ silent: true });
+    }, 650);
+  };
 
-    let id = propertyId;
-    if (!id) id = await saveDraft({ silent: false });
-
-    if (!id) {
-      toast.error("Nu am un draft salvat încă.");
-      return;
-    }
-
-    if (warnings.length) {
-      toast.error("Mai ai câteva lucruri de completat", {
-        description: warnings[0],
-      });
-      setStep(4);
-      return;
-    }
-
-    setSubmitting(true);
-    try {
-      await hostPropertyService.submitForReview(id);
-      toast.success("Trimis spre verificare");
-      navigate("/host", { replace: true });
-    } catch (e) {
-      // toast handled in service
-    } finally {
-      setSubmitting(false);
-    }
+  const setField = (patch) => {
+    setForm((p) => {
+      const next = { ...p, ...patch };
+      return next;
+    });
+    scheduleAutosave();
   };
 
   // ---------- Cloudinary signed upload ----------
   const uploadToCloudinary = async (file) => {
-    // IMPORTANT: în multe setup-uri, semnătura e aceeași pentru cover și galerie
     const sig = await hostPropertyService.getCloudinarySignature();
     const url = `https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`;
 
@@ -432,9 +352,7 @@ setHostProfile(hp);
 
     const res = await fetch(url, { method: "POST", body: fd });
     const data = await res.json();
-
-    if (!res.ok)
-      throw new Error(data?.error?.message || "Cloudinary upload failed");
+    if (!res.ok) throw new Error(data?.error?.message || "Cloudinary upload failed");
 
     return {
       url: data.secure_url,
@@ -451,7 +369,6 @@ setHostProfile(hp);
       e.target.value = "";
       return;
     }
-
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -460,6 +377,7 @@ setHostProfile(hp);
       const uploaded = await uploadToCloudinary(file);
       setForm((p) => ({ ...p, coverImage: uploaded }));
       toast.success("Cover încărcat");
+      scheduleAutosave();
     } catch (err) {
       toast.error("Nu am putut încărca cover-ul", {
         description: err?.message || "Eroare upload",
@@ -475,25 +393,22 @@ setHostProfile(hp);
       e.target.value = "";
       return;
     }
-
     const arr = Array.from(e.target.files || []);
     if (!arr.length) return;
 
     setUploading(true);
     try {
       const uploaded = [];
-      // upload serial -> mai sigur (rate limit / stabil)
       for (const f of arr) uploaded.push(await uploadToCloudinary(f));
 
       setForm((p) => {
         const nextImages = [...(p.images || []), ...uploaded];
-        const nextCover = p.coverImage?.url
-          ? p.coverImage
-          : uploaded[0] || null;
+        const nextCover = p.coverImage?.url ? p.coverImage : uploaded[0] || null;
         return { ...p, images: nextImages, coverImage: nextCover };
       });
 
       toast.success(`Încărcate ${arr.length} imagini`);
+      scheduleAutosave();
     } catch (err) {
       toast.error("Nu am putut încărca imaginile", {
         description: err?.message || "Eroare upload",
@@ -507,12 +422,11 @@ setHostProfile(hp);
   const removeImage = (publicId) => {
     setForm((p) => {
       const next = (p.images || []).filter((i) => i.publicId !== publicId);
-
       let nextCover = p.coverImage;
       if (p.coverImage?.publicId === publicId) nextCover = next[0] || null;
-
       return { ...p, images: next, coverImage: nextCover };
     });
+    scheduleAutosave();
   };
 
   const setCoverFromGallery = (publicId) => {
@@ -520,222 +434,195 @@ setHostProfile(hp);
       const img = (p.images || []).find((i) => i.publicId === publicId);
       return { ...p, coverImage: img || p.coverImage };
     });
+    scheduleAutosave();
   };
 
   const openCoverPicker = () => coverInputRef.current?.click();
   const openGalleryPicker = () => galleryInputRef.current?.click();
 
-  const goNext = async () => {
-    if (!stepValid) {
-      toast.error("Completează câmpurile necesare pentru acest pas.");
+  const submit = async () => {
+    if (!hostProfileOk) {
+      toast.error("Completează profilul de gazdă înainte.");
+      setProfileOpen(true);
       return;
     }
-    if (step <= 3) await saveDraft({ silent: true });
+    if (!ensureHostProfile()) return;
 
-    setStep((s) => Math.min(STEPS.length - 1, s + 1));
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+    let id = propertyId;
+    if (!id) id = await saveDraft({ silent: false });
 
-  const goBack = () => {
-    setStep((s) => Math.max(0, s - 1));
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (!id) {
+      toast.error("Nu am un draft salvat încă.");
+      return;
+    }
+
+    if (warnings.length) {
+      toast.error("Mai ai câteva lucruri de completat", { description: warnings[0] });
+      const el = document.querySelector("[data-ha-anchor='review']");
+      el?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await hostPropertyService.submitForReview(id);
+      toast.success("Trimis spre verificare");
+      navigate("/host", { replace: true });
+    } catch {
+      // toast handled in service
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const canSubmitNow = allValid && !submitting && !saving && !uploading;
 
   return (
-    <div className="hostAddShell">
-      {/* Gate banner */}
-      {!hpLoading && !hostProfileOk && (
-        <div className="haBanner haBannerWarn">
-          <div className="haBannerIcon">
-            <UserCircle2 size={18} />
-          </div>
-          <div className="haBannerText">
-            <div className="haBannerTitle">Completează profilul de gazdă</div>
-            <div className="haBannerSub">
-              Înainte să creezi o proprietate, ai nevoie de un HostProfile
-              (minim Display name).
+    <div className="haSHELL">
+      <div className="haCONTAINER">
+        {/* Gate banner */}
+        {!hpLoading && !hostProfileOk && (
+          <div className="haGate">
+            <div className="haGateIcon">
+              <UserCircle2 size={18} />
             </div>
-          </div>
-          <button
-            className="haBannerBtn"
-            type="button"
-            onClick={() => setProfileOpen(true)}
-          >
-            Mergi la profil
-          </button>
-        </div>
-      )}
-
-      {/* Top header */}
-      <header className="hostAddTop">
-        <div className="topLeft">
-          <div className="titleRow">
-            <h1>{editId ? "Editează proprietate" : "Adaugă proprietate"}</h1>
-
-            <span className={`statusPill ${propertyId ? "hasId" : ""}`}>
-              {editId
-                ? "Editare draft"
-                : propertyId
-                ? "Draft salvat"
-                : "Draft nou"}
-            </span>
-          </div>
-
-          <p className="sub">
-            Creezi un draft, adaugi poze (cover separat), apoi trimiți la
-            verificare.
-          </p>
-
-          <div className="metaRow">
-            <div className="metaCard">
-              <div className="metaIcon">
-                <Sparkles size={18} />
-              </div>
-              <div className="metaText">
-                <div className="metaLabel">Completare</div>
-                <div className="metaValue">{completion}%</div>
-              </div>
-              <div className="progressBar">
-                <div
-                  className="progressFill"
-                  style={{ width: `${completion}%` }}
-                />
+            <div className="haGateText">
+              <div className="haGateTitle">Completează profilul de gazdă</div>
+              <div className="haGateSub">
+                Înainte să creezi o proprietate, ai nevoie de un HostProfile (minim Display name).
               </div>
             </div>
-
-            <div className="metaCard">
-              <div className="metaIcon">
-                <ShieldCheck size={18} />
-              </div>
-              <div className="metaText">
-                <div className="metaLabel">Reguli</div>
-                <div className="metaValue">Min. 5 poze</div>
-              </div>
-              <div className="metaHint">Ideal 8–12, cover clar & luminos.</div>
-            </div>
+            <button className="btn btn-secondary" type="button" onClick={() => setProfileOpen(true)}>
+              Mergi la profil
+            </button>
           </div>
-        </div>
+        )}
 
-        <div className="topActions">
-          <button
-            className="btn btn-secondary"
-            type="button"
-            onClick={() => saveDraft({ silent: false })}
-            disabled={saving || uploading || !hostProfileOk}
-            title={
-              !hostProfileOk
-                ? "Completează profilul de gazdă"
-                : "Salvează draft-ul"
-            }
-          >
-            <Save size={18} />
-            {saving ? "Se salvează..." : "Salvează draft"}
-          </button>
+        {/* Header (ca ppHeader) */}
+        <div className="haHeader">
+          <div className="haHeaderLeft">
+            <h1 className="haTitle">{editId ? "Editează proprietate" : "Adaugă proprietate"}</h1>
 
-          <button
-            className="btn btn-primary"
-            type="button"
-            onClick={() => {
-              setStep(4);
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-            disabled={uploading}
-            title="Mergi la review"
-          >
-            <CheckCircle2 size={18} />
-            Review
-          </button>
-        </div>
-      </header>
+            <div className="haMetaRow">
+              <span className={`haPill ${propertyId ? "ok" : ""}`}>
+                {editId ? "Editare draft" : propertyId ? "Draft salvat" : "Draft nou"}
+              </span>
 
-      {/* Stepper */}
-      <div className="stepperWrap">
-        <div className="stepper">
-          {STEPS.map((s, idx) => {
-            const isActive = idx === step;
-            const isDone = idx < step;
-            return (
-              <button
-                key={s.id}
-                type="button"
-                className={`stepItem ${isActive ? "active" : ""} ${
-                  isDone ? "done" : ""
-                }`}
-                onClick={() => setStep(idx)}
-              >
-                <span className="stepDot">{isDone ? "✓" : idx + 1}</span>
-                <span className="stepTxt">
-                  <span className="stepTitle">{s.title}</span>
-                  <span className="stepSub">{s.subtitle}</span>
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+              <span className="haDot">•</span>
 
-      {/* Content grid */}
-      <div className="hostAddGrid">
-        {/* LEFT MAIN */}
-        <section className="panelX mainPanel">
-          <div className="panelTop">
-            <div className="panelTitle">
-              {STEPS[step].title}
-              <span className="panelBadge">
-                {step + 1}/{STEPS.length}
+              <span className="haMeta">
+                <Sparkles size={14} /> <b>{completion}%</b> complet
+              </span>
+
+              <span className="haDot">•</span>
+
+              <span className="haMeta">
+                <ShieldCheck size={14} /> Minim 5 poze
               </span>
             </div>
-            <div className="panelHint">{STEPS[step].subtitle}</div>
           </div>
 
-          {/* Step 1 - Details */}
-          {step === 0 && (
-            <div className="panelBody">
-              <div className="fieldGrid2">
-                <div className="fieldRow">
-                  <label className="label">Titlu</label>
+          <div className="haHeaderActions">
+            <button
+              className="haActionBtn"
+              type="button"
+              onClick={() => saveDraft({ silent: false })}
+              disabled={saving || uploading || !hostProfileOk}
+            >
+              <Save size={16} />
+              <span>{saving ? "Se salvează..." : "Salvează"}</span>
+            </button>
+
+            <button
+              className="haActionBtn haActionPrimary"
+              type="button"
+              onClick={() => {
+                const el = document.querySelector("[data-ha-anchor='review']");
+                el?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              disabled={uploading}
+            >
+              <CheckCircle2 size={16} />
+              <span>Review</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Grid (ca ppGrid) */}
+        <div className="haGRID">
+          {/* LEFT */}
+          <div className="haLEFT">
+            {/* Quick nav (nu e stepper; e doar “jump links”) */}
+            <div className="haQuickNav">
+              <button className="haQuickChip" onClick={() => document.querySelector("[data-ha-anchor='details']")?.scrollIntoView({ behavior: "smooth" })}>
+                <Home size={14} /> Detalii
+              </button>
+              <button className="haQuickChip" onClick={() => document.querySelector("[data-ha-anchor='location']")?.scrollIntoView({ behavior: "smooth" })}>
+                <MapPin size={14} /> Locație
+              </button>
+              <button className="haQuickChip" onClick={() => document.querySelector("[data-ha-anchor='pricing']")?.scrollIntoView({ behavior: "smooth" })}>
+                <BadgePercent size={14} /> Preț
+              </button>
+              <button className="haQuickChip" onClick={() => document.querySelector("[data-ha-anchor='photos']")?.scrollIntoView({ behavior: "smooth" })}>
+                <ImageIcon size={14} /> Poze
+              </button>
+              <button className="haQuickChip" onClick={() => document.querySelector("[data-ha-anchor='review']")?.scrollIntoView({ behavior: "smooth" })}>
+                <CheckCircle2 size={14} /> Submit
+              </button>
+            </div>
+
+            {/* SECTION: Details */}
+            <section className="haSection" data-ha-anchor="details">
+              <div className="haSectionTop">
+                <div>
+                  <h2 className="haH2">Detalii</h2>
+                  <div className="haMuted">Titlu, tip, descriere, capacitate</div>
+                </div>
+                <div className="haMiniState">
+                  {form.title.trim().length >= 3 && form.description.trim().length >= 20 ? (
+                    <span className="haOK"><CheckCircle2 size={16} /> OK</span>
+                  ) : (
+                    <span className="haBAD"><AlertTriangle size={16} /> Incomplet</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="haFieldGrid2">
+                <div className="haField">
+                  <label className="haLabel">Titlu</label>
                   <input
                     className="input"
                     value={form.title}
-                    onChange={(e) =>
-                      setForm((p) => ({ ...p, title: e.target.value }))
-                    }
-                    placeholder="Ex: Pensiune modernă cu spa"
+                    onChange={(e) => setField({ title: e.target.value })}
+                    onBlur={() => propertyId && saveDraft({ silent: true })}
+                    placeholder="Ex: Cabană premium cu spa & view"
                     maxLength={90}
                   />
-                  <div className="fieldHelp">
-                    {form.title.trim().length}/90 • Minim 3 caractere
-                  </div>
+                  <div className="haHelp">{form.title.trim().length}/90 • Minim 3 caractere</div>
                 </div>
 
-                <div className="fieldRow">
-                  <label className="label">Subtitlu</label>
+                <div className="haField">
+                  <label className="haLabel">Subtitlu</label>
                   <input
                     className="input"
                     value={form.subtitle}
-                    onChange={(e) =>
-                      setForm((p) => ({ ...p, subtitle: e.target.value }))
-                    }
-                    placeholder="Ex: Spa & mic dejun"
+                    onChange={(e) => setField({ subtitle: e.target.value })}
+                    onBlur={() => propertyId && saveDraft({ silent: true })}
+                    placeholder="Ex: Sauna • Șemineu • Parcare"
                     maxLength={60}
                   />
-                  <div className="fieldHelp">
-                    {form.subtitle.trim().length}/60
-                  </div>
+                  <div className="haHelp">{form.subtitle.trim().length}/60</div>
                 </div>
               </div>
 
-              <div className="fieldGrid2">
-                <div className="fieldRow">
-                  <label className="label">Tip</label>
+              <div className="haFieldGrid2">
+                <div className="haField">
+                  <label className="haLabel">Tip</label>
                   <select
                     className="input"
                     value={form.type}
-                    onChange={(e) =>
-                      setForm((p) => ({ ...p, type: e.target.value }))
-                    }
+                    onChange={(e) => setField({ type: e.target.value })}
+                    onBlur={() => propertyId && saveDraft({ silent: true })}
                   >
                     {TYPES.map((t) => (
                       <option key={t} value={t}>
@@ -743,262 +630,327 @@ setHostProfile(hp);
                       </option>
                     ))}
                   </select>
-                  <div className="fieldHelp">Apare ca filtru în listări</div>
+                  <div className="haHelp">Apare ca filtru în listări</div>
                 </div>
 
-                <div className="fieldRow">
-                  <label className="label">Capacitate (persoane)</label>
-                  <input
-                    className="input"
-                    type="number"
-                    value={form.capacity}
-                    onChange={(e) =>
-                      setForm((p) => ({
-                        ...p,
-                        capacity: clampNumber(e.target.value, 1, 50),
-                      }))
-                    }
-                    min={1}
-                    max={50}
-                  />
-                  <div className="fieldHelp">Minim 1 • Maxim 50</div>
+                <div className="haField">
+                  <label className="haLabel">Capacitate (persoane)</label>
+                  <div className="haInputWithIcon">
+                    <Users size={16} className="haInputIcon" />
+                    <input
+                      className="input"
+                      type="number"
+                      value={form.capacity}
+                      onChange={(e) => setField({ capacity: clampNumber(e.target.value, 1, 50) })}
+                      onBlur={() => propertyId && saveDraft({ silent: true })}
+                      min={1}
+                      max={50}
+                    />
+                  </div>
+                  <div className="haHelp">Minim 1 • Maxim 50</div>
                 </div>
               </div>
 
-              <div className="fieldRow">
-                <label className="label">Descriere</label>
+              <div className="haField">
+                <label className="haLabel">Descriere</label>
                 <textarea
-                  className="input textarea"
+                  className="input haTextarea"
                   value={form.description}
-                  onChange={(e) =>
-                    setForm((p) => ({ ...p, description: e.target.value }))
-                  }
-                  placeholder="Spune clar ce primește oaspetele: camere, vibe, spații, priveliște, acces, parcare..."
+                  onChange={(e) => setField({ description: e.target.value })}
+                  onBlur={() => propertyId && saveDraft({ silent: true })}
+                  placeholder="Primele 2–3 propoziții contează: vibe, view, spații, acces, parcare..."
                   maxLength={4000}
                 />
-                <div className="fieldHelp">
-                  {form.description.trim().length}/4000 • Minim 20 caractere
-                </div>
+                <div className="haHelp">{form.description.trim().length}/4000 • Minim 20 caractere</div>
               </div>
 
-              <div className="callout good">
+              <div className="haCallout good">
                 <Sparkles size={18} />
                 <div>
-                  <div className="calloutTitle">Tip pro</div>
-                  <div className="calloutText">
-                    Primele 2–3 propoziții contează cel mai mult (apar în card +
-                    preview).
-                  </div>
+                  <div className="haCalloutTitle">Tip pro</div>
+                  <div className="haCalloutText">Scrie începutul ca un “hook” — apare în card + preview.</div>
                 </div>
               </div>
-            </div>
-          )}
+            </section>
 
-          {/* Step 2 - Location */}
-          {step === 1 && (
-            <div className="panelBody">
-              <div className="callout neutral">
+            {/* SECTION: Location */}
+            <section className="haSection" data-ha-anchor="location">
+              <div className="haSectionTop">
+                <div>
+                  <h2 className="haH2">Locație</h2>
+                  <div className="haMuted">Oraș obligatoriu, rest opțional</div>
+                </div>
+                <div className="haMiniState">
+                  {form.city.trim().length >= 2 ? (
+                    <span className="haOK"><CheckCircle2 size={16} /> OK</span>
+                  ) : (
+                    <span className="haBAD"><AlertTriangle size={16} /> Incomplet</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="haCallout neutral">
                 <MapPin size={18} />
                 <div>
-                  <div className="calloutTitle">Locație</div>
-                  <div className="calloutText">
-                    Orașul este obligatoriu. Localitatea și adresa sunt
-                    opționale, dar cresc conversia.
-                  </div>
+                  <div className="haCalloutTitle">Recomandare</div>
+                  <div className="haCalloutText">Localitatea și adresa cresc conversia, dar nu pune detalii sensibile.</div>
                 </div>
               </div>
 
-              <div className="fieldGrid2">
-                <div className="fieldRow">
-                  <label className="label">Oraș</label>
+              <div className="haFieldGrid2">
+                <div className="haField">
+                  <label className="haLabel">Oraș</label>
                   <input
                     className="input"
                     value={form.city}
-                    onChange={(e) =>
-                      setForm((p) => ({ ...p, city: e.target.value }))
-                    }
+                    onChange={(e) => setField({ city: e.target.value })}
+                    onBlur={() => propertyId && saveDraft({ silent: true })}
                     placeholder="Suceava"
                   />
-                  <div className="fieldHelp">Minim 2 caractere</div>
+                  <div className="haHelp">Minim 2 caractere</div>
                 </div>
 
-                <div className="fieldRow">
-                  <label className="label">Localitate (opțional)</label>
+                <div className="haField">
+                  <label className="haLabel">Localitate (opțional)</label>
                   <input
                     className="input"
                     value={form.locality}
-                    onChange={(e) =>
-                      setForm((p) => ({ ...p, locality: e.target.value }))
-                    }
+                    onChange={(e) => setField({ locality: e.target.value })}
+                    onBlur={() => propertyId && saveDraft({ silent: true })}
                     placeholder="Voroneț"
                   />
-                  <div className="fieldHelp">Sat / comună / zonă</div>
+                  <div className="haHelp">Sat / comună / zonă</div>
                 </div>
               </div>
 
-              <div className="fieldRow">
-                <label className="label">Adresă (opțional)</label>
+              <div className="haField">
+                <label className="haLabel">Adresă (opțional)</label>
                 <input
                   className="input"
                   value={form.addressLine}
-                  onChange={(e) =>
-                    setForm((p) => ({ ...p, addressLine: e.target.value }))
-                  }
+                  onChange={(e) => setField({ addressLine: e.target.value })}
+                  onBlur={() => propertyId && saveDraft({ silent: true })}
                   placeholder="Strada, nr"
                 />
-                <div className="fieldHelp">
-                  Nu afișa detalii sensibile (ex: cod ușă), doar adresă
-                  generală.
+                <div className="haHelp">Doar adresă generală. Fără coduri, instrucțiuni private etc.</div>
+              </div>
+
+              <div className="haDivider" />
+
+<div className="haSectionTitleRow">
+  <div className="haH3">Pin pe hartă</div>
+  <div className="haMuted">Click pe hartă sau drag marker-ul</div>
+</div>
+
+<GeoPicker
+  value={form.geo}
+  onChange={(geo) => {
+    setField({ geo });
+    // autosave va porni singur din setField()
+  }}
+/>
+
+<div className="haHelp" style={{ marginTop: 10 }}>
+  {form.geo?.coordinates?.length === 2
+    ? `Salvat: lng ${form.geo.coordinates[0].toFixed(5)}, lat ${form.geo.coordinates[1].toFixed(5)}`
+    : "Nu ai setat încă pin-ul (recomandat)."}
+</div>
+
+{form.geo ? (
+  <button
+    type="button"
+    className="btn btn-secondary"
+    onClick={() => setField({ geo: null })}
+    style={{ marginTop: 10 }}
+  >
+    Șterge pin
+  </button>
+) : null}
+
+            </section>
+
+            {/* SECTION: Pricing + Facilities */}
+            <section className="haSection" data-ha-anchor="pricing">
+              <div className="haSectionTop">
+                <div>
+                  <h2 className="haH2">Preț & facilități</h2>
+                  <div className="haMuted">Preț/noapte + dotări</div>
+                </div>
+                <div className="haMiniState">
+                  {Number(form.pricePerNight) >= 0 && Number(form.capacity) >= 1 ? (
+                    <span className="haOK"><CheckCircle2 size={16} /> OK</span>
+                  ) : (
+                    <span className="haBAD"><AlertTriangle size={16} /> Incomplet</span>
+                  )}
                 </div>
               </div>
-            </div>
-          )}
 
-          {/* Step 3 - Pricing */}
-          {step === 2 && (
-            <div className="panelBody">
-              <div className="fieldGrid2">
-                <div className="fieldRow">
-                  <label className="label">Preț / noapte</label>
-                  <div className="inputWithIcon">
-                    <BadgePercent size={18} className="inputIcon" />
+              <div className="haFieldGrid2">
+                <div className="haField">
+                  <label className="haLabel">Preț / noapte</label>
+                  <div className="haInputWithIcon">
+                    <BadgePercent size={16} className="haInputIcon" />
                     <input
                       className="input"
                       type="number"
                       value={form.pricePerNight}
-                      onChange={(e) =>
-                        setForm((p) => ({
-                          ...p,
-                          pricePerNight: clampNumber(e.target.value, 0, 999999),
-                        }))
-                      }
+                      onChange={(e) => setField({ pricePerNight: clampNumber(e.target.value, 0, 999999) })}
+                      onBlur={() => propertyId && saveDraft({ silent: true })}
                       min={0}
                     />
                   </div>
-                  <div className="fieldHelp">
-                    Apare în listă + calcul rezervare
-                  </div>
+                  <div className="haHelp">Apare în listă + în viitor la rezervări</div>
                 </div>
 
-                <div className="fieldRow">
-                  <label className="label">Monedă</label>
+                <div className="haField">
+                  <label className="haLabel">Monedă</label>
                   <select
                     className="input"
                     value={form.currency}
-                    onChange={(e) =>
-                      setForm((p) => ({ ...p, currency: e.target.value }))
-                    }
+                    onChange={(e) => setField({ currency: e.target.value })}
+                    onBlur={() => propertyId && saveDraft({ silent: true })}
                   >
                     <option value="RON">RON</option>
                     <option value="EUR">EUR</option>
                   </select>
-                  <div className="fieldHelp">Recomand RON pentru Bucovina</div>
+                  <div className="haHelp">Recomand RON pentru Bucovina</div>
                 </div>
               </div>
 
-              <div className="pricePreview">
+              <div className="haPricePreview">
                 <BedDouble size={18} />
-                <div className="priceText">
-                  <div className="priceLabel">Preview</div>
-                  <div className="priceValue">
-                    {formatMoney(form.pricePerNight, form.currency)} / noapte
-                  </div>
+                <div>
+                  <div className="haMuted">Preview</div>
+                  <div className="haPriceValue">{formatMoney(form.pricePerNight, form.currency)} / noapte</div>
                 </div>
               </div>
 
-              <div className="divider" />
+              <div className="haDivider" />
 
-              <div className="sectionTitleRow">
-                <div className="sectionTitle">Facilități</div>
-                <div className="sectionHint">Selectează ce ai disponibil</div>
+              <div className="haSectionTitleRow">
+                <div className="haMuted">Bifează ce e disponibil</div>
               </div>
 
-              <div className="chips">
-                {FACILITIES.map((f) => (
-                  <button
-                    key={f.key}
-                    type="button"
-                    className={`chip ${
-                      form.facilities.includes(f.key) ? "active" : ""
-                    }`}
-                    onClick={() => toggleFacility(f.key)}
-                  >
-                    {f.label}
-                  </button>
-                ))}
-              </div>
+              <div className="haField">
+  <label className="haLabel">Facilități</label>
 
-              <div className="callout good">
+  <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+    <button
+      type="button"
+      className="btn btn-secondary"
+      onClick={() => setAmenitiesOpen(true)}
+    >
+      Alege facilități ({form.facilities.length})
+    </button>
+
+    {form.facilities.length ? (
+      <button
+        type="button"
+        className="btn btn-secondary"
+        onClick={() => setField({ facilities: [] })}
+      >
+        Șterge toate
+      </button>
+    ) : null}
+  </div>
+
+  <div className="haHelp">
+    Recomand: bifează doar ce există cu adevărat. Facilitățile apar ca filtre publice.
+  </div>
+
+  {/* mini preview (max 6) */}
+  {form.facilities.length ? (
+    <div className="haPreviewChips" style={{ marginTop: 10 }}>
+      {form.facilities.slice(0, 6).map((k) => (
+        <span key={k} className="haTinyChip">
+          {AMENITY_BY_KEY[k]?.label || k}
+        </span>
+      ))}
+      {form.facilities.length > 6 ? (
+        <span className="haTinyChip muted">+{form.facilities.length - 6}</span>
+      ) : null}
+    </div>
+  ) : null}
+</div>
+
+<AmenitiesModal
+  open={amenitiesOpen}
+  value={form.facilities}
+  onClose={() => setAmenitiesOpen(false)}
+  onChange={(arr) => setField({ facilities: arr })}
+/>
+
+
+
+
+              <div className="haCallout good">
                 <CheckCircle2 size={18} />
                 <div>
-                  <div className="calloutTitle">Tip pro</div>
-                  <div className="calloutText">
-                    Wi-Fi + Parcare + Mic dejun sunt cele mai căutate — dacă le
-                    ai, merită bifate.
-                  </div>
+                  <div className="haCalloutTitle">Tip pro</div>
+                  <div className="haCalloutText">Wi-Fi + Parcare + Mic dejun cresc click-urile (dacă le ai, bifează).</div>
                 </div>
               </div>
-            </div>
-          )}
+            </section>
 
-          {/* Step 4 - Photos */}
-          {step === 3 && (
-            <div className="panelBody">
-              <div className="photoLayout">
+            {/* SECTION: Photos */}
+            <section className="haSection" data-ha-anchor="photos">
+              <div className="haSectionTop">
+                <div>
+                  <h2 className="haH2">Poze</h2>
+                  <div className="haMuted">Cover + galerie (minim 5)</div>
+                </div>
+                <div className="haMiniState">
+                  {(form.images?.length || 0) >= 5 && (form.coverImage?.url || form.images?.[0]?.url) ? (
+                    <span className="haOK"><CheckCircle2 size={16} /> OK</span>
+                  ) : (
+                    <span className="haBAD"><AlertTriangle size={16} /> Incomplet</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="haPhotoLayout">
                 {/* Cover */}
-                <div className="coverBlock">
-                  <div className="blockHead">
+                <div className="haBlock">
+                  <div className="haBlockHead">
                     <div>
-                      <div className="blockTitle">Cover photo</div>
-                      <div className="blockSub">
-                        Poza principală (cea mai importantă). Recomand: fațada /
-                        living luminos / view.
-                      </div>
+                      <div className="haBlockTitle">Cover photo</div>
+                      <div className="haMuted">Cea mai importantă poză. Recomand: fațadă / living luminos / view.</div>
                     </div>
 
-                    <div className="blockActions">
-                      <button
-                        className="btn btn-secondary"
-                        type="button"
-                        onClick={openCoverPicker}
-                        disabled={uploading || hpLoading || !hostProfileOk}
-                      >
-                        <ImageIcon size={18} />
-                        {uploading ? "Upload..." : "Încarcă cover"}
-                      </button>
-                      <input
-                        ref={coverInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={onPickCover}
-                        disabled={uploading}
-                        className="hiddenInput"
-                      />
-                    </div>
+                    <button
+                      className="btn btn-secondary"
+                      type="button"
+                      onClick={openCoverPicker}
+                      disabled={uploading || hpLoading || !hostProfileOk}
+                    >
+                      <ImageIcon size={18} />
+                      {uploading ? "Upload..." : "Încarcă cover"}
+                    </button>
+
+                    <input
+                      ref={coverInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={onPickCover}
+                      disabled={uploading}
+                      className="haHiddenInput"
+                    />
                   </div>
 
-                  <div
-                    className={`coverPreview ${
-                      form.coverImage?.url ? "hasImg" : ""
-                    }`}
-                  >
+                  <div className={`haCover ${form.coverImage?.url ? "has" : ""}`}>
                     {form.coverImage?.url ? (
                       <>
                         <img src={form.coverImage.url} alt="Cover" />
-                        <div className="coverOverlay">
-                          <span className="coverPill">Cover</span>
+                        <div className="haCoverOverlay">
+                          <span className="haCoverPill">Cover</span>
                         </div>
                       </>
                     ) : (
-                      <div className="coverEmpty">
-                        <div className="coverEmptyIcon">
-                          <ImageIcon size={22} />
-                        </div>
-                        <div className="coverEmptyText">
-                          <div className="coverEmptyTitle">Alege un cover</div>
-                          <div className="coverEmptySub">
-                            Un cover bun crește click-urile considerabil.
-                          </div>
+                      <div className="haEmpty">
+                        <ImageIcon size={22} />
+                        <div>
+                          <div className="haEmptyTitle">Alege un cover</div>
+                          <div className="haMuted">Un cover bun crește click-urile considerabil.</div>
                         </div>
                       </div>
                     )}
@@ -1006,94 +958,66 @@ setHostProfile(hp);
                 </div>
 
                 {/* Gallery */}
-                <div className="galleryBlock">
-                  <div className="blockHead">
+                <div className="haBlock">
+                  <div className="haBlockHead">
                     <div>
-                      <div className="blockTitle">Galerie</div>
-                      <div className="blockSub">
-                        Minim 5 poze (ideal 8–12). Include: camere, baie,
-                        exterior, spații comune, view.
-                      </div>
+                      <div className="haBlockTitle">Galerie</div>
+                      <div className="haMuted">Ideal 8–12 poze: camere, baie, exterior, spații comune, view.</div>
                     </div>
 
-                    <div className="blockActions">
-                      <button
-                        className="btn btn-primary"
-                        type="button"
-                        onClick={openGalleryPicker}
-                        disabled={uploading || hpLoading || !hostProfileOk}
-                      >
-                        <ImageIcon size={18} />
-                        {uploading ? "Upload..." : "Încarcă imagini"}
-                      </button>
-                      <input
-                        ref={galleryInputRef}
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        onChange={onPickImages}
-                        disabled={uploading}
-                        className="hiddenInput"
-                      />
-                    </div>
+                    <button
+                      className="btn btn-primary"
+                      type="button"
+                      onClick={openGalleryPicker}
+                      disabled={uploading || hpLoading || !hostProfileOk}
+                    >
+                      <ImageIcon size={18} />
+                      {uploading ? "Upload..." : "Încarcă imagini"}
+                    </button>
+
+                    <input
+                      ref={galleryInputRef}
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={onPickImages}
+                      disabled={uploading}
+                      className="haHiddenInput"
+                    />
                   </div>
 
-                  <div className="photoStats">
-                    <div
-                      className={`statChip ${
-                        (form.images?.length || 0) >= 5 ? "ok" : "warn"
-                      }`}
-                    >
-                      {(form.images?.length || 0) >= 5 ? (
-                        <CheckCircle2 size={16} />
-                      ) : (
-                        <AlertTriangle size={16} />
-                      )}
+                  <div className="haPhotoStats">
+                    <div className={`haStatChip ${(form.images?.length || 0) >= 5 ? "ok" : "warn"}`}>
+                      {(form.images?.length || 0) >= 5 ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />}
                       <span>{form.images?.length || 0} / 5 minim</span>
                     </div>
-                    <div className="statChip neutral">
+                    <div className="haStatChip neutral">
                       <span>Tip: 8–12 poze arată “premium”</span>
                     </div>
                   </div>
 
                   {(form.images?.length || 0) === 0 ? (
-                    <div className="galleryEmpty">
-                      <div className="galleryEmptyIcon">
-                        <ImageIcon size={22} />
-                      </div>
-                      <div className="galleryEmptyText">
-                        <div className="galleryEmptyTitle">
-                          Nu ai încă poze în galerie
-                        </div>
-                        <div className="galleryEmptySub">
-                          Apasă “Încarcă imagini” și adaugă câteva cadre bune.
-                        </div>
+                    <div className="haEmpty">
+                      <ImageIcon size={22} />
+                      <div>
+                        <div className="haEmptyTitle">Nu ai încă poze în galerie</div>
+                        <div className="haMuted">Apasă “Încarcă imagini” și adaugă câteva cadre bune.</div>
                       </div>
                     </div>
                   ) : (
-                    <div className="thumbGrid">
+                    <div className="haThumbGrid">
                       {form.images.map((img) => {
-                        const isCover =
-                          form.coverImage?.publicId === img.publicId;
+                        const isCover = form.coverImage?.publicId === img.publicId;
                         return (
-                          <div
-                            className={`thumb ${isCover ? "isCover" : ""}`}
-                            key={img.publicId}
-                          >
+                          <div className={`haThumb ${isCover ? "isCover" : ""}`} key={img.publicId}>
                             <img src={img.url} alt="" />
-                            <div className="thumbTop">
-                              {isCover && (
-                                <span className="thumbPill">Cover</span>
-                              )}
-                            </div>
+                            <div className="haThumbTop">{isCover ? <span className="haThumbPill">Cover</span> : null}</div>
 
-                            <div className="thumbActions">
+                            <div className="haThumbActions">
                               <button
                                 type="button"
-                                className="miniBtn"
-                                onClick={() =>
-                                  setCoverFromGallery(img.publicId)
-                                }
+                                className="haMiniBtn"
+                                onClick={() => setCoverFromGallery(img.publicId)}
                                 disabled={uploading}
                               >
                                 Set cover
@@ -1101,7 +1025,7 @@ setHostProfile(hp);
 
                               <button
                                 type="button"
-                                className="miniBtn danger"
+                                className="haMiniBtn danger"
                                 onClick={() => removeImage(img.publicId)}
                                 disabled={uploading}
                               >
@@ -1114,394 +1038,197 @@ setHostProfile(hp);
                     </div>
                   )}
 
-                  <div className="callout neutral">
+                  <div className="haCallout neutral">
                     <AlertTriangle size={18} />
                     <div>
-                      <div className="calloutTitle">Important</div>
-                      <div className="calloutText">
-                        Evită poze întunecate/blur. Cover-ul ar trebui să fie
-                        cel mai clar și “wow”.
-                      </div>
+                      <div className="haCalloutTitle">Important</div>
+                      <div className="haCalloutText">Evită poze întunecate/blur. Cover-ul trebuie să fie “wow”.</div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
 
-          {/* Step 5 - Review */}
-          {step === 4 && (
-            <div className="panelBody">
-              <div className="reviewGrid">
-                <div className="reviewCard">
-                  <div className="reviewHead">
-                    <div className="reviewTitle">Rezumat</div>
-                    <div
-                      className={`reviewBadge ${
-                        warnings.length ? "warn" : "ok"
-                      }`}
-                    >
-                      {warnings.length ? (
-                        <AlertTriangle size={16} />
-                      ) : (
-                        <CheckCircle2 size={16} />
-                      )}
-                      {warnings.length
-                        ? `${warnings.length} atenționări`
-                        : "Gata de trimis"}
-                    </div>
-                  </div>
+              {/* CTA: dacă vrei, poți crea draft aici rapid */}
+              {!propertyId ? (
+                <div className="haBottomCta">
+                  <button
+                    className="btn btn-primary"
+                    type="button"
+                    onClick={() => saveDraft({ silent: false })}
+                    disabled={saving || uploading || !hostProfileOk}
+                  >
+                    <Save size={18} />
+                    Creează draft (ca să pornească autosave)
+                  </button>
+                  <div className="haMuted">După draft, modificările se salvează automat (soft).</div>
+                </div>
+              ) : null}
+            </section>
 
-                  <div className="reviewRow">
-                    <div className="reviewLabel">Titlu</div>
-                    <div className="reviewValue">
-                      {form.title?.trim() || "—"}
-                    </div>
-                  </div>
-                  <div className="reviewRow">
-                    <div className="reviewLabel">Tip</div>
-                    <div className="reviewValue">{form.type}</div>
-                  </div>
-                  <div className="reviewRow">
-                    <div className="reviewLabel">Locație</div>
-                    <div className="reviewValue">
-                      {[form.locality?.trim(), form.city?.trim()]
-                        .filter(Boolean)
-                        .join(", ") || "—"}
-                    </div>
-                  </div>
-                  <div className="reviewRow">
-                    <div className="reviewLabel">Preț</div>
-                    <div className="reviewValue">
-                      {formatMoney(form.pricePerNight, form.currency)} / noapte
-                    </div>
-                  </div>
-                  <div className="reviewRow">
-                    <div className="reviewLabel">Capacitate</div>
-                    <div className="reviewValue">{form.capacity} persoane</div>
-                  </div>
-                  <div className="reviewRow">
-                    <div className="reviewLabel">Facilități</div>
-                    <div className="reviewValue">
-                      {form.facilities?.length
-                        ? FACILITIES.filter((f) =>
-                            form.facilities.includes(f.key)
-                          )
-                            .map((f) => f.label)
-                            .join(", ")
-                        : "—"}
-                    </div>
-                  </div>
-                  <div className="reviewRow">
-                    <div className="reviewLabel">Poze</div>
-                    <div className="reviewValue">
-                      {form.images?.length || 0} (cover:{" "}
-                      {form.coverImage?.url ? "da" : "nu"})
-                    </div>
-                  </div>
-
-                  <div className="reviewMedia">
-                    <div className="reviewCover">
-                      <div className="reviewMediaLabel">Cover preview</div>
-                      <div
-                        className={`reviewCoverBox ${
-                          form.coverImage?.url || form.images?.[0]?.url
-                            ? "has"
-                            : ""
-                        }`}
-                      >
-                        {form.coverImage?.url || form.images?.[0]?.url ? (
-                          <img
-                            src={form.coverImage?.url || form.images?.[0]?.url}
-                            alt="Cover preview"
-                          />
-                        ) : (
-                          <div className="reviewCoverEmpty">—</div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="reviewDesc">
-                      <div className="reviewMediaLabel">Descriere</div>
-                      <div className="reviewDescBox">
-                        {form.description?.trim()
-                          ? form.description.trim()
-                          : "—"}
-                      </div>
-                    </div>
-                  </div>
+            {/* SECTION: Review + Submit */}
+            <section className="haSection" data-ha-anchor="review">
+              <div className="haSectionTop">
+                <div>
+                  <h2 className="haH2">Review & Trimite</h2>
+                  <div className="haMuted">Verifică înainte de “Pending”</div>
                 </div>
 
-                <div className="reviewCard">
-                  <div className="reviewHead">
-                    <div className="reviewTitle">Checklist</div>
-                    <div className="reviewMini">{completion}% complet</div>
-                  </div>
+                <div className={`haReviewBadge ${warnings.length ? "warn" : "ok"}`}>
+                  {warnings.length ? <AlertTriangle size={16} /> : <CheckCircle2 size={16} />}
+                  {warnings.length ? `${warnings.length} atenționări` : "Gata de trimis"}
+                </div>
+              </div>
 
-                  <ul className="checkList">
-                    <li
-                      className={form.title.trim().length >= 3 ? "ok" : "bad"}
-                    >
-                      {form.title.trim().length >= 3 ? (
-                        <CheckCircle2 size={16} />
-                      ) : (
-                        <AlertTriangle size={16} />
-                      )}
-                      Titlu (min 3)
-                    </li>
-                    <li
-                      className={
-                        form.description.trim().length >= 20 ? "ok" : "bad"
-                      }
-                    >
-                      {form.description.trim().length >= 20 ? (
-                        <CheckCircle2 size={16} />
-                      ) : (
-                        <AlertTriangle size={16} />
-                      )}
-                      Descriere (min 20)
-                    </li>
-                    <li className={form.city.trim().length >= 2 ? "ok" : "bad"}>
-                      {form.city.trim().length >= 2 ? (
-                        <CheckCircle2 size={16} />
-                      ) : (
-                        <AlertTriangle size={16} />
-                      )}
-                      Oraș (obligatoriu)
-                    </li>
-                    <li
-                      className={(form.images?.length || 0) >= 5 ? "ok" : "bad"}
-                    >
-                      {(form.images?.length || 0) >= 5 ? (
-                        <CheckCircle2 size={16} />
-                      ) : (
-                        <AlertTriangle size={16} />
-                      )}
-                      Minim 5 poze
-                    </li>
-                    <li
-                      className={
-                        form.coverImage?.url || form.images?.[0]?.url
-                          ? "ok"
-                          : "bad"
-                      }
-                    >
-                      {form.coverImage?.url || form.images?.[0]?.url ? (
-                        <CheckCircle2 size={16} />
-                      ) : (
-                        <AlertTriangle size={16} />
-                      )}
-                      Cover setat
-                    </li>
+              {warnings.length ? (
+                <div className="haWarnBox">
+                  <div className="haWarnTitle">
+                    <AlertTriangle size={18} /> Atenționări
+                  </div>
+                  <ul className="haWarnList">
+                    {warnings.map((w, i) => (
+                      <li key={i}>{w}</li>
+                    ))}
                   </ul>
-
-                  {warnings.length ? (
-                    <div className="warnBox">
-                      <div className="warnTitle">
-                        <AlertTriangle size={18} /> Atenționări
-                      </div>
-                      <ul className="warnList">
-                        {warnings.map((w, i) => (
-                          <li key={i}>{w}</li>
-                        ))}
-                      </ul>
-
-                      <div className="warnActions">
-                        <button
-                          className="btn btn-secondary"
-                          type="button"
-                          onClick={() => setStep(0)}
-                        >
-                          Repară detalii
-                        </button>
-                        <button
-                          className="btn btn-secondary"
-                          type="button"
-                          onClick={() => setStep(3)}
-                        >
-                          Repară poze
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="callout good">
-                      <CheckCircle2 size={18} />
-                      <div>
-                        <div className="calloutTitle">Arată bine</div>
-                        <div className="calloutText">
-                          Poți trimite spre verificare. Dacă vrei, mai adaugă
-                          2–3 poze extra.
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </div>
-              </div>
-            </div>
-          )}
-        </section>
-
-        {/* RIGHT SIDEBAR */}
-        <aside className="panelX sidePanel">
-          <div className="panelTop">
-            <div className="panelTitle">Preview</div>
-            <div className="panelHint">Cum poate arăta în listă</div>
-          </div>
-
-          <div className="previewCard">
-            <div className="previewImage">
-              {form.coverImage?.url || form.images?.[0]?.url ? (
-                <img
-                  src={form.coverImage?.url || form.images?.[0]?.url}
-                  alt="preview"
-                />
               ) : (
-                <div className="previewEmpty">
-                  <ImageIcon size={20} />
-                  <span>Fără cover</span>
+                <div className="haCallout good">
+                  <CheckCircle2 size={18} />
+                  <div>
+                    <div className="haCalloutTitle">Arată bine</div>
+                    <div className="haCalloutText">Poți trimite spre verificare. Dacă vrei, mai adaugă 2–3 poze.</div>
+                  </div>
                 </div>
               )}
-              <div className="previewOverlay">
-                <span className="previewPill">{form.type}</span>
-                <span className="previewPill soft">{form.capacity} pers.</span>
-              </div>
-            </div>
 
-            <div className="previewBody">
-              <div className="previewTitle">
-                {form.title.trim() || "Titlu proprietate"}
-              </div>
-              <div className="previewSub">
-                {[form.locality?.trim(), form.city?.trim()]
-                  .filter(Boolean)
-                  .join(", ") || "Locație"}
+              <div className="haSubmitRow">
+                <button
+                  className="btn btn-secondary"
+                  type="button"
+                  onClick={() => saveDraft({ silent: false })}
+                  disabled={saving || uploading || !hostProfileOk}
+                >
+                  <Save size={18} />
+                  {saving ? "Se salvează..." : "Salvează draft"}
+                </button>
+
+                <button
+                  className="btn btn-primary"
+                  type="button"
+                  onClick={submit}
+                  disabled={!canSubmitNow}
+                >
+                  <Send size={18} />
+                  {submitting ? "Se trimite..." : "Trimite la verificare"}
+                </button>
               </div>
 
-              <div className="previewPrice">
-                {formatMoney(form.pricePerNight, form.currency)}{" "}
-                <span>/ noapte</span>
+              <div className="haTinyHint">
+                Draft → Pending → Live. Adminul aprobă înainte să apară public.
+              </div>
+            </section>
+          </div>
+
+          {/* RIGHT (Sticky Preview) */}
+          <aside className="haRIGHT">
+            <div className="haPreviewCard">
+              <div className="haPreviewTop">
+                <div className="haPreviewPriceRow">
+                  <span className="haPreviewPrice">{formatMoney(form.pricePerNight, form.currency)}</span>
+                  <span className="haMuted">/ noapte</span>
+                </div>
+
+                <div className="haPreviewSubRow">
+                  <span className="haPill soft">{form.type}</span>
+                  <span className="haPill soft">{form.capacity} pers.</span>
+                  <span className={`haPill ${propertyId ? "ok" : ""}`}>{propertyId ? "Draft" : "Nesalvat"}</span>
+                </div>
               </div>
 
-              <div className="previewChips">
-                {form.facilities?.slice(0, 4).map((k) => {
-                  const f = FACILITIES.find((x) => x.key === k);
-                  return (
-                    <span key={k} className="tinyChip">
-                      {f?.label || k}
-                    </span>
-                  );
-                })}
-                {(form.facilities?.length || 0) > 4 && (
-                  <span className="tinyChip muted">
-                    +{form.facilities.length - 4}
+              <div className="haPreviewImage">
+                {form.coverImage?.url || form.images?.[0]?.url ? (
+                  <img src={form.coverImage?.url || form.images?.[0]?.url} alt="preview" />
+                ) : (
+                  <div className="haPreviewEmpty">
+                    <ImageIcon size={20} />
+                    <span>Fără cover</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="haPreviewBody">
+                <div className="haPreviewTitle">{form.title.trim() || "Titlu proprietate"}</div>
+                <div className="haPreviewLoc">
+                  <MapPin size={14} />
+                  <span>
+                    {[form.locality?.trim(), form.city?.trim()].filter(Boolean).join(", ") || "Locație"}
                   </span>
+                </div>
+
+                {form.subtitle?.trim() ? <div className="haPreviewSubtitle">{form.subtitle.trim()}</div> : null}
+
+                <div className="haPreviewChips">
+                {form.facilities?.slice(0, 6).map((k) => {
+  const a = AMENITY_BY_KEY[k];
+  return (
+    <span key={k} className="haTinyChip">
+      {a?.label || k}
+    </span>
+  );
+})}
+
+                  {(form.facilities?.length || 0) > 6 ? (
+                    <span className="haTinyChip muted">+{form.facilities.length - 6}</span>
+                  ) : null}
+                </div>
+
+                <div className="haPreviewMeta">
+                  <div className="haMiniRow">
+                    <span className="haMuted">Completare</span>
+                    <b>{completion}%</b>
+                  </div>
+                  <div className="haMiniRow">
+                    <span className="haMuted">Poze</span>
+                    <b>{form.images?.length || 0}</b>
+                  </div>
+                  <div className="haMiniRow">
+                    <span className="haMuted">Upload</span>
+                    <b className={uploading ? "haPulse" : ""}>{uploading ? "în curs…" : "idle"}</b>
+                  </div>
+                </div>
+
+                {warnings.length ? (
+                  <div className="haSideWarn">
+                    <AlertTriangle size={16} />
+                    <span>{warnings[0]}</span>
+                  </div>
+                ) : (
+                  <div className="haSideOk">
+                    <CheckCircle2 size={16} />
+                    <span>Gata de trimis</span>
+                  </div>
                 )}
               </div>
             </div>
-          </div>
 
-          <div className="sideMini">
-            <div className="sideMiniRow">
-              <div className="miniKey">ID draft</div>
-              <div className="miniVal">{propertyId || "—"}</div>
-            </div>
-            <div className="sideMiniRow">
-              <div className="miniKey">Upload</div>
-              <div className={`miniVal ${uploading ? "pulse" : ""}`}>
-                {uploading ? "în curs…" : "idle"}
+            <div className="haSideNote">
+              <ShieldCheck size={18} />
+              <div>
+                <div className="haSideNoteTitle">Workflow</div>
+                <div className="haMuted">Draft → Pending → Live. Adminul verifică înainte de publicare.</div>
               </div>
             </div>
-            <div className="sideMiniRow">
-              <div className="miniKey">Salvare</div>
-              <div className={`miniVal ${saving ? "pulse" : ""}`}>
-                {saving ? "în curs…" : "idle"}
-              </div>
-            </div>
-            <div className="sideMiniRow">
-              <div className="miniKey">Gazdă</div>
-              <div className={`miniVal ${hostProfileOk ? "" : "bad"}`}>
-                {hpLoading
-                  ? "se verifică…"
-                  : hostProfileOk
-                  ? "profil OK"
-                  : "profil incomplet"}
-              </div>
-            </div>
-          </div>
-
-          <div className="callout neutral">
-            <ShieldCheck size={18} />
-            <div>
-              <div className="calloutTitle">Workflow</div>
-              <div className="calloutText">
-                Draft → Pending → Live. Adminul aprobă înainte să apară public.
-              </div>
-            </div>
-          </div>
-        </aside>
-      </div>
-
-      {/* Sticky bottom bar */}
-      <div className="stickyBar">
-        <div className="stickyInner">
-          <div className="stickyLeft">
-            <div className={`stickyState ${stepValid ? "ok" : "bad"}`}>
-              {stepValid ? (
-                <CheckCircle2 size={16} />
-              ) : (
-                <AlertTriangle size={16} />
-              )}
-              {stepValid ? "Pas valid" : "Completează pasul"}
-            </div>
-            <div className="stickyMeta">
-              <span className="stickyDot" />
-              <span>{completion}% complet</span>
-              <span className="stickyDot" />
-              <span>{form.images?.length || 0} poze</span>
-            </div>
-          </div>
-
-          <div className="stickyRight">
-            <button
-              className="btn btn-secondary"
-              type="button"
-              onClick={goBack}
-              disabled={step === 0}
-            >
-              <ChevronLeft size={18} /> Înapoi
-            </button>
-
-            {step < 4 ? (
-              <button
-                className="btn btn-primary"
-                type="button"
-                onClick={goNext}
-                disabled={uploading || saving}
-              >
-                Următorul <ChevronRight size={18} />
-              </button>
-            ) : (
-              <button
-                className="btn btn-primary"
-                type="button"
-                onClick={submit}
-                disabled={!canSubmitNow}
-              >
-                <Send size={18} />
-                {submitting ? "Se trimite..." : "Trimite la verificare"}
-              </button>
-            )}
-          </div>
+          </aside>
         </div>
-        <HostProfileModal
-          open={profileOpen}
-          onClose={() => setProfileOpen(false)}
-          onSaved={(payload) => {
-            const hp = payload?.hostProfile || payload?.profile || payload;
-            setHostProfile(hp);
-          }}
-                  />
       </div>
+
+      <HostProfileModal
+        open={profileOpen}
+        onClose={() => setProfileOpen(false)}
+        onSaved={(payload) => {
+          const hp = payload?.hostProfile || payload?.profile || payload;
+          setHostProfile(hp);
+        }}
+      />
     </div>
   );
 }

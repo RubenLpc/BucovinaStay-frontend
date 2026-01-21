@@ -125,7 +125,7 @@ export default function HostActivity() {
   return (
     <div className="haPage">
       <div className="haMain">
-        <header className="haHeader">
+        <header className="hacHeader">
           <div className="haCrumb">Gazdă</div>
 
           <div className="haTitleRow">

@@ -13,6 +13,10 @@ import {
 
 import "./AdminTopNav.css";
 import { useAuthStore } from "../../stores/authStore";
+import AdminNotifications from "../AdminNotifications/AdminNotifications";
+import { getAdminUnreadCount } from "../../api/adminNotificationsService";
+import { toast } from "sonner";
+
 
 const ADMIN_TABS = [
   { label: "Overview", path: "/admin" },
@@ -59,7 +63,21 @@ export default function AdminTopNav({
 
   const displayName = user?.name || user?.email || "Admin";
   const initials = useMemo(() => initialsFrom(displayName), [displayName]);
-
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [unread, setUnread] = useState(0);
+  
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const res = await getAdminUnreadCount();
+        if (!alive) return;
+        setUnread(res?.count ?? 0);
+      } catch {}
+    })();
+    return () => (alive = false);
+  }, []);
+  
   // Close on ESC
   useEffect(() => {
     function onKeyDown(e) {
@@ -124,15 +142,18 @@ export default function AdminTopNav({
           </button>
 
           <button
-            className="atnIconBtn"
-            type="button"
-            aria-label="Notifications"
-            title="Notifications"
-            onClick={() => (onOpenNotifications ? onOpenNotifications() : null)}
-          >
-            <Bell size={16} />
-            <span className="atnNotifDot" aria-hidden="true" />
-          </button>
+  className="atnIconBtn"
+  type="button"
+  aria-label="Notifications"
+  title="Notifications"
+  onClick={() => setNotifOpen((v) => !v)}
+>
+  <Bell size={16} />
+  {unread > 0 ? (
+    <span className="atnBadge">{unread > 99 ? "99+" : unread}</span>
+  ) : null}
+</button>
+
 
           <div className="atnProfile">
             <button
@@ -228,6 +249,33 @@ export default function AdminTopNav({
           )}
         </div>
       </div>
+      <AdminNotifications
+  open={notifOpen}
+  onClose={() => setNotifOpen(false)}
+  onUnreadChange={(c) => {
+    if (typeof c === "number") setUnread(c);
+    // dacă vrei refresh complet:
+    // else getAdminUnreadCount().then(r => setUnread(r?.count ?? 0)).catch(()=>{});
+  }}
+  onNavigateEntity={(n) => {
+    // click -> du-te unde trebuie
+    if (n?.entityType === "property" && n?.entityId) {
+      navigate(`/cazari/${n.entityId}`);
+      return;
+    }
+    if (n?.entityType === "user" && n?.entityId) {
+      //navigate(`/admin/users/${n.entityId}`);
+      return;
+    }
+    if (n?.entityType === "review" && n?.entityId) {
+      //navigate(`/admin/reviews?focus=${n.entityId}`);
+      return;
+    }
+    toast.info("Notificare", { description: n?.title || "—" });
+  }}
+/>
+
     </header>
+    
   );
 }

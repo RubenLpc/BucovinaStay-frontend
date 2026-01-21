@@ -1,10 +1,16 @@
-// client/src/components/TopNav/TopNav.jsx
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./TopNav.css";
 import { useAuthStore } from "../../stores/authStore";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Bell } from "lucide-react";
 
+import HostNotifications from "../HostNotifications/HostNotifications";
+import HostInboxModal from "../HostInboxModal/HostInboxModal";
+
+import {
+  getHostUnreadCount,
+  markHostMessageRead,
+} from "../../api/hostMessagesService";
 
 function formatPlan(plan) {
   if (!plan) return "Free";
@@ -31,14 +37,49 @@ export default function TopNav({
   user,
   onOpenHostProfile,
   subscription,
-  onOpenSettings, // optional override
+  onOpenSettings,
   onOpenBilling = () => {},
   onUpgrade = () => {},
 }) {
-  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { logout } = useAuthStore();
+
+  // ✅ separă stările
+  const [menuOpen, setMenuOpen] = useState(false);       // dropdown cont
+  const [mobileOpen, setMobileOpen] = useState(false);   // burger tabs
+  const [notifOpen, setNotifOpen] = useState(false);     // drawer notificări
+
+  // ✅ modal mesaj (HostInboxModal)
+  const [activeMsg, setActiveMsg] = useState(null);
+
+  // unread badge
+  const [unread, setUnread] = useState(0);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const res = await getHostUnreadCount();
+        if (!alive) return;
+        setUnread(res?.count ?? 0);
+      } catch {}
+    })();
+    return () => (alive = false);
+  }, []);
+
+  // ESC close all overlays
+  useEffect(() => {
+    const onEsc = (e) => {
+      if (e.key !== "Escape") return;
+      setNotifOpen(false);
+      setMenuOpen(false);
+      setMobileOpen(false);
+      setActiveMsg(null);
+    };
+    window.addEventListener("keydown", onEsc);
+    return () => window.removeEventListener("keydown", onEsc);
+  }, []);
 
   const handleOpenSettings = () => {
     if (typeof onOpenSettings === "function") return onOpenSettings();
@@ -107,35 +148,58 @@ export default function TopNav({
             </button>
           )}
 
-          <button className="tnIconBtn" type="button" aria-label="Notificări">
-            <span className="tnNotifDot" /> 🔔
+          {/* ✅ Bell real + badge */}
+          <button
+            className="tnIconBtn"
+            type="button"
+            aria-label="Notificări"
+            aria-expanded={notifOpen}
+            onClick={() => {
+              setNotifOpen((v) => !v);
+              setMenuOpen(false);
+              setMobileOpen(false);
+            }}
+          >
+            <Bell size={18} />
+            {unread > 0 ? (
+              <span className="tnBadge">{unread > 99 ? "99+" : unread}</span>
+            ) : null}
           </button>
 
+          {/* ✅ burger tabs */}
           <button
-  className="tnIconBtn tnTabsBtn"
-  type="button"
-  aria-label="Meniu"
-  onClick={() => setOpen((v) => !v)}
->
-  {open ? <X size={18} /> : <Menu size={18} />}
-</button>
+            className="tnIconBtn tnTabsBtn"
+            type="button"
+            aria-label="Meniu"
+            onClick={() => {
+              setMobileOpen((v) => !v);
+              setMenuOpen(false);
+              setNotifOpen(false);
+            }}
+          >
+            {mobileOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
 
-
+          {/* ✅ dropdown cont separat */}
           <div className="tnProfile">
             <button
               className="tnAvatarBtn"
               type="button"
-              onClick={() => setOpen((v) => !v)}
+              onClick={() => {
+                setMenuOpen((v) => !v);
+                setNotifOpen(false);
+                setMobileOpen(false);
+              }}
               aria-label="Meniu cont"
             >
               <span className="tnAvatar">{initials}</span>
             </button>
 
-            {open && (
+            {menuOpen && (
               <>
                 <button
                   className="tnBackdrop"
-                  onClick={() => setOpen(false)}
+                  onClick={() => setMenuOpen(false)}
                   aria-label="Închide"
                   type="button"
                 />
@@ -146,31 +210,31 @@ export default function TopNav({
                       {plan} • {sub.label}
                     </div>
                   </div>
+
                   <div className="tnMenuList">
-  {TABS.map((t) => (
-    <button
-      key={t.path}
-      className={`tnMenuItem ${location.pathname.startsWith(t.path) ? "isActive" : ""}`}
-      type="button"
-      onClick={() => {
-        setOpen(false);
-        navigate(t.path);
-      }}
-    >
-      {t.label}
-      <span className="tnMenuArrow">›</span>
-    </button>
-  ))}
-</div>
+                    {TABS.map((t) => (
+                      <button
+                        key={t.path}
+                        className={`tnMenuItem ${location.pathname.startsWith(t.path) ? "isActive" : ""}`}
+                        type="button"
+                        onClick={() => {
+                          setMenuOpen(false);
+                          navigate(t.path);
+                        }}
+                      >
+                        {t.label}
+                        <span className="tnMenuArrow">›</span>
+                      </button>
+                    ))}
+                  </div>
 
-<div className="tnMenuSep" />
-
+                  <div className="tnMenuSep" />
 
                   <button
                     className="tnMenuItem"
                     type="button"
                     onClick={() => {
-                      setOpen(false);
+                      setMenuOpen(false);
                       onOpenBilling();
                     }}
                   >
@@ -181,7 +245,7 @@ export default function TopNav({
                     className="tnMenuItem"
                     type="button"
                     onClick={() => {
-                      setOpen(false);
+                      setMenuOpen(false);
                       handleOpenSettings();
                     }}
                   >
@@ -192,7 +256,7 @@ export default function TopNav({
                     className="tnMenuItem"
                     type="button"
                     onClick={() => {
-                      setOpen(false);
+                      setMenuOpen(false);
                       onOpenHostProfile?.();
                     }}
                     title="Editează profilul de gazdă"
@@ -206,7 +270,7 @@ export default function TopNav({
                     className="tnMenuItem danger"
                     type="button"
                     onClick={() => {
-                      setOpen(false);
+                      setMenuOpen(false);
                       logout();
                       navigate("/");
                     }}
@@ -219,6 +283,52 @@ export default function TopNav({
           </div>
         </div>
       </div>
+
+      {/* ✅ Notifications drawer/panel */}
+      <HostNotifications
+        open={notifOpen}
+        onClose={() => setNotifOpen(false)}
+        onOpenInbox={() => {
+          setNotifOpen(false);
+          navigate("/host/dashboard"); // sau /host/inbox dacă ai pagină
+        }}
+        onOpenMessage={async (msg) => {
+          // 1) închide notifications
+          setNotifOpen(false);
+
+          // 2) deschide modal
+          setActiveMsg(msg);
+
+          // 3) opțional: marchează read imediat + scade badge
+          const id = msg?._id || msg?.id;
+          if (id && (msg.status || "new") === "new") {
+            try {
+              await markHostMessageRead(id);
+              setUnread((u) => Math.max(0, (u || 0) - 1));
+            } catch {}
+          }
+        }}
+        onOpenProperty={(propertyId) => {
+          setNotifOpen(false);
+          if (propertyId) navigate(`/cazari/${propertyId}`);
+        }}
+      />
+
+      {/* ✅ Modal mesaj deschis din notificări */}
+      <HostInboxModal
+        open={!!activeMsg}
+        msg={activeMsg}
+        onClose={() => setActiveMsg(null)}
+        onMarkRead={async () => {
+          if (!activeMsg) return;
+          const id = activeMsg._id || activeMsg.id;
+          await markHostMessageRead(id);
+          setActiveMsg((p) => (p ? { ...p, status: "read" } : p));
+          setUnread((u) => Math.max(0, (u || 0) - 1));
+        }}
+        // dacă ai endpoint de unread:
+        // onMarkUnread={...}
+      />
     </header>
   );
 }

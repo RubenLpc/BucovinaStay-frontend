@@ -1,0 +1,433 @@
+.himOverlay{
+    position: fixed;
+    inset: 0;
+    z-index: 2500;
+    display: grid;
+    place-items: center;
+    padding: 14px;
+  }
+  
+  .himBackdrop{
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: none;
+  }
+  
+  .himModal{
+    position: relative;
+    width: min(900px, 100%);
+    background: rgba(255,255,255,0.98);
+    border: 1px solid rgba(17,24,39,0.12);
+    border-radius: 22px;
+    box-shadow: 0 30px 100px rgba(0,0,0,0.35);
+    overflow: hidden;
+    animation: himIn 160ms ease-out;
+  }
+  
+  @keyframes himIn{
+    from{ transform: translateY(10px); opacity: 0; }
+    to{ transform: translateY(0); opacity: 1; }
+  }
+  
+  /* Top */
+  .himTop{
+    display:flex;
+    align-items:flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 16px 16px 10px;
+    border-bottom: 1px solid rgba(17,24,39,0.08);
+  }
+  
+  .himKicker{
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 900;
+    color: rgba(17,24,39,0.55);
+  }
+  
+  .himTitleRow{ display:flex; align-items:center; gap: 10px; margin-top: 4px; }
+  .himTitle{
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: rgba(17,24,39,0.92);
+  }
+  .himSub{
+    margin-top: 6px;
+    color: rgba(17,24,39,0.62);
+    font-weight: 650;
+    font-size: 13px;
+  }
+  
+  .himTopRight{ display:flex; align-items:center; gap: 10px; }
+  
+  .himBadgeNew,
+  .himBadgeRead{
+    font-size: 12px;
+    font-weight: 900;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(17,24,39,0.12);
+  }
+  .himBadgeNew{
+    background: rgba(255,56,92,0.12);
+    border-color: rgba(255,56,92,0.22);
+    color: rgba(176,18,47,0.95);
+  }
+  .himBadgeRead{
+    background: rgba(17,24,39,0.04);
+    color: rgba(17,24,39,0.68);
+  }
+  
+  .himChip{
+    height: 40px;
+    padding: 0 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(17,24,39,0.10);
+    background: rgba(17,24,39,0.04);
+    font-weight: 900;
+    display:inline-flex;
+    gap: 8px;
+    align-items:center;
+    cursor: pointer;
+    transition: transform .12s ease, background .12s ease, border-color .12s ease;
+  }
+  .himChip:hover{
+    transform: translateY(-1px);
+    background: rgba(17,24,39,0.06);
+    border-color: rgba(17,24,39,0.14);
+  }
+  
+  .himClose{
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+    border: 1px solid rgba(17,24,39,0.10);
+    background: rgba(17,24,39,0.04);
+    cursor:pointer;
+    display:grid;
+    place-items:center;
+  }
+  
+  /* Property card */
+  .himCard{
+    display:grid;
+    grid-template-columns: 180px 1fr;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+  
+  .himCover{
+    width: 100%;
+    height: 120px;
+    border-radius: 18px;
+    background: rgba(17,24,39,0.06);
+    border: 1px solid rgba(17,24,39,0.10);
+    background-size: cover;
+    background-position: center;
+  }
+  
+  .himCardBody{ min-width: 0; display:flex; flex-direction: column; justify-content: center; }
+  
+  .himCardTitle{
+    font-size: 16px;
+    font-weight: 920;
+    letter-spacing: -0.02em;
+    color: rgba(17,24,39,0.92);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .himCardMeta{
+    margin-top: 4px;
+    font-size: 13px;
+    color: rgba(17,24,39,0.62);
+    font-weight: 700;
+  }
+  
+  .himActions{
+    margin-top: 10px;
+    display:flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .himBtn{
+    height: 40px;
+    padding: 0 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(17,24,39,0.10);
+    background: rgba(17,24,39,0.04);
+    font-weight: 900;
+    display:inline-flex;
+    gap: 8px;
+    align-items:center;
+    cursor: pointer;
+    transition: transform .12s ease, background .12s ease, border-color .12s ease;
+  }
+  .himBtn:hover{
+    transform: translateY(-1px);
+    background: rgba(17,24,39,0.06);
+    border-color: rgba(17,24,39,0.14);
+  }
+  .himBtnGhost{
+    background: rgba(255,56,92,0.08);
+    border-color: rgba(255,56,92,0.18);
+  }
+  
+  .himBtn.isDisabled{
+    opacity: .45;
+    pointer-events: none;
+  }
+  
+  /* Message */
+  .himMsg{ padding: 2px 16px 0; }
+  .himMsgLabel{
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 900;
+    color: rgba(17,24,39,0.55);
+    margin: 10px 0 8px;
+  }
+  .himMsgBubble{
+    border-radius: 18px;
+    background: rgba(17,24,39,0.03);
+    border: 1px solid rgba(17,24,39,0.08);
+    padding: 12px 12px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: rgba(17,24,39,0.86);
+  }
+  
+  /* Reply */
+  .himReply{ padding: 8px 16px 16px; }
+  .himTextarea{
+    width: 100%;
+    min-height: 110px;
+    resize: vertical;
+    border-radius: 18px;
+    border: 1px solid rgba(17,24,39,0.12);
+    padding: 12px 12px;
+    font-size: 14px;
+    line-height: 1.55;
+    outline: none;
+    transition: box-shadow .15s ease, border-color .15s ease;
+  }
+  .himTextarea:focus{
+    border-color: rgba(255,56,92,0.28);
+    box-shadow: 0 0 0 4px rgba(255,56,92,0.10);
+  }
+  
+  .himReplyBar{
+    margin-top: 10px;
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .himHint{
+    font-size: 12.5px;
+    color: rgba(17,24,39,0.58);
+    font-weight: 650;
+  }
+  
+  .himSendBtns{ display:flex; gap: 10px; flex-wrap: wrap; }
+  
+  .himSend{
+    height: 42px;
+    padding: 0 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(17,24,39,0.10);
+    background: rgba(17,24,39,0.92);
+    color: #fff;
+    font-weight: 920;
+    display:inline-flex;
+    align-items:center;
+    gap: 8px;
+    cursor: pointer;
+    transition: transform .12s ease, background .12s ease;
+  }
+  .himSend:hover{ transform: translateY(-1px); background: rgba(17,24,39,1); }
+  .himSend.isDisabled{ opacity: .50; pointer-events: none; }
+  
+  .himFootNote{
+    padding: 10px 16px 14px;
+    border-top: 1px solid rgba(17,24,39,0.08);
+    font-size: 12.5px;
+    color: rgba(17,24,39,0.55);
+    background: rgba(17,24,39,0.02);
+  }
+  
+  @media (max-width: 720px){
+    .himCard{ grid-template-columns: 1fr; }
+    .himCover{ height: 150px; }
+    .himReplyBar{ flex-direction: column; align-items: flex-start; }
+  }
+  
+  /* ===== extra responsive (small phones) ===== */
+
+/* 720px deja ai - aici doar finetuning */
+@media (max-width: 540px){
+    .himModal{
+      width: 100%;
+      border-radius: 18px;
+    }
+  
+    .himTop{
+      padding: 14px 12px 10px;
+      gap: 10px;
+    }
+  
+    .himTitle{ font-size: 18px; }
+    .himSub{ font-size: 12.5px; }
+  
+    .himChip{
+      height: 38px;
+      padding: 0 10px;
+      border-radius: 12px;
+      font-size: 13px;
+    }
+  
+    .himClose{
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+    }
+  
+    .himCard{
+      padding: 12px;
+      gap: 10px;
+    }
+  
+    .himCover{
+      height: 140px;
+      border-radius: 16px;
+    }
+  
+    .himActions{
+      gap: 8px;
+    }
+  
+    .himBtn{
+      height: 38px;
+      padding: 0 10px;
+      border-radius: 12px;
+      font-size: 13px;
+    }
+  
+    .himMsg{ padding: 0 12px; }
+    .himMsgBubble{
+      border-radius: 16px;
+      padding: 10px;
+      font-size: 13.5px;
+    }
+  
+    .himReply{ padding: 8px 12px 12px; }
+    .himTextarea{
+      border-radius: 16px;
+      min-height: 96px;
+      font-size: 13.5px;
+    }
+  
+    .himSend{
+      height: 40px;
+      padding: 0 12px;
+      border-radius: 12px;
+      font-size: 13px;
+    }
+  
+    .himFootNote{
+      padding: 10px 12px 12px;
+      font-size: 12px;
+    }
+  }
+  
+  /* telefoane foarte mici (360-390) */
+  @media (max-width: 400px){
+    /* modal tip "sheet" full-height cu scroll */
+    .himOverlay{
+      padding: 10px;
+      align-items: end;
+    }
+  
+    .himModal{
+      height: min(92vh, 740px);
+      overflow: hidden;
+    }
+  
+    /* conținut scrollabil */
+    .himModal{
+      display: flex;
+      flex-direction: column;
+    }
+  
+    .himTop{
+      flex: 0 0 auto;
+    }
+  
+    /* restul devine scroll */
+    .himCard,
+    .himMsg,
+    .himReply{
+      flex: 0 0 auto;
+    }
+  
+    /* wrapper scroll: folosim overflow pe modal, dar fără a strica top/bottom */
+    .himModal{
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  
+    .himTitleRow{
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+  
+    .himTopRight{
+      gap: 8px;
+    }
+  
+    /* butoanele de acțiuni pe 2 coloane */
+    .himActions{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+  
+    .himBtn{
+      justify-content: center;
+      width: 100%;
+    }
+  
+    /* reply send buttons pe 1 coloană */
+    .himReplyBar{
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .himSendBtns{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+  
+    .himSend{
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  /* ultra small (<= 340px) */
+  @media (max-width: 340px){
+    .himTitle{ font-size: 17px; }
+    .himBadgeNew, .himBadgeRead{ padding: 5px 9px; }
+    .himChip{ font-size: 12.5px; }
+    .himBtn, .himSend{ font-size: 12.5px; }
+  }
+  

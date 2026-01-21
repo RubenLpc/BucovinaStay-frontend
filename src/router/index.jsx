@@ -29,6 +29,8 @@ import AdminListings from "../pages/Admin/AdminListings";
 import AdminSettings from "../pages/Admin/AdminSettings";
 import AdminReviews from "../pages/Admin/AdminReviews";
 import Maintenance from "../pages/Maintenance/Maintenance";
+import Favorites from "../pages/Favorites/Favorites";
+
 
 
 
@@ -52,6 +54,9 @@ export const router = createBrowserRouter([
       { path: "trasee", element: <Trails /> },
       { path: "cazari", element: <Stays /> },
       { path: "cazari/:id", element: <PropertyPage /> },
+      { path: "favorites", element: <Favorites /> },
+
+
 
 
       {

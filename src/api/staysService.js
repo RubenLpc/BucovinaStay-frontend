@@ -10,19 +10,22 @@ function mapPropertyToStay(p) {
     type: p.type,
 
     pricePerNight: p.pricePerNight,
-    capacity: p.capacity,                 // fallback
-    maxGuests: p.maxGuests ?? p.capacity, // ✅ virtual dacă vine, fallback dacă nu
+    capacity: p.capacity,
+    maxGuests: p.maxGuests ?? p.capacity,
 
     rating: p.ratingAvg || 0,
     reviews: p.reviewsCount || 0,
 
-    amenities: p.amenities || p.facilities || [], // ✅ virtual sau direct
+    amenities: p.amenities || p.facilities || [],
     badges: p.badges || [],
 
-    // ✅ FOARTE IMPORTANT: imaginea
     image: p.image || p.coverImage?.url || p.images?.[0]?.url || "",
+
+    // ✅ IMPORTANT pentru pini:
+    geo: p.geo || null,
   };
 }
+
 
 export async function listStays(params) {
   const qs = new URLSearchParams(params).toString();
@@ -35,6 +38,7 @@ export async function listStays(params) {
 }
 
 export async function getStay(id) {
-  const p = await apiFetch(`/properties/${id}`, { method: "GET" });
-  return mapPropertyToStay(p);
+  const data = await apiFetch(`/properties/${id}`, { method: "GET" });
+  return mapPropertyToStay(data.property); // ✅
 }
+

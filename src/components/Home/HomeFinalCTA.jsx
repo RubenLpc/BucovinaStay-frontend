@@ -9,7 +9,7 @@ export default function HomeFinalCTA({
   primaryLabel = "Explorează cazările",
   secondaryLabel = "Devino gazdă",
   primaryTo = "/cazari",
-  secondaryTo = "/host/add",
+  secondaryTo = "/auth/register",
 }) {
   const navigate = useNavigate();
 
