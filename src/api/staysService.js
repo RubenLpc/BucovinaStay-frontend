@@ -10,6 +10,7 @@ function mapPropertyToStay(p) {
     type: p.type,
 
     pricePerNight: p.pricePerNight,
+    currency: p.currency || "RON",
     capacity: p.capacity,
     maxGuests: p.maxGuests ?? p.capacity,
 

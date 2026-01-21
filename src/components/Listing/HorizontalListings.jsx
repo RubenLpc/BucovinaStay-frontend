@@ -460,7 +460,7 @@ export default function HorizontalListings({
   const renderItems = items?.length ? items : [];
 
   return (
-    <section className="container hl2-wrap">
+    <section id="hl2-listings" className="container hl2-wrap">
       <header className="hl2-head">
         <div className="hl2-headLeft">
           <div className="hl2-kicker">BucovinaStay Picks</div>

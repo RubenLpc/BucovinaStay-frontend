@@ -248,6 +248,8 @@ export default function Stays() {
         if (!alive) return;
 
         setResults(data.items || []);
+        console.log("first item:", data.items?.[0]);
+
         setTotal(data.total ?? 0);
       } catch (e) {
         if (!alive) return;

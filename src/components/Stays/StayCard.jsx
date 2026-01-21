@@ -49,7 +49,7 @@ function safeImg(src) {
   return src;
 }
 
-function formatMoney(value, currency = "RON") {
+function formatMoney(value, currency) {
   const n = Number(value ?? 0);
   if (!Number.isFinite(n)) return "—";
   try {
@@ -115,6 +115,7 @@ export default function StayCard({ stay, active = false, onOpen, onHover }) {
   const reviews = Number.isFinite(Number(stay?.reviewsCount ?? stay?.reviews)) ? Number(stay?.reviewsCount ?? stay?.reviews) : 0;
 
   const currency = stay?.currency || "RON";
+  console.log('Currency:', stay);
   const priceValue = formatMoney(stay?.pricePerNight, currency);
 
   const maxGuests = stay?.maxGuests ?? stay?.capacity ?? stay?.guests ?? null;

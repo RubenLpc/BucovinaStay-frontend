@@ -71,6 +71,14 @@ export default function Home() {
       setItems(next);
       setMode("ai");
 
+      requestAnimationFrame(() => {
+        document.getElementById("hl2-listings")?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      });
+      
+
       if (!next.length) {
         toast.info("Nu am găsit rezultate.", { description: "Încearcă o descriere diferită." });
       }
