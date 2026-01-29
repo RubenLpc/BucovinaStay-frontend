@@ -2,18 +2,40 @@ import React, { useMemo } from "react";
 import "./HostSection.css";
 import { ShieldCheck, Star, MessageSquareText, BadgeCheck } from "lucide-react";
 import defaultAvatar from "../../assets/default_avatar.png";
+import { useTranslation } from "react-i18next";
 
 function clamp(n, min, max) {
   return Math.max(min, Math.min(max, n));
 }
 
-function formatPct(v) {
-  if (v == null) return "—";
+function formatPct(v, dash = "—") {
+  if (v == null) return dash;
   const x = clamp(Number(v), 0, 100);
   return `${Math.round(x)}%`;
 }
 
+function monthsLabel(months, t) {
+  if (months == null) return t("hostSection.stats.monthsLabelFallback");
+  const n = Number(months);
+  if (!Number.isFinite(n) || n <= 0) return t("hostSection.stats.monthsLabelFallback");
+
+  // RO pluralization simplu / EN diferit
+  // folosim t cu count (ideal), dar rămânem compatibili:
+  return t("hostSection.stats.monthsLabel", { count: n, months: n });
+}
+
+function responseTimeText(bucket, explicitText, t) {
+  if (explicitText) return explicitText;
+
+  if (bucket === "within_hour") return t("hostSection.details.responseTimeT.withinHour");
+  if (bucket === "within_day") return t("hostSection.details.responseTimeT.withinDay");
+  if (bucket === "few_days") return t("hostSection.details.responseTimeT.fewDays");
+  return "—";
+}
+
 export default function HostSection({ host, property, onMessage }) {
+  const { t } = useTranslation();
+
   const stats = useMemo(() => {
     const propReviews = Number(property?.reviewsCount || 0);
     const propRating = property?.ratingAvg ?? null;
@@ -29,9 +51,16 @@ export default function HostSection({ host, property, onMessage }) {
   const isVerified = Boolean(host?.verified);
   const DEFAULT_HOST_AVATAR = defaultAvatar;
 
+  const hostName = host?.name || t("hostSection.fallbackHostName");
+
+  const rating =
+    stats.rating == null || !Number.isFinite(Number(stats.rating))
+      ? null
+      : Number(stats.rating);
+
   return (
-    <section className="hsWrap">
-      <h2 className="hsTitle">Fă cunoștință cu gazda ta</h2>
+    <section className="hsWrap" aria-label={t("hostSection.aria.section")}>
+      <h2 className="hsTitle">{t("hostSection.title")}</h2>
 
       <div className="hsGrid">
         {/* LEFT CARD */}
@@ -41,7 +70,7 @@ export default function HostSection({ host, property, onMessage }) {
               <img
                 className="hsAvatar"
                 src={host?.avatarUrl || DEFAULT_HOST_AVATAR}
-                alt={`Avatar ${host?.name || "Gazdă"}`}
+                alt={t("hostSection.aria.avatarAlt", { name: hostName })}
                 loading="lazy"
                 onError={(e) => {
                   e.currentTarget.src = DEFAULT_HOST_AVATAR;
@@ -49,59 +78,55 @@ export default function HostSection({ host, property, onMessage }) {
               />
 
               {isSuperHost ? (
-                <div className="hsBadge" title="Super-gazdă">
+                <div className="hsBadge" title={t("hostSection.badges.superhost")}>
                   <ShieldCheck size={16} />
                 </div>
               ) : null}
             </div>
 
             <div className="hsNameBlock">
-              <div className="hsName">{host?.name || "Gazdă"}</div>
+              <div className="hsName">{hostName}</div>
 
               <div className="hsSubtitle">
-                {host?.isSuperHost && (
+                {isSuperHost ? (
                   <span className="hsBadgeInline super">
                     <ShieldCheck size={14} />
-                    Super-gazdă
+                    {t("hostSection.badges.superhost")}
                   </span>
-                )}
+                ) : null}
 
-                {host?.verified && (
+                {isVerified ? (
                   <span className="hsBadgeInline verified">
                     <BadgeCheck size={14} />
-                    Verificat
+                    {t("hostSection.badges.verified")}
                   </span>
-                )}
+                ) : null}
               </div>
             </div>
 
             <div className="hsStats">
               <div className="hsStat">
-                <div className="hsStatValue">{stats.reviews}</div>
-                <div className="hsStatLabel">Recenzii</div>
+                <div className="hsStatValue">{Number(stats.reviews || 0)}</div>
+                <div className="hsStatLabel">{t("hostSection.stats.reviews")}</div>
               </div>
 
               <div className="hsDivider" />
 
               <div className="hsStat">
                 <div className="hsStatValue">
-                  {stats.rating == null ? "—" : Number(stats.rating).toFixed(1)}
-                  <span className="hsStar">
+                  {rating == null ? "—" : rating.toFixed(1)}
+                  <span className="hsStar" aria-hidden="true">
                     <Star size={16} />
                   </span>
                 </div>
-                <div className="hsStatLabel">Scor</div>
+                <div className="hsStatLabel">{t("hostSection.stats.score")}</div>
               </div>
 
               <div className="hsDivider" />
 
               <div className="hsStat">
-                <div className="hsStatValue">
-                  {stats.months == null ? "—" : stats.months}
-                </div>
-                <div className="hsStatLabel">
-                  {stats.months === 1 ? "Lună ca gazdă" : "Luni ca gazdă"}
-                </div>
+                <div className="hsStatValue">{stats.months == null ? "—" : stats.months}</div>
+                <div className="hsStatLabel">{monthsLabel(stats.months, t)}</div>
               </div>
             </div>
           </div>
@@ -113,41 +138,36 @@ export default function HostSection({ host, property, onMessage }) {
         <div className="hsRight">
           <div className="hsRightBox">
             <div className="hsRightTitle">
-              {host?.name || "Gazda"}{" "}
-              {isSuperHost ? "este o Super-gazdă" : "este o gazdă"}
+              {t("hostSection.right.title", {
+                name: hostName,
+                kind: isSuperHost ? t("hostSection.badges.superhost") : t("hostSection.right.host"),
+              })}
             </div>
 
             <p className="hsRightText">
-              {isSuperHost
-                ? "Super-gazdele sunt gazde cu experiență, evaluate la superlativ, care se angajează să ofere oaspeților șederi de excepție."
-                : "Gazdele oferă oaspeților sprijin și informații pentru o ședere cât mai bună."}
+              {isSuperHost ? t("hostSection.right.textSuper") : t("hostSection.right.textNormal")}
             </p>
 
             <div className="hsRightHr" />
 
-            <div className="hsRightSubtitle">Detalii despre gazdă</div>
+            <div className="hsRightSubtitle">{t("hostSection.details.title")}</div>
 
             <div className="hsDetails">
               <div className="hsRow">
-                <span className="hsKey">Rată de răspuns:</span>
+                <span className="hsKey">{t("hostSection.details.responseRate")}</span>
                 <span className="hsVal">{formatPct(host?.responseRate)}</span>
               </div>
+
               <div className="hsRow">
-                <span className="hsKey">Timp de răspuns:</span>
+                <span className="hsKey">{t("hostSection.details.responseTime")}</span>
                 <span className="hsVal">
-                  {host?.responseTimeText ||
-                    (host?.responseTimeBucket === "within_hour"
-                      ? "în mai puțin de o oră"
-                      : host?.responseTimeBucket === "within_day"
-                      ? "în aceeași zi"
-                      : host?.responseTimeBucket === "few_days"
-                      ? "în câteva zile"
-                      : "—")}
+                  {responseTimeText(host?.responseTimeBucket, host?.responseTimeText, t)}
                 </span>
               </div>
+
               {Array.isArray(host?.languages) && host.languages.length > 0 ? (
                 <div className="hsRow hsRowStack">
-                  <span className="hsKey">Limbi vorbite:</span>
+                  <span className="hsKey">{t("hostSection.details.languages")}</span>
                   <div className="hsLangs">
                     {host.languages.slice(0, 8).map((l) => (
                       <span key={l} className="hsLangChip">
@@ -159,9 +179,9 @@ export default function HostSection({ host, property, onMessage }) {
               ) : null}
             </div>
 
-            <button className="hsBtn" onClick={() => onMessage?.()}>
+            <button className="hsBtn" type="button" onClick={() => onMessage?.()}>
               <MessageSquareText size={18} />
-              Trimite un mesaj gazdei
+              {t("hostSection.cta")}
             </button>
 
             {host?.disclaimer ? (
@@ -175,10 +195,7 @@ export default function HostSection({ host, property, onMessage }) {
               </div>
             ) : null}
 
-            <div className="hsNote">
-              Pentru a-ți proteja plata, folosește întotdeauna platforma pentru
-              a trimite bani și a comunica cu gazdele.
-            </div>
+            <div className="hsNote">{t("hostSection.note")}</div>
           </div>
         </div>
       </div>

@@ -12,7 +12,6 @@ import { getHostProfilePublic } from "../../api/hostProfileService";
 import defaultAvatar from "../../assets/default_avatar.png";
 import { AMENITY_BY_KEY } from "../../constants/amenitiesCatalog";
 
-
 import { toast } from "sonner";
 import "./PropertyPage.css";
 
@@ -23,24 +22,16 @@ import {
   MapPin,
   Users,
   Home,
-  BedDouble,
-  Bath,
   Trophy,
-  DoorOpen,
   Sparkles,
-  Wifi,
   Car,
-  Coffee,
-  PawPrint,
-  CookingPot,
-  Snowflake,
-  Flame,
-  Waves,
   X,
   ChevronRight,
   Images as ImagesIcon,
   ShieldCheck,
 } from "lucide-react";
+
+import { useTranslation } from "react-i18next";
 
 const TYPE_LABELS = {
   apartament: "Apartament",
@@ -49,18 +40,6 @@ const TYPE_LABELS = {
   hotel: "Hotel",
   vila: "Vilă",
   tiny_house: "Tiny House",
-};
-
-const AMENITY_META = {
-  wifi: { label: "Wi-Fi", Icon: Wifi },
-  parking: { label: "Parcare", Icon: Car },
-  breakfast: { label: "Mic dejun", Icon: Coffee },
-  petFriendly: { label: "Pet-friendly", Icon: PawPrint },
-  spa: { label: "Spa", Icon: Sparkles }, // ✅ fără Spa icon (nu există)
-  kitchen: { label: "Bucătărie", Icon: CookingPot },
-  ac: { label: "Aer condiționat", Icon: Snowflake },
-  sauna: { label: "Saună", Icon: Waves },
-  fireplace: { label: "Șemineu", Icon: Flame },
 };
 
 function isNonEmptyString(v) {
@@ -74,6 +53,7 @@ function formatMoney(value, currency = "RON") {
     return new Intl.NumberFormat("ro-RO", {
       style: "currency",
       currency,
+      maximumFractionDigits: 0,
     }).format(value ?? 0);
   } catch {
     return `${value ?? 0} ${currency || ""}`.trim();
@@ -87,38 +67,32 @@ function clampText(text, n = 320) {
   return t.slice(0, n).trim() + "…";
 }
 
-function Modal({ open, title, onClose, children, size = "lg" }) {
+function Modal({ open, title, onClose, children, size = "lg", closeLabel = "Închide" }) {
   if (!open) return null;
   return (
     <div className="ppModalOverlay" role="dialog" aria-modal="true">
       <div className={`ppModal ppModal-${size}`}>
-        <button className="ppModalClose" onClick={onClose} aria-label="Închide">
+        <button className="ppModalClose" onClick={onClose} aria-label={closeLabel}>
           <X size={18} />
         </button>
         {title ? <h2 className="ppModalTitle">{title}</h2> : null}
         <div className="ppModalBody">{children}</div>
       </div>
-      <button
-        className="ppModalBackdrop"
-        onClick={onClose}
-        aria-label="Închide"
-      />
+      <button className="ppModalBackdrop" onClick={onClose} aria-label={closeLabel} />
     </div>
   );
 }
 
 export default function PropertyPage() {
+  const { t } = useTranslation();
   const { id } = useParams();
 
   useEffect(() => {
     if (!id) return;
-
-    // dedupe per sesiune (nu umfli views)
     const key = `pp:view:${id}`;
     if (sessionStorage.getItem(key)) return;
-
     sessionStorage.setItem(key, "1");
-    trackImpression([id]); // type: impression
+    trackImpression([id]);
   }, [id]);
 
   const [loading, setLoading] = useState(true);
@@ -130,31 +104,15 @@ export default function PropertyPage() {
   const [showFullDescription, setShowFullDescription] = useState(false);
 
   const user = useAuthStore((s) => s.user);
-  const {
-    favIds,
-    toggle: toggleFav,
-    loading: favLoading,
-  } = useFavorites(!!user);
+  const { favIds, toggle: toggleFav, loading: favLoading } = useFavorites(!!user);
 
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  // zoom + pan
-  const [zoom, setZoom] = useState(1);
-  const [pan, setPan] = useState({ x: 0, y: 0 });
-  const [dragging, setDragging] = useState(false);
-  const dragStart = React.useRef({ x: 0, y: 0 });
-  const panStart = React.useRef({ x: 0, y: 0 });
-
-  const [Host, setHost] = useState(null);
+  const [hostUser, setHostUser] = useState(null);
+  const [hostProfile, setHostProfile] = useState(null);
+  const [hostProfileLoading, setHostProfileLoading] = useState(false);
 
   const [msgOpen, setMsgOpen] = useState(false);
 
-  const [hostUser, setHostUser] = useState(null); // user basic (name/phone) - din property
-  const [hostProfile, setHostProfile] = useState(null); // HostProfile public
-  const [hostProfileLoading, setHostProfileLoading] = useState(false);
-
-  const DEFAULT_HOST_AVATAR = defaultAvatar; // pune tu un asset real
+  const DEFAULT_HOST_AVATAR = defaultAvatar;
 
   const isFav = useMemo(() => {
     if (!id) return false;
@@ -173,7 +131,7 @@ export default function PropertyPage() {
         setHostUser(data.host || null);
       } catch (e) {
         if (!alive) return;
-        setErr(e?.message || "Nu am putut încărca proprietatea.");
+        setErr(e?.message || t("propertyPage.errors.loadFailed"));
       } finally {
         if (alive) setLoading(false);
       }
@@ -181,23 +139,21 @@ export default function PropertyPage() {
     return () => {
       alive = false;
     };
-  }, [id]);
+  }, [id, t]);
 
   const images = useMemo(() => {
-    const list = Array.isArray(p?.images)
-      ? p.images.map((x) => x?.url).filter(Boolean)
-      : [];
+    const list = Array.isArray(p?.images) ? p.images.map((x) => x?.url).filter(Boolean) : [];
     const cover = p?.coverImage?.url;
     if (cover && !list.includes(cover)) return [cover, ...list];
     return list.length ? list : cover ? [cover] : [];
   }, [p]);
 
-  const title = p?.title || "Proprietate";
+  const title = p?.title || t("propertyPage.fallbackTitle");
   const subtitle = isNonEmptyString(p?.subtitle) ? p.subtitle : "";
   const typeLabel = p?.type ? TYPE_LABELS[p.type] || p.type : "";
-  const locationLine = [p?.locality, p?.city, p?.region]
-    .filter(isNonEmptyString)
-    .join(", ");
+
+  const locationLine = [p?.locality, p?.city, p?.region].filter(isNonEmptyString).join(", ");
+
   const price = typeof p?.pricePerNight === "number" ? p.pricePerNight : null;
   const currency = p?.currency || "RON";
 
@@ -219,14 +175,13 @@ export default function PropertyPage() {
 
   const canShowHighlights = ratingAvg > 0 && reviewsCount > 0;
 
-  const hostFromProperty =
-    p?.hostId && typeof p.hostId === "object" ? p.hostId : null;
-
+  const hostFromProperty = p?.hostId && typeof p.hostId === "object" ? p.hostId : null;
   const hostUserId =
     hostFromProperty?._id ||
     hostUser?._id ||
     (typeof p?.hostId === "string" ? p.hostId : null) ||
     null;
+
   useEffect(() => {
     let alive = true;
 
@@ -235,7 +190,6 @@ export default function PropertyPage() {
         setHostProfile(null);
         return;
       }
-
       try {
         setHostProfileLoading(true);
         const res = await getHostProfilePublic(hostUserId);
@@ -243,7 +197,7 @@ export default function PropertyPage() {
         setHostProfile(res?.host || null);
       } catch {
         if (!alive) return;
-        setHostProfile(null); // fallback silent
+        setHostProfile(null);
       } finally {
         if (alive) setHostProfileLoading(false);
       }
@@ -257,58 +211,44 @@ export default function PropertyPage() {
   const quickFacts = useMemo(() => {
     const items = [];
 
-    if (hasValue(typeLabel))
-      items.push({ Icon: Home, text: `Întreaga unitate • ${typeLabel}` });
-    // Modelul tău are doar capacity (maxGuests). La “dormitoare/paturi/băi” nu inventăm.
+    if (hasValue(typeLabel)) items.push({ Icon: Home, text: t("propertyPage.facts.entirePlace", { type: typeLabel }) });
     if (typeof p?.capacity === "number" && p.capacity > 0)
-      items.push({ Icon: Users, text: `${p.capacity} oaspeți` });
+      items.push({ Icon: Users, text: t("propertyPage.facts.guests", { count: p.capacity }) });
 
-    // dacă ai addressLine, arată-l; dacă nu, arată localitate/city.
-    if (isNonEmptyString(p?.addressLine))
-      items.push({ Icon: MapPin, text: p.addressLine.trim() });
+    if (isNonEmptyString(p?.addressLine)) items.push({ Icon: MapPin, text: p.addressLine.trim() });
 
     return items;
-  }, [p, typeLabel]);
+  }, [p, typeLabel, t]);
 
   const displayedAmenities = facilities.slice(0, 8);
-  const remainingAmenitiesCount = Math.max(
-    0,
-    facilities.length - displayedAmenities.length
-  );
+  const remainingAmenitiesCount = Math.max(0, facilities.length - displayedAmenities.length);
 
   const mapEmbedSrc = useMemo(() => {
     if (coords) {
       return `https://www.google.com/maps?q=${coords.lat},${coords.lng}&z=13&output=embed`;
     }
-    // fallback pe oraș/localitate, ca “approx”
     const q = encodeURIComponent(p?.city || p?.locality || "Bucovina");
     return `https://www.google.com/maps?q=${q}&z=12&output=embed`;
   }, [coords, p]);
 
   const hostName =
-  hostProfile?.displayName ||
-  hostProfile?.name ||
-  hostFromProperty?.name ||
-  hostUser?.name ||
-  "Gazda";
-
+    hostProfile?.displayName ||
+    hostProfile?.name ||
+    hostFromProperty?.name ||
+    hostUser?.name ||
+    t("propertyPage.host.fallbackName");
 
   const hostPhone = hostFromProperty?.phone || hostUser?.phone || "";
 
   const hostAvatar =
-    (isNonEmptyString(hostProfile?.avatarUrl) && hostProfile.avatarUrl) ||
-    DEFAULT_HOST_AVATAR;
+    (isNonEmptyString(hostProfile?.avatarUrl) && hostProfile.avatarUrl) || DEFAULT_HOST_AVATAR;
 
-  const hostBio =
-    (isNonEmptyString(hostProfile?.bio) && hostProfile.bio.trim()) || "";
+  const hostBio = (isNonEmptyString(hostProfile?.bio) && hostProfile.bio.trim()) || "";
 
   const hasPhone = typeof hostPhone === "string" && hostPhone.trim().length > 0;
   const cleanPhone = (s) => String(s || "").replace(/[^\d+]/g, "");
   const telHref = hasPhone ? `tel:${cleanPhone(hostPhone)}` : "";
-  const waHref = hasPhone
-    ? `https://wa.me/${cleanPhone(hostPhone).replace(/^\+/, "")}`
-    : "";
-
+  const waHref = hasPhone ? `https://wa.me/${cleanPhone(hostPhone).replace(/^\+/, "")}` : "";
   const smsHref = hasPhone ? `sms:${cleanPhone(hostPhone)}` : "";
 
   const onShare = async () => {
@@ -316,10 +256,11 @@ export default function PropertyPage() {
       const url = window.location.href;
       if (navigator.share) {
         await navigator.share({ title, url });
+        toast.success(t("propertyPage.toasts.shared"));
       } else {
         await navigator.clipboard.writeText(url);
-        toast.success("Link copiat", {
-          description: "Poți distribui acum anunțul.",
+        toast.success(t("propertyPage.toasts.linkCopied.title"), {
+          description: t("propertyPage.toasts.linkCopied.desc"),
         });
       }
     } catch {
@@ -329,33 +270,26 @@ export default function PropertyPage() {
 
   const onSave = async () => {
     if (!user) {
-      toast.info("Autentificare", {
-        description: "Autentifică-te ca să salvezi la favorite.",
+      toast.info(t("propertyPage.toasts.authRequired.title"), {
+        description: t("propertyPage.toasts.authRequired.desc"),
       });
       return;
     }
 
     try {
       await toggleFav(String(id));
-      // toasturile sunt deja în favoritesService (add/remove)
+      // toast-urile add/remove le ai deja în hook/service
     } catch (e) {
-      toast.error("Eroare", {
-        description: e?.message || "Nu am putut actualiza favoritele.",
+      toast.error(t("propertyPage.toasts.favError.title"), {
+        description: e?.message || t("propertyPage.toasts.favError.desc"),
       });
     }
   };
 
   async function handleSendMessage({ propertyId, message, guestName, guestEmail, guestPhone }) {
-    await sendHostMessage({
-      propertyId,
-      message,
-      guestName,
-      guestEmail,
-      guestPhone,
-    });
-    toast.success("Mesaj trimis");
+    await sendHostMessage({ propertyId, message, guestName, guestEmail, guestPhone });
+    toast.success(t("propertyPage.toasts.messageSent"));
   }
-  
 
   if (loading) {
     return (
@@ -382,7 +316,7 @@ export default function PropertyPage() {
       <div className="ppShell">
         <div className="ppContainer">
           <div className="ppErrorCard">
-            <h2>Nu am putut încărca anunțul</h2>
+            <h2>{t("propertyPage.errors.title")}</h2>
             <p>{err}</p>
           </div>
         </div>
@@ -411,12 +345,12 @@ export default function PropertyPage() {
                   <button
                     className="ppLinkLike"
                     onClick={() =>
-                      toast.info("Recenzii", {
-                        description: "În curând: recenzii detaliate.",
+                      toast.info(t("propertyPage.toasts.reviewsSoon.title"), {
+                        description: t("propertyPage.toasts.reviewsSoon.desc"),
                       })
                     }
                   >
-                    {reviewsCount} recenzii
+                    {t("propertyPage.reviewsCount", { count: reviewsCount })}
                   </button>
                 </>
               ) : null}
@@ -443,17 +377,18 @@ export default function PropertyPage() {
           <div className="ppHeaderActions">
             <button className="ppActionBtn" onClick={onShare}>
               <Share2 size={16} />
-              <span>Distribuie</span>
+              <span>{t("propertyPage.actions.share")}</span>
             </button>
+
             <button
               className={`ppActionBtn ${isFav ? "isActive" : ""}`}
               onClick={onSave}
               disabled={favLoading}
               aria-pressed={isFav}
-              title={isFav ? "Scoate din favorite" : "Adaugă la favorite"}
+              title={isFav ? t("propertyPage.actions.removeFromFav") : t("propertyPage.actions.addToFav")}
             >
               <Heart size={16} fill={isFav ? "currentColor" : "none"} />
-              <span>{isFav ? "Salvat" : "Salvează"}</span>
+              <span>{isFav ? t("propertyPage.actions.saved") : t("propertyPage.actions.save")}</span>
             </button>
           </div>
         </div>
@@ -465,23 +400,20 @@ export default function PropertyPage() {
               <button
                 className="ppGalleryMain"
                 onClick={() => setShowAllPhotos(true)}
-                aria-label="Deschide fotografii"
+                aria-label={t("propertyPage.gallery.openAria")}
               >
-                <img src={images[0]} alt="Foto principală" loading="eager" />
+                <img src={images[0]} alt={t("propertyPage.gallery.mainAlt")} loading="eager" />
               </button>
 
               <div className="ppGallerySide">
-                {(images.slice(1, 5).length
-                  ? images.slice(1, 5)
-                  : images.slice(0, 4)
-                ).map((src, idx) => (
+                {(images.slice(1, 5).length ? images.slice(1, 5) : images.slice(0, 4)).map((src, idx) => (
                   <button
                     key={src + idx}
                     className="ppGalleryThumb"
                     onClick={() => setShowAllPhotos(true)}
-                    aria-label="Deschide fotografii"
+                    aria-label={t("propertyPage.gallery.openAria")}
                   >
-                    <img src={src} alt={`Foto ${idx + 2}`} loading="lazy" />
+                    <img src={src} alt={t("propertyPage.gallery.thumbAlt", { n: idx + 2 })} loading="lazy" />
                   </button>
                 ))}
               </div>
@@ -494,14 +426,14 @@ export default function PropertyPage() {
                 }}
               >
                 <ImagesIcon size={16} />
-                Afișează toate fotografiile
+                {t("propertyPage.gallery.showAll")}
               </button>
             </div>
           ) : (
             <div className="ppGalleryEmpty">
               <div className="ppGalleryEmptyInner">
                 <ImagesIcon size={22} />
-                <span>Nu există fotografii încă.</span>
+                <span>{t("propertyPage.gallery.empty")}</span>
               </div>
             </div>
           )}
@@ -514,8 +446,8 @@ export default function PropertyPage() {
             <div className="ppSection">
               <h2 className="ppH2">
                 {typeLabel
-                  ? `${typeLabel} în ${p?.city || "Bucovina"}`
-                  : "Detalii cazare"}
+                  ? t("propertyPage.headlineWithCity", { type: typeLabel, city: p?.city || t("propertyPage.regionFallback") })
+                  : t("propertyPage.detailsTitle")}
               </h2>
 
               {quickFacts.length ? (
@@ -529,9 +461,7 @@ export default function PropertyPage() {
                 </div>
               ) : null}
 
-              {/* Badges */}
-              {Array.isArray(p?.badges) &&
-              p.badges.filter(isNonEmptyString).length ? (
+              {Array.isArray(p?.badges) && p.badges.filter(isNonEmptyString).length ? (
                 <div className="ppBadges">
                   {p.badges
                     .filter(isNonEmptyString)
@@ -544,19 +474,14 @@ export default function PropertyPage() {
                 </div>
               ) : null}
 
-              {/* Highlights (nu inventăm date; afișăm doar dacă are sens) */}
               {canShowHighlights ? (
                 <div className="ppHighlights">
                   {ratingAvg >= 4.8 && reviewsCount >= 10 ? (
                     <div className="ppHighlightItem">
                       <Trophy size={18} />
                       <div>
-                        <div className="ppHighlightTitle">
-                          Printre cele mai apreciate anunțuri
-                        </div>
-                        <div className="ppHighlightDesc">
-                          Scor ridicat, bazat pe evaluări și recenzii.
-                        </div>
+                        <div className="ppHighlightTitle">{t("propertyPage.highlights.topRatedTitle")}</div>
+                        <div className="ppHighlightDesc">{t("propertyPage.highlights.topRatedDesc")}</div>
                       </div>
                     </div>
                   ) : null}
@@ -565,12 +490,8 @@ export default function PropertyPage() {
                     <div className="ppHighlightItem">
                       <Sparkles size={18} />
                       <div>
-                        <div className="ppHighlightTitle">
-                          Relaxare la locație
-                        </div>
-                        <div className="ppHighlightDesc">
-                          Are dotări pentru confort și relaxare.
-                        </div>
+                        <div className="ppHighlightTitle">{t("propertyPage.highlights.relaxTitle")}</div>
+                        <div className="ppHighlightDesc">{t("propertyPage.highlights.relaxDesc")}</div>
                       </div>
                     </div>
                   ) : null}
@@ -579,12 +500,8 @@ export default function PropertyPage() {
                     <div className="ppHighlightItem">
                       <Car size={18} />
                       <div>
-                        <div className="ppHighlightTitle">
-                          Parcare disponibilă
-                        </div>
-                        <div className="ppHighlightDesc">
-                          Ideal dacă vii cu mașina.
-                        </div>
+                        <div className="ppHighlightTitle">{t("propertyPage.highlights.parkingTitle")}</div>
+                        <div className="ppHighlightDesc">{t("propertyPage.highlights.parkingDesc")}</div>
                       </div>
                     </div>
                   ) : null}
@@ -593,63 +510,50 @@ export default function PropertyPage() {
 
               <div className="ppDivider" />
 
-              {/* Description */}
               {isNonEmptyString(p?.description) ? (
                 <>
                   <p className="ppDesc">{clampText(p.description, 420)}</p>
-
                   {p.description.trim().length > 420 ? (
-                    <button
-                      className="ppOutlineBtn"
-                      onClick={() => setShowFullDescription(true)}
-                    >
-                      Afișează mai multe <ChevronRight size={16} />
+                    <button className="ppOutlineBtn" onClick={() => setShowFullDescription(true)}>
+                      {t("propertyPage.actions.showMore")} <ChevronRight size={16} />
                     </button>
                   ) : null}
                 </>
               ) : (
-                <p className="ppMuted">Descrierea nu este disponibilă încă.</p>
+                <p className="ppMuted">{t("propertyPage.descriptionMissing")}</p>
               )}
             </div>
 
-            {/* Amenities */}
             {facilities.length ? (
               <div className="ppSection">
-                <h2 className="ppH2">Ce oferă acest loc</h2>
+                <h2 className="ppH2">{t("propertyPage.amenitiesTitle")}</h2>
 
                 <div className="ppAmenitiesGrid">
                   {displayedAmenities.map((key) => {
-const meta = AMENITY_BY_KEY[key];
-if (!meta) return null;
-                    const Icon = meta?.Icon;
+                    const meta = AMENITY_BY_KEY[key];
+                    if (!meta) return null;
+                    const Icon = meta.icon; // ✅ corect: în catalog este "icon"
                     return (
                       <div className="ppAmenity" key={key}>
-{Icon ? <Icon size={20} /> : null}
-<span>{meta?.label || key}</span>
+                        {Icon ? <Icon size={20} /> : null}
+                        <span>{meta.label || key}</span>
                       </div>
                     );
                   })}
                 </div>
 
-                <button
-                  className="ppOutlineBtn"
-                  onClick={() => setShowAllAmenities(true)}
-                >
-                  Afișează toate dotările{" "}
-                  {facilities.length ? `(${facilities.length})` : ""}{" "}
+                <button className="ppOutlineBtn" onClick={() => setShowAllAmenities(true)}>
+                  {t("propertyPage.actions.showAllAmenities", { count: facilities.length })}
                 </button>
 
                 {remainingAmenitiesCount > 0 ? (
-                  <div className="ppTinyHint">
-                    + încă {remainingAmenitiesCount} dotări
-                  </div>
+                  <div className="ppTinyHint">{t("propertyPage.moreAmenities", { count: remainingAmenitiesCount })}</div>
                 ) : null}
               </div>
             ) : null}
 
-            {/* Reviews (summary only, fără inventat) */}
             <div className="ppSection">
-              <h2 className="ppH2">Recenzii</h2>
+              <h2 className="ppH2">{t("propertyPage.reviewsTitle")}</h2>
 
               {reviewsCount > 0 && ratingAvg > 0 ? (
                 <div className="ppReviewSummary">
@@ -659,72 +563,56 @@ if (!meta) return null;
                       <span>{ratingAvg.toFixed(1).replace(".", ",")}</span>
                       <span className="ppScoreLaurel">🏆</span>
                     </div>
-                    <div className="ppMuted">
-                      Bazat pe {reviewsCount} recenzii
-                    </div>
+                    <div className="ppMuted">{t("propertyPage.reviewsBasedOn", { count: reviewsCount })}</div>
                   </div>
 
                   <div className="ppReviewNote">
                     <ShieldCheck size={18} />
                     <div>
-                      <div className="ppHighlightTitle">
-                        Recenzii verificate
-                      </div>
-                      <div className="ppHighlightDesc"></div>
+                      <div className="ppHighlightTitle">{t("propertyPage.verifiedReviews.title")}</div>
+                      <div className="ppHighlightDesc">{t("propertyPage.verifiedReviews.desc")}</div>
                     </div>
                   </div>
                 </div>
               ) : (
                 <div className="ppEmptyBlock">
-                  <div className="ppEmptyTitle">Încă nu există recenzii</div>
-                  <div className="ppMuted">
-                    Cazarea e nouă sau nu a primit încă feedback. Poți verifica
-                    dotările și locația.
-                  </div>
+                  <div className="ppEmptyTitle">{t("propertyPage.noReviews.title")}</div>
+                  <div className="ppMuted">{t("propertyPage.noReviews.desc")}</div>
                 </div>
               )}
             </div>
 
-            {/* Map */}
             {isNonEmptyString(p?.city) || coords ? (
               <div className="ppSection">
-                <h2 className="ppH2">Unde vei fi</h2>
-                {isNonEmptyString(locationLine) ? (
-                  <div className="ppMuted">{locationLine}</div>
-                ) : null}
+                <h2 className="ppH2">{t("propertyPage.mapTitle")}</h2>
+                {isNonEmptyString(locationLine) ? <div className="ppMuted">{locationLine}</div> : null}
 
                 <div className="ppMapWrap">
                   <iframe
-                    title="Harta"
+                    title={t("propertyPage.mapFrameTitle")}
                     src={mapEmbedSrc}
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                   />
                   {!coords ? (
-                    <div className="ppMapOverlayNote">
-                      Locație aproximativă (fără coordonate exacte)
-                    </div>
+                    <div className="ppMapOverlayNote">{t("propertyPage.mapApprox")}</div>
                   ) : null}
                 </div>
               </div>
             ) : null}
           </div>
 
-          {/* RIGHT (booking card) */}
-          {/* RIGHT (contact card) */}
-          {/* RIGHT (contact card) */}
+          {/* RIGHT */}
           <div className="ppColRight">
             <div className="ppBookingCard">
               <div className="ppBookingTop">
                 {typeof price === "number" && price > 0 ? (
                   <div className="ppPriceRow">
-                    <span className="ppPrice">
-                      {formatMoney(price, currency)}
-                    </span>
-                    <span className="ppMuted">/ noapte</span>
+                    <span className="ppPrice">{formatMoney(price, currency)}</span>
+                    <span className="ppMuted">{t("propertyPage.perNight")}</span>
                   </div>
                 ) : (
-                  <div className="ppMuted">Preț indisponibil</div>
+                  <div className="ppMuted">{t("propertyPage.priceUnavailable")}</div>
                 )}
 
                 {canShowHighlights ? (
@@ -732,15 +620,15 @@ if (!meta) return null;
                     <Star size={14} />
                     <b>{ratingAvg.toFixed(1).replace(".", ",")}</b>
                     <span className="ppDot">•</span>
-                    <span className="ppMuted">{reviewsCount} recenzii</span>
+                    <span className="ppMuted">{t("propertyPage.reviewsCount", { count: reviewsCount })}</span>
                   </div>
                 ) : null}
               </div>
 
               <div className="ppContactBlock">
-                <div className="ppContactTitle">Contactează gazda</div>
+                <div className="ppContactTitle">{t("propertyPage.contact.title")}</div>
                 <div className="ppContactSubtitle">
-                  {hostName} • răspuns rapid • confirmă detalii înainte să vii
+                  {t("propertyPage.contact.subtitle", { host: hostName })}
                 </div>
 
                 <div className="ppContactButtons">
@@ -750,19 +638,18 @@ if (!meta) return null;
                       href={telHref}
                       onClick={() => trackClick(id, "contact_phone")}
                     >
-                      Sună acum
+                      {t("propertyPage.contact.callNow")}
                     </a>
                   ) : (
                     <button
                       className="ppPrimaryBtn ppPrimaryBtnSolid"
                       onClick={() =>
-                        toast.info("Număr indisponibil", {
-                          description:
-                            "Gazda nu a setat încă un număr de telefon.",
+                        toast.info(t("propertyPage.toasts.phoneMissing.title"), {
+                          description: t("propertyPage.toasts.phoneMissing.desc"),
                         })
                       }
                     >
-                      Sună acum
+                      {t("propertyPage.contact.callNow")}
                     </button>
                   )}
 
@@ -771,7 +658,7 @@ if (!meta) return null;
                     href={smsHref}
                     onClick={() => trackClick(id, "contact_sms")}
                   >
-                    Trimite mesaj
+                    {t("propertyPage.contact.sendSms")}
                   </a>
 
                   {hasPhone ? (
@@ -789,10 +676,7 @@ if (!meta) return null;
 
                 <div className="ppContactHint">
                   <ShieldCheck size={16} />
-                  <span>
-                    Sfat: confirmă prețul, accesul și check-in-ul. (În curând:
-                    mesagerie în platformă)
-                  </span>
+                  <span>{t("propertyPage.contact.hint")}</span>
                 </div>
               </div>
 
@@ -801,18 +685,20 @@ if (!meta) return null;
               <div className="ppMiniRecap">
                 {typeof price === "number" && price > 0 ? (
                   <div className="ppMiniRow">
-                    <span>{formatMoney(price, currency)} • noapte</span>
+                    <span>{t("propertyPage.recap.nightLabel", { price: formatMoney(price, currency) })}</span>
                     <b>{formatMoney(price, currency)}</b>
                   </div>
                 ) : null}
+
                 <div className="ppMiniRow">
-                  <span className="ppMuted">Locație</span>
+                  <span className="ppMuted">{t("propertyPage.recap.location")}</span>
                   <b>{p?.city || p?.locality || "—"}</b>
                 </div>
               </div>
             </div>
           </div>
         </div>
+
         {hostUserId ? (
           <>
             <HostSection
@@ -825,11 +711,8 @@ if (!meta) return null;
                 isSuperHost: !!hostProfile?.isSuperHost,
                 hostingSince: hostProfile?.hostingSince || null,
                 responseRate: hostProfile?.responseRate ?? null,
-                responseTimeBucket:
-                  hostProfile?.responseTimeBucket || "unknown",
-                languages: Array.isArray(hostProfile?.languages)
-                  ? hostProfile.languages
-                  : [],
+                responseTimeBucket: hostProfile?.responseTimeBucket || "unknown",
+                languages: Array.isArray(hostProfile?.languages) ? hostProfile.languages : [],
                 stats: hostProfile?.stats || null,
               }}
               loading={hostProfileLoading}
@@ -840,11 +723,7 @@ if (!meta) return null;
             <MessageHostModal
               open={msgOpen}
               onClose={() => setMsgOpen(false)}
-              host={{
-                id: hostUserId,
-                name: hostName,
-                avatarUrl: hostAvatar,
-              }}
+              host={{ id: hostUserId, name: hostName, avatarUrl: hostAvatar }}
               property={p}
               onSend={handleSendMessage}
             />
@@ -856,22 +735,22 @@ if (!meta) return null;
         </div>
 
         {/* MODALS */}
-
         <Modal
           open={showAllPhotos}
           title=""
           onClose={() => setShowAllPhotos(false)}
           size="xl"
+          closeLabel={t("common.close")}
         >
           <div className="ppPhotoModalHeader">
-            <div className="ppPhotoModalTitle">Fotografii</div>
-            <div className="ppMuted">{images.length} imagini</div>
+            <div className="ppPhotoModalTitle">{t("propertyPage.gallery.photosTitle")}</div>
+            <div className="ppMuted">{t("propertyPage.gallery.imagesCount", { count: images.length })}</div>
           </div>
 
           <div className="ppPhotoGrid">
             {images.map((src, idx) => (
               <div className="ppPhotoCell" key={src + idx}>
-                <img src={src} alt={`Foto ${idx + 1}`} loading="lazy" />
+                <img src={src} alt={t("propertyPage.gallery.photoAlt", { n: idx + 1 })} loading="lazy" />
               </div>
             ))}
           </div>
@@ -879,38 +758,38 @@ if (!meta) return null;
 
         <Modal
           open={showAllAmenities}
-          title="Ce oferă acest loc"
+          title={t("propertyPage.amenitiesTitle")}
           onClose={() => setShowAllAmenities(false)}
           size="lg"
+          closeLabel={t("common.close")}
         >
           <div className="ppAmenityList">
-  {facilities.map((key) => {
-    const meta = AMENITY_BY_KEY[key];
-    if (!meta) return null;
-    const Icon = meta.icon;
-
-    return (
-      <div className="ppAmenityRow" key={key}>
-        {Icon ? <Icon size={20} /> : null}
-        <span>{meta.label || key}</span>
-      </div>
-    );
-  })}
-</div>
-
+            {facilities.map((key) => {
+              const meta = AMENITY_BY_KEY[key];
+              if (!meta) return null;
+              const Icon = meta.icon; // ✅ corect
+              return (
+                <div className="ppAmenityRow" key={key}>
+                  {Icon ? <Icon size={20} /> : null}
+                  <span>{meta.label || key}</span>
+                </div>
+              );
+            })}
+          </div>
         </Modal>
 
         <Modal
           open={showFullDescription}
-          title="Despre acest spațiu"
+          title={t("propertyPage.fullDescTitle")}
           onClose={() => setShowFullDescription(false)}
           size="lg"
+          closeLabel={t("common.close")}
         >
           <div className="ppFullDesc">
             {isNonEmptyString(p?.description) ? (
               <p>{p.description.trim()}</p>
             ) : (
-              <p className="ppMuted">Descriere indisponibilă.</p>
+              <p className="ppMuted">{t("propertyPage.descriptionUnavailable")}</p>
             )}
 
             <div className="ppFullDescMeta">
@@ -926,7 +805,7 @@ if (!meta) return null;
               ) : null}
               {typeof p?.capacity === "number" && p.capacity > 0 ? (
                 <div className="ppFullDescLine">
-                  <Users size={16} /> <span>Max {p.capacity} oaspeți</span>
+                  <Users size={16} /> <span>{t("propertyPage.facts.maxGuests", { count: p.capacity })}</span>
                 </div>
               ) : null}
             </div>

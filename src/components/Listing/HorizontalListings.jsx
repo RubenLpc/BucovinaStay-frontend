@@ -5,9 +5,10 @@ import { toast } from "sonner";
 import { useAnalyticsImpressions } from "../../hooks/useAnalyticsImpressions";
 import { trackClick } from "../../api/analyticsService";
 
-
 import { useAuthStore } from "../../stores/authStore";
 import { useFavorites } from "../../hooks/useFavorites";
+
+import { useTranslation } from "react-i18next";
 
 import {
   ChevronLeft,
@@ -17,9 +18,7 @@ import {
   Sparkles,
   Crown,
   BadgeCheck,
-  Flame,
   Mountain,
-  Leaf,
   Coffee,
   MapPin,
   Users,
@@ -43,66 +42,16 @@ const FALLBACK_IMG =
   </svg>
 `);
 
-
-
-export const BADGE_META = {
-  top: {
-    label: "Top",
-    tone: "gold",
-    Icon: Crown,
-    description: "Evaluări excelente de la oaspeți",
-  },
-
-  spa: {
-    label: "Spa & Relax",
-    tone: "pink",
-    Icon: Sparkles,
-    description: "Dotări pentru relaxare (spa, saună, jacuzzi)",
-  },
-
-  new: {
-    label: "Nou",
-    tone: "blue",
-    Icon: Sparkles,
-    description: "Anunț publicat recent",
-  },
-
-  value: {
-    label: "Best value",
-    tone: "green",
-    Icon: BadgeCheck,
-    description: "Raport foarte bun calitate–preț",
-  },
-
-  view: {
-    label: "Priveliște",
-    tone: "violet",
-    Icon: Mountain,
-    description: "Vedere deosebită (munte / natură)",
-  },
-
-  family: {
-    label: "Familie",
-    tone: "teal",
-    Icon: Users,
-    description: "Potrivit pentru familii sau grupuri",
-  },
-
-  breakfast: {
-    label: "Mic dejun",
-    tone: "amber",
-    Icon: Coffee,
-    description: "Mic dejun inclus sau disponibil",
-  },
-
-  recommended: {
-    label: "Recomandat",
-    tone: "dark",
-    Icon: Sparkles,
-    description: "Selecție recomandată de platformă",
-  },
+const BADGE_META = {
+  top: { tone: "gold", Icon: Crown },
+  spa: { tone: "pink", Icon: Sparkles },
+  new: { tone: "blue", Icon: Sparkles },
+  value: { tone: "green", Icon: BadgeCheck },
+  view: { tone: "violet", Icon: Mountain },
+  family: { tone: "teal", Icon: Users },
+  breakfast: { tone: "amber", Icon: Coffee },
+  recommended: { tone: "dark", Icon: Sparkles },
 };
-
 
 function safeImg(src) {
   if (!src) return FALLBACK_IMG;
@@ -124,50 +73,37 @@ function smartScore(l) {
   const reviews = typeof l.reviews === "number" ? l.reviews : 0;
   const price = typeof l.pricePerNight === "number" ? l.pricePerNight : 9999;
 
-  // base: rating dominates, but reviews add confidence
-  // (rating 5 => +110)
   s += rating * 22;
-
-  // confidence boost: more reviews => slightly higher
-  // cap to avoid overpowering rating
   s += Math.min(18, Math.log10(1 + reviews) * 10);
 
-  // price: cheaper gets bonus, but don't punish premium too much
-  // baseline around 420 RON like you had; clamp so it doesn't explode
   const priceBonus = Math.max(-12, Math.min(18, (420 - price) * 0.06));
   s += priceBonus;
 
   const a = Array.isArray(l.amenities) ? l.amenities : [];
   const has = (k) => a.includes(k);
 
-  // --- High-intent "wow" amenities (strong) ---
   if (has("hotTub")) s += 11;
   if (has("sauna")) s += 8;
   if (has("spa")) s += 7;
   if (has("fireplace")) s += 5;
 
-  // --- Location / outdoor vibe ---
   if (has("mountainView")) s += 6;
   if (has("terrace")) s += 2;
   if (has("garden")) s += 2;
   if (has("bbq")) s += 2;
 
-  // --- Convenience ---
   if (has("wifi")) s += 4;
   if (has("parking") || has("freeStreetParking")) s += 3;
   if (has("selfCheckIn")) s += 4;
   if (has("privateEntrance")) s += 2;
 
-  // --- Kitchen quality (bundle scoring) ---
-  // Airbnb vibe: kitchen matters more if it's "complete"
   const kitchenParts = ["fridge", "stove", "oven", "microwave", "coffeeMaker", "kettle", "dishesAndCutlery"];
   const kitchenCount = kitchenParts.reduce((acc, k) => acc + (has(k) ? 1 : 0), 0);
 
   if (has("kitchen")) s += 3;
-  if (kitchenCount >= 4) s += 3;     // decent kitchen
-  if (kitchenCount >= 6) s += 4;     // full kitchen
+  if (kitchenCount >= 4) s += 3;
+  if (kitchenCount >= 6) s += 4;
 
-  // --- Comfort / indoor ---
   if (has("ac")) s += 3;
   if (has("heating")) s += 2;
   if (has("hotWater")) s += 1;
@@ -175,34 +111,22 @@ function smartScore(l) {
   if (has("iron")) s += 1;
   if (has("workspace")) s += 1;
 
-  // --- Entertainment ---
   if (has("tv")) s += 1;
   if (has("streaming")) s += 2;
   if (has("boardGames")) s += 1;
 
-  // --- Family-friendly (derived, not stored as amenity) ---
   const guests = typeof l.guests === "number" ? l.guests : (typeof l.capacity === "number" ? l.capacity : 0);
-  const familySignals =
-    (guests >= 4) ||
-    has("crib") ||
-    has("highChair") ||
-    has("washer") ||
-    has("kitchen");
-
+  const familySignals = guests >= 4 || has("crib") || has("highChair") || has("washer") || has("kitchen");
   if (familySignals) s += 2;
   if ((has("crib") && has("highChair")) || guests >= 6) s += 2;
 
-  // --- Pets (small; niche) ---
   if (has("petFriendly")) s += 1;
 
-  // --- Safety (trust signals) ---
-  // don't over-score, but small bump
   const safetyKeys = ["smokeAlarm", "fireExtinguisher", "firstAidKit"];
   const safetyCount = safetyKeys.reduce((acc, k) => acc + (has(k) ? 1 : 0), 0);
   if (safetyCount >= 1) s += 1;
   if (safetyCount >= 2) s += 2;
 
-  // mild penalty if too few essentials (optional)
   const essentialSignals = ["towels", "bedLinen", "hairDryer", "essentials"];
   const essentialCount = essentialSignals.reduce((acc, k) => acc + (has(k) ? 1 : 0), 0);
   if (essentialCount === 0) s -= 1;
@@ -211,7 +135,6 @@ function smartScore(l) {
 }
 
 function computeBadges(listing, ctx) {
-  // if host/admin manually set badges, respect them
   if (Array.isArray(listing.badges) && listing.badges.length) {
     return listing.badges.slice(0, 2);
   }
@@ -225,72 +148,65 @@ function computeBadges(listing, ctx) {
 
   const out = [];
 
-  // 1) TOP: high rating + some reviews
   if (rating != null && rating >= 4.85 && reviews >= 8) out.push("top");
 
-  // 2) SPA / WOW: hot tub or sauna or spa or fireplace
-  if (
-    out.length < 2 &&
-    (has("hotTub") || has("sauna") || has("spa") || has("fireplace"))
-  ) out.push("spa");
+  if (out.length < 2 && (has("hotTub") || has("sauna") || has("spa") || has("fireplace"))) out.push("spa");
 
-  // 3) NEW: created recently (your existing logic)
   if (out.length < 2 && listing.createdAt) {
     const days = (ctx.now - new Date(listing.createdAt)) / (1000 * 60 * 60 * 24);
     if (days <= 14) out.push("new");
   }
 
-  // 4) VALUE: cheap vs local threshold
   if (out.length < 2 && price != null && price <= ctx.cheapThreshold) out.push("value");
 
-  // 5) VIEW
   if (out.length < 2 && has("mountainView")) out.push("view");
 
-  // 6) FAMILY (derived)
   const guests =
-    typeof listing.guests === "number"
-      ? listing.guests
-      : (typeof listing.capacity === "number" ? listing.capacity : 0);
+    typeof listing.guests === "number" ? listing.guests : (typeof listing.capacity === "number" ? listing.capacity : 0);
 
-  const familySignals =
-    guests >= 4 || has("crib") || has("highChair") || has("kitchen") || has("washer");
-
+  const familySignals = guests >= 4 || has("crib") || has("highChair") || has("kitchen") || has("washer");
   if (out.length < 2 && familySignals) out.push("family");
 
-  // 7) BREAKFAST
   if (out.length < 2 && has("breakfast")) out.push("breakfast");
 
-  // 8) RECOMMENDED: your “smartPickIds” bucket
   if (out.length < 2 && ctx.smartPickIds?.has?.(listing.id)) out.push("recommended");
 
   return out.slice(0, 2);
-}
-
-
-function formatMoney(v, currency = "RON") {
-  if (typeof v !== "number") return "—";
-  try {
-    return new Intl.NumberFormat("ro-RO", { style: "currency", currency, maximumFractionDigits: 0 }).format(v);
-  } catch {
-    return `${v} ${currency}`;
-  }
 }
 
 function clamp(n, a, b) {
   return Math.max(a, Math.min(b, n));
 }
 
-function BadgeStack({ badges }) {
+function formatMoney(v, currency = "RON", locale = "ro-RO") {
+  if (typeof v !== "number") return "—";
+  try {
+    return new Intl.NumberFormat(locale, { style: "currency", currency, maximumFractionDigits: 0 }).format(v);
+  } catch {
+    return `${v} ${currency}`;
+  }
+}
+
+function BadgeStack({ badges, t }) {
   if (!badges?.length) return null;
+
   return (
     <div className="hl2-badges" aria-label="Badges">
       {badges.map((k) => {
         const meta = BADGE_META[k] || BADGE_META.recommended;
         const Icon = meta.Icon;
+
+        const label = t(`badges.${k}.label`);
+        const desc = t(`badges.${k}.desc`);
+
         return (
-          <span key={k} className={`hl2-badge tone-${meta.tone}`} title={meta.label}>
+          <span
+            key={k}
+            className={`hl2-badge tone-${meta.tone}`}
+            title={desc || label}
+          >
             <Icon size={14} className="hl2-badgeIcon" aria-hidden="true" />
-            <span className="hl2-badgeText">{meta.label}</span>
+            <span className="hl2-badgeText">{label}</span>
           </span>
         );
       })}
@@ -316,12 +232,13 @@ function SkeletonCard() {
 
 /* ------------ component ------------ */
 export default function HorizontalListings({
-  title = "Cazări recomandate",
-  subtitle = "Selecție atent aleasă pentru Bucovina",
+  title,
+  subtitle,
   items = [],
   loading = false,
-  onSeeAll, // optional callback (ex: navigate la /cazari?...)
+  onSeeAll,
 }) {
+  const { t, i18n } = useTranslation();
 
   useAnalyticsImpressions(items);
 
@@ -334,10 +251,11 @@ export default function HorizontalListings({
 
   const [canLeft, setCanLeft] = useState(false);
   const [canRight, setCanRight] = useState(false);
-  const [progress, setProgress] = useState(0); // 0..1
+  const [progress, setProgress] = useState(0);
 
-  // drag-to-scroll (premium feel)
   const drag = useRef({ down: false, x: 0, left: 0, moved: false });
+
+  const locale = i18n.language?.startsWith("en") ? "en-US" : "ro-RO";
 
   const ctx = useMemo(() => {
     const now = new Date();
@@ -358,12 +276,9 @@ export default function HorizontalListings({
     return { now, cheapThreshold, smartPickIds };
   }, [items]);
 
-  
-
   const open = useCallback(
     (id) => {
       trackClick(id, "open");
-
       navigate(`/cazari/${id}`);
     },
     [navigate]
@@ -413,69 +328,68 @@ export default function HorizontalListings({
   };
 
   const isInteractive = (el) =>
-    !!el.closest?.("button, a, input, textarea, select, [role='button']");
+    !!el?.closest?.("button, a, input, textarea, select, [role='button']");
   
   const onPointerDown = (e) => {
-    // ✅ pe desktop (mouse) nu mai capturăm pointer-ul (nu stricăm click)
     if (e.pointerType === "mouse") return;
-  
-    // ✅ nu porni drag dacă user apasă pe buton/link
     if (isInteractive(e.target)) return;
-  
+
     const el = trackRef.current;
     if (!el) return;
-  
+
     drag.current.down = true;
     drag.current.x = e.clientX;
     drag.current.left = el.scrollLeft;
     drag.current.moved = false;
-  
+
     el.setPointerCapture?.(e.pointerId);
     el.classList.add("is-dragging");
   };
-  
+
   const onPointerMove = (e) => {
     if (e.pointerType === "mouse") return;
     const el = trackRef.current;
     if (!el || !drag.current.down) return;
-  
+
     const dx = e.clientX - drag.current.x;
     if (Math.abs(dx) > 6) drag.current.moved = true;
     el.scrollLeft = drag.current.left - dx;
   };
-  
+
   const onPointerUp = (e) => {
     if (e.pointerType === "mouse") return;
     const el = trackRef.current;
     if (!el) return;
-  
+
     drag.current.down = false;
     el.releasePointerCapture?.(e.pointerId);
     el.classList.remove("is-dragging");
   };
-  
 
   const shouldBlockClick = () => drag.current.moved;
 
   const renderItems = items?.length ? items : [];
 
+  const computedTitle = title ?? t("hl.titleDefault");
+  const computedSubtitle = subtitle ?? t("hl.subtitleDefault");
+
   return (
     <section id="hl2-listings" className="container hl2-wrap">
       <header className="hl2-head">
         <div className="hl2-headLeft">
-          <div className="hl2-kicker">BucovinaStay Picks</div>
-          <h2 className="hl2-title">{title}</h2>
-          {subtitle ? <p className="hl2-subtitle">{subtitle}</p> : null}
+          <div className="hl2-kicker">{t("hl.kicker")}</div>
+          <h2 className="hl2-title">{computedTitle}</h2>
+          {computedSubtitle ? <p className="hl2-subtitle">{computedSubtitle}</p> : null}
         </div>
 
         <div className="hl2-actions">
           {typeof onSeeAll === "function" ? (
             <button type="button" className="hl2-seeAll" onClick={onSeeAll}>
-              Vezi toate <ArrowRight size={16} />
+              {t("hl.seeAll")} <ArrowRight size={16} />
             </button>
           ) : null}
 
-          <div className="hl2-progress" aria-hidden="true">
+          <div className="hl2-progress" aria-hidden="true" aria-label={t("hl.progressAria")}>
             <span className="hl2-progressFill" style={{ transform: `scaleX(${progress})` }} />
           </div>
 
@@ -484,16 +398,17 @@ export default function HorizontalListings({
             type="button"
             onClick={() => handleScroll(-1)}
             disabled={!canLeft}
-            aria-label="Scroll stânga"
+            aria-label={t("hl.scrollLeft")}
           >
             <ChevronLeft size={18} />
           </button>
+
           <button
             className="hl2-arrow"
             type="button"
             onClick={() => handleScroll(1)}
             disabled={!canRight}
-            aria-label="Scroll dreapta"
+            aria-label={t("hl.scrollRight")}
           >
             <ChevronRight size={18} />
           </button>
@@ -501,13 +416,11 @@ export default function HorizontalListings({
       </header>
 
       <div className="hl2-viewport">
-       
-
         <div
           ref={trackRef}
           className="hl2-track"
           role="list"
-          aria-label="Cazări recomandate"
+          aria-label={t("hl.listAria")}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
@@ -523,8 +436,8 @@ export default function HorizontalListings({
           ) : !renderItems.length ? (
             <div className="hl2-empty" role="status" aria-live="polite">
               <div className="hl2-emptyCard">
-                <div className="hl2-emptyTitle">Nu avem recomandări momentan</div>
-                <div className="hl2-emptyText">Încearcă să alegi alt oraș sau revino mai târziu.</div>
+                <div className="hl2-emptyTitle">{t("hl.emptyTitle")}</div>
+                <div className="hl2-emptyText">{t("hl.emptyText")}</div>
               </div>
             </div>
           ) : (
@@ -537,8 +450,12 @@ export default function HorizontalListings({
 
               const priceText = formatMoney(
                 typeof x.pricePerNight === "number" ? x.pricePerNight : null,
-                x.currency || "RON"
+                x.currency || "RON",
+                locale
               );
+
+              const titleText = x.title || t("hl.fallbackAlt");
+              const openAria = t("hl.openAria", { title: titleText });
 
               return (
                 <article
@@ -556,12 +473,12 @@ export default function HorizontalListings({
                       open(x.id);
                     }
                   }}
-                  aria-label={`Deschide cazarea ${x.title}`}
+                  aria-label={openAria}
                 >
                   <div className="hl2-media">
                     <img
                       src={safeImg(x.image)}
-                      alt={x.title || "Cazare"}
+                      alt={titleText}
                       loading="lazy"
                       draggable={false}
                       onError={(e) => {
@@ -572,31 +489,31 @@ export default function HorizontalListings({
                     <div className="hl2-overlay" aria-hidden="true" />
                     <div className="hl2-shine" aria-hidden="true" />
 
-                    <BadgeStack badges={badges} />
+                    <BadgeStack badges={badges} t={t} />
 
                     <button
                       type="button"
                       className={`hl2-fav ${isFav ? "active" : ""} ${!isAuthenticated ? "locked" : ""}`}
-                      aria-label={isFav ? "Scoate din favorite" : "Adaugă la favorite"}
+                      aria-label={isFav ? t("hl.favRemove") : t("hl.favAdd")}
                       onClick={async (e) => {
                         e.stopPropagation();
                         if (!isAuthenticated) {
-                          toast.info("Trebuie să fii autentificat", {
-                            description: "Autentifică-te pentru a salva cazări la favorite.",
+                          toast.info(t("toasts.authRequiredTitle"), {
+                            description: t("toasts.authRequiredDesc"),
                           });
                           return;
                         }
                         try {
                           await toggleFav(x.id);
                         } catch {
-                          toast.error("Nu am putut actualiza favoritele.");
+                          toast.error(t("toasts.favUpdateFail"));
                         }
                       }}
                     >
                       <Heart size={18} className="hl2-favIcon" aria-hidden="true" />
                     </button>
 
-                    <div className="hl2-rating" title="Rating">
+                    <div className="hl2-rating" title={t("hl.ratingTitle")}>
                       <Star size={14} className="hl2-star" aria-hidden="true" />
                       <span className="hl2-ratingNum">{ratingNum > 0 ? ratingNum.toFixed(1) : "0.0"}</span>
                       <span className="hl2-ratingSep">•</span>
@@ -611,26 +528,26 @@ export default function HorizontalListings({
                         <span>{x.location || "—"}</span>
                       </div>
 
-                      <div className="hl2-price" title="Preț pe noapte">
+                      <div className="hl2-price" title={t("hl.priceNightTitle")}>
                         <span className="hl2-priceNum">{priceText}</span>
-                        <span className="hl2-night">/ noapte</span>
+                        <span className="hl2-night">{t("hl.perNight")}</span>
                       </div>
                     </div>
 
                     <h3 className="hl2-name" title={x.title || ""}>
-                      {x.title || "Fără titlu"}
+                      {x.title || t("hl.fallbackAlt")}
                     </h3>
 
                     <div className="hl2-bottomRow">
                       <div className="hl2-meta">
                         <Users size={14} aria-hidden="true" />
                         <span>
-                          max <strong>{x.guests ?? "—"}</strong> oaspeți
+                          {t("hl.maxGuests")} <strong>{x.guests ?? "—"}</strong> {t("hl.guests")}
                         </span>
                       </div>
 
                       <div className="hl2-cta">
-                        Vezi detalii <span className="hl2-ctaArrow">→</span>
+                        {t("hl.seeDetails")} <span className="hl2-ctaArrow">→</span>
                       </div>
                     </div>
                   </div>

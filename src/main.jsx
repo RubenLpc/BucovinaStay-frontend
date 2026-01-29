@@ -5,6 +5,8 @@ import { router } from "./router";
 import "./index.css";
 import { Toaster } from "sonner";
 import { checkHealth } from "./api/client";
+import "./i18n"; // ✅ IMPORTANT
+
 
 function Bootstrap() {
   useEffect(() => {

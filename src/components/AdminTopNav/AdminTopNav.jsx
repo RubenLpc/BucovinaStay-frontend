@@ -3,12 +3,13 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Bell,
-  Settings,
   LayoutDashboard,
   ArrowRight,
   Menu,
   X,
   ShieldCheck,
+  Globe,
+  Check,
 } from "lucide-react";
 
 import "./AdminTopNav.css";
@@ -16,23 +17,23 @@ import { useAuthStore } from "../../stores/authStore";
 import AdminNotifications from "../AdminNotifications/AdminNotifications";
 import { getAdminUnreadCount } from "../../api/adminNotificationsService";
 import { toast } from "sonner";
-
+import { useTranslation } from "react-i18next";
 
 const ADMIN_TABS = [
-  { label: "Overview", path: "/admin" },
-  { label: "Users", path: "/admin/users" },
-  { label: "Listings", path: "/admin/listings" },
-  { label: "Reviews", path: "/admin/reviews" },
-  { label: "Settings", path: "/admin/settings" },
+  { key: "overview", path: "/admin" },
+  { key: "users", path: "/admin/users" },
+  { key: "listings", path: "/admin/listings" },
+  { key: "reviews", path: "/admin/reviews" },
+  { key: "settings", path: "/admin/settings" },
 ];
 
-function getActiveLabel(pathname) {
-  if (pathname === "/admin") return "Overview";
-  if (pathname.startsWith("/admin/users")) return "Users";
-  if (pathname.startsWith("/admin/listings")) return "Listings";
-  if (pathname.startsWith("/admin/reviews")) return "Reviews";
-  if (pathname.startsWith("/admin/settings")) return "Settings";
-  return "Overview";
+function getActiveKey(pathname) {
+  if (pathname === "/admin") return "overview";
+  if (pathname.startsWith("/admin/users")) return "users";
+  if (pathname.startsWith("/admin/listings")) return "listings";
+  if (pathname.startsWith("/admin/reviews")) return "reviews";
+  if (pathname.startsWith("/admin/settings")) return "settings";
+  return "overview";
 }
 
 function initialsFrom(nameOrEmail) {
@@ -42,11 +43,15 @@ function initialsFrom(nameOrEmail) {
   return s.slice(0, 2).toUpperCase();
 }
 
+const LANGS = [
+  { code: "ro", label: "RO", nameKey: "adminTopNav.langs.ro" },
+  { code: "en", label: "EN", nameKey: "adminTopNav.langs.en" },
+];
+
 export default function AdminTopNav({
   brandText = "BucovinaStay",
-  roleLabel = "Admin", // ✅ rămâne mereu vizibil
+  roleLabel = "Admin",
   onOpenAdminProfile,
-  onOpenNotifications,
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -56,16 +61,37 @@ export default function AdminTopNav({
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
 
-  const activeLabel = useMemo(
-    () => getActiveLabel(location.pathname),
-    [location.pathname]
-  );
+  // i18n
+  const { t, i18n } = useTranslation();
+  const lang = (i18n.resolvedLanguage || i18n.language || "ro").slice(0, 2);
+
+  const activeKey = useMemo(() => getActiveKey(location.pathname), [location.pathname]);
 
   const displayName = user?.name || user?.email || "Admin";
   const initials = useMemo(() => initialsFrom(displayName), [displayName]);
+
   const [notifOpen, setNotifOpen] = useState(false);
   const [unread, setUnread] = useState(0);
-  
+
+  const setLang = async (code) => {
+    if (!code || code === lang) return;
+    try {
+      await i18n.changeLanguage(code);
+      localStorage.setItem("lang", code);
+
+      toast.success(t("adminTopNav.toasts.languageChangedTitle"), {
+        description: t(
+          code === "ro" ? "adminTopNav.toasts.languageChangedRO" : "adminTopNav.toasts.languageChangedEN"
+        ),
+      });
+    } catch (e) {
+      toast.error(t("adminTopNav.toasts.languageFailedTitle"), {
+        description: t("adminTopNav.toasts.languageFailedDesc"),
+      });
+    }
+  };
+
+  // unread count
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -77,7 +103,7 @@ export default function AdminTopNav({
     })();
     return () => (alive = false);
   }, []);
-  
+
   // Close on ESC
   useEffect(() => {
     function onKeyDown(e) {
@@ -100,8 +126,9 @@ export default function AdminTopNav({
           className="atnBrand"
           role="button"
           tabIndex={0}
-          onClick={() => go("/admin")}
+          onClick={() => go("/")}
           onKeyDown={(e) => e.key === "Enter" && go("/admin")}
+          aria-label={t("adminTopNav.aria.brand")}
         >
           <div className="atnLogo" aria-hidden="true">
             <LayoutDashboard size={16} />
@@ -113,67 +140,81 @@ export default function AdminTopNav({
 
         {/* CENTER: desktop tabs only */}
         <div className="atnCenter atnCenterDesktop">
-          <nav className="atnPill" aria-label="Admin navigation">
-            {ADMIN_TABS.map((t) => (
+          <nav className="atnPill" aria-label={t("adminTopNav.aria.nav")}>
+            {ADMIN_TABS.map((tab) => (
               <button
-                key={t.path}
+                key={tab.key}
                 type="button"
-                className={`atnTab ${activeLabel === t.label ? "isActive" : ""}`}
-                onClick={() => go(t.path)}
+                className={`atnTab ${activeKey === tab.key ? "isActive" : ""}`}
+                onClick={() => go(tab.path)}
               >
-                {t.label}
+                {t(`adminTopNav.tabs.${tab.key}`)}
               </button>
             ))}
           </nav>
         </div>
 
-        {/* RIGHT: single line icons (mobile + desktop) */}
+        {/* RIGHT: actions */}
         <div className="atnRight">
-          {/* ✅ Role pill stays in top bar */}
+          {/* Role pill */}
           <button
             className="atnRolePill"
             type="button"
             onClick={() => go("/admin")}
-            title="Role"
+            title={t("adminTopNav.role")}
+            aria-label={t("adminTopNav.role")}
           >
-            <span className="atnRoleLbl">Role</span>
+            <span className="atnRoleLbl">{t("adminTopNav.role")}</span>
             <span className="atnDotSep" aria-hidden="true" />
             <span className="atnRoleVal">{roleLabel}</span>
           </button>
 
+          {/* Desktop language switcher (hidden on mobile via CSS) */}
+          <div className="atnLangDesktop" aria-label={t("adminTopNav.language")}>
+            <button
+              className="atnLangBtn"
+              type="button"
+              onClick={() => setLang(lang === "ro" ? "en" : "ro")}
+              title={lang === "ro" ? t("adminTopNav.switchToEN") : t("adminTopNav.switchToRO")}
+              aria-label={t("adminTopNav.language")}
+            >
+              <Globe size={16} />
+              <span className="atnLangCode">{lang === "ro" ? "RO" : "EN"}</span>
+            </button>
+          </div>
+
+          {/* Notifications */}
           <button
-  className="atnIconBtn"
-  type="button"
-  aria-label="Notifications"
-  title="Notifications"
-  onClick={() => setNotifOpen((v) => !v)}
->
-  <Bell size={16} />
-  {unread > 0 ? (
-    <span className="atnBadge">{unread > 99 ? "99+" : unread}</span>
-  ) : null}
-</button>
+            className="atnIconBtn"
+            type="button"
+            aria-label={t("adminTopNav.notifications")}
+            title={t("adminTopNav.notifications")}
+            onClick={() => setNotifOpen((v) => !v)}
+          >
+            <Bell size={16} />
+            {unread > 0 ? <span className="atnBadge">{unread > 99 ? "99+" : unread}</span> : null}
+          </button>
 
-
+          {/* Avatar */}
           <div className="atnProfile">
             <button
               className="atnAvatarBtn"
               type="button"
-              aria-label="Open admin profile"
+              aria-label={t("adminTopNav.openAdminProfile")}
               onClick={() => (typeof onOpenAdminProfile === "function" ? onOpenAdminProfile() : null)}
             >
               <span className="atnAvatar">{initials}</span>
             </button>
           </div>
 
-          {/* ✅ Hamburger replaces settings on mobile */}
+          {/* Hamburger */}
           <button
             className="atnIconBtn atnMenuBtn"
             type="button"
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-label={menuOpen ? t("adminTopNav.closeMenu") : t("adminTopNav.openMenu")}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
-            title="Menu"
+            title={t("adminTopNav.menu")}
           >
             {menuOpen ? <X size={16} /> : <Menu size={16} />}
           </button>
@@ -184,36 +225,52 @@ export default function AdminTopNav({
                 className="atnBackdrop"
                 type="button"
                 onClick={() => setMenuOpen(false)}
-                aria-label="Close menu"
+                aria-label={t("adminTopNav.closeMenu")}
               />
 
-              <div className="atnMenu atnMenuTabs" role="menu" aria-label="Admin menu">
+              <div className="atnMenu atnMenuTabs" role="menu" aria-label={t("adminTopNav.aria.menu")}>
                 {/* TOP: role + identity */}
                 <div className="atnMenuHead atnMenuHeadRole">
                   <div className="atnMenuHeadTop">
                     <div className="atnRoleChip">
                       <ShieldCheck size={14} />
-                      <span>Role</span>
+                      <span>{t("adminTopNav.role")}</span>
                       <span className="atnRoleChipDot" />
                       <b>{roleLabel}</b>
                     </div>
                   </div>
 
                   <div className="atnMenuName">{displayName}</div>
-                  <div className="atnMenuMeta">Admin • Control Panel</div>
+                  <div className="atnMenuMeta">{t("adminTopNav.adminMeta")}</div>
                 </div>
+
+                {/* Mobile language picker (ONLY in menu) */}
+                <div className="atnLangMobile" aria-label={t("adminTopNav.language")}>
+            <button
+              className="atnLangBtn"
+              type="button"
+              onClick={() => setLang(lang === "ro" ? "en" : "ro")}
+              title={lang === "ro" ? t("adminTopNav.switchToEN") : t("adminTopNav.switchToRO")}
+              aria-label={t("adminTopNav.language")}
+            >
+              <Globe size={16} />
+              <span className="atnLangCode">{lang === "ro" ? "RO" : "EN"}</span>
+            </button>
+          </div>
+
+                <div className="atnMenuSep" />
 
                 {/* NAV LIST */}
                 <div className="atnMenuList" role="none">
-                  {ADMIN_TABS.map((t) => (
+                  {ADMIN_TABS.map((tab) => (
                     <button
-                      key={t.path}
-                      className={`atnMenuItem ${activeLabel === t.label ? "isActive" : ""}`}
+                      key={tab.key}
+                      className={`atnMenuItem ${activeKey === tab.key ? "isActive" : ""}`}
                       type="button"
                       role="menuitem"
-                      onClick={() => go(t.path)}
+                      onClick={() => go(tab.path)}
                     >
-                      <span>{t.label}</span>
+                      <span>{t(`adminTopNav.tabs.${tab.key}`)}</span>
                       <ArrowRight size={14} className="atnMenuArrow" />
                     </button>
                   ))}
@@ -222,13 +279,8 @@ export default function AdminTopNav({
                 <div className="atnMenuSep" />
 
                 {/* actions */}
-                <button
-                  className="atnMenuItem"
-                  type="button"
-                  role="menuitem"
-                  onClick={() => go("/")}
-                >
-                  <span>Go to website</span>
+                <button className="atnMenuItem" type="button" role="menuitem" onClick={() => go("/")}>
+                  <span>{t("adminTopNav.goToWebsite")}</span>
                   <ArrowRight size={14} className="atnMenuArrow" />
                 </button>
 
@@ -242,40 +294,28 @@ export default function AdminTopNav({
                     navigate("/", { replace: true });
                   }}
                 >
-                  Logout
+                  {t("adminTopNav.logout")}
                 </button>
               </div>
             </>
           )}
         </div>
       </div>
-      <AdminNotifications
-  open={notifOpen}
-  onClose={() => setNotifOpen(false)}
-  onUnreadChange={(c) => {
-    if (typeof c === "number") setUnread(c);
-    // dacă vrei refresh complet:
-    // else getAdminUnreadCount().then(r => setUnread(r?.count ?? 0)).catch(()=>{});
-  }}
-  onNavigateEntity={(n) => {
-    // click -> du-te unde trebuie
-    if (n?.entityType === "property" && n?.entityId) {
-      navigate(`/cazari/${n.entityId}`);
-      return;
-    }
-    if (n?.entityType === "user" && n?.entityId) {
-      //navigate(`/admin/users/${n.entityId}`);
-      return;
-    }
-    if (n?.entityType === "review" && n?.entityId) {
-      //navigate(`/admin/reviews?focus=${n.entityId}`);
-      return;
-    }
-    toast.info("Notificare", { description: n?.title || "—" });
-  }}
-/>
 
+      <AdminNotifications
+        open={notifOpen}
+        onClose={() => setNotifOpen(false)}
+        onUnreadChange={(c) => {
+          if (typeof c === "number") setUnread(c);
+        }}
+        onNavigateEntity={(n) => {
+          if (n?.entityType === "property" && n?.entityId) {
+            navigate(`/cazari/${n.entityId}`);
+            return;
+          }
+          toast.info(t("adminTopNav.notificationFallbackTitle"), { description: n?.title || "—" });
+        }}
+      />
     </header>
-    
   );
 }

@@ -5,6 +5,7 @@ import { adminListProperties, adminSetPropertyStatus } from "../../api/adminServ
 import AdminPage from "./AdminPage";
 import RejectReasonModal from "./RejectReasonModal";
 import "./Admin.css";
+import { useTranslation } from "react-i18next";
 
 const FALLBACK_IMG =
   "data:image/svg+xml;charset=UTF-8," +
@@ -24,7 +25,7 @@ function canApprove(status) {
   return status === "pending";
 }
 function canReject(status) {
-  return status === "pending"; // strict "pro" (reject only submitted)
+  return status === "pending";
 }
 function canPause(status) {
   return status === "live";
@@ -34,6 +35,8 @@ function canResume(status) {
 }
 
 export default function AdminListings() {
+  const { t } = useTranslation();
+
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("pending");
   const [page, setPage] = useState(1);
@@ -65,7 +68,7 @@ export default function AdminListings() {
         await load();
       } catch (e) {
         if (!alive) return;
-        toast.error("Nu am putut încărca listings", { description: e?.message || "Eroare" });
+        toast.error(t("admin.listings.toastLoadFailTitle"), { description: e?.message || t("admin.common.error") });
         setRows([]);
         setTotal(0);
       } finally {
@@ -74,35 +77,38 @@ export default function AdminListings() {
     })();
     return () => (alive = false);
     // eslint-disable-next-line
-  }, [page, limit, q, status]);
+  }, [page, limit, q, status, t]);
 
   const setStatusAction = async (id, nextStatus, extra = {}) => {
     try {
       await adminSetPropertyStatus(id, { status: nextStatus, ...extra });
-      toast.success("Actualizat");
+      toast.success(t("admin.listings.toastUpdatedTitle"));
       await load();
     } catch (e) {
-      toast.error("Nu am putut actualiza", { description: e?.message || "Eroare" });
+      toast.error(t("admin.listings.toastUpdateFailTitle"), { description: e?.message || t("admin.common.error") });
     }
   };
 
   return (
-    <AdminPage title="Listings moderation" subtitle={`${total} rezultate`}>
+    <AdminPage
+      titleKey="admin.listings.pageTitle"
+      subtitle={t("admin.common.resultsCount", { count: total, total })}
+    >
       <div className="hdCard hdTable adListings">
         <div className="hdCardTop">
           <div>
-            <div className="hdCardLabel">Listings moderation</div>
-            <div className="hdCardHint">{total} rezultate</div>
+            <div className="hdCardLabel">{t("admin.listings.cardTitle")}</div>
+            <div className="hdCardHint">{t("admin.common.resultsCount", { count: total, total })}</div>
           </div>
 
           <div className="hdToolbar">
             <select className="hdSelect" value={status} onChange={(e) => setStatus(e.target.value)}>
-              <option value="pending">pending</option>
-              <option value="live">live</option>
-              <option value="paused">paused</option>
-              <option value="rejected">rejected</option>
-              <option value="draft">draft</option>
-              <option value="all">all</option>
+              <option value="pending">{t("admin.common.status.pending")}</option>
+              <option value="live">{t("admin.common.status.live")}</option>
+              <option value="paused">{t("admin.common.status.paused")}</option>
+              <option value="rejected">{t("admin.common.status.rejected")}</option>
+              <option value="draft">{t("admin.common.status.draft")}</option>
+              <option value="all">{t("admin.common.status.all")}</option>
             </select>
 
             <div className="adSearchWrap">
@@ -111,17 +117,17 @@ export default function AdminListings() {
                 className="hdSearchInput adSearch"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="Caută: titlu / oraș / tip..."
+                placeholder={t("admin.listings.searchPlaceholder")}
               />
             </div>
           </div>
         </div>
 
         <div className="adListingsHead">
-          <div>Proprietate</div>
-          <div>Status</div>
-          <div>Host</div>
-          <div style={{ justifySelf: "end" }}>Acțiuni</div>
+          <div>{t("admin.listings.cols.property")}</div>
+          <div>{t("admin.listings.cols.status")}</div>
+          <div>{t("admin.listings.cols.host")}</div>
+          <div style={{ justifySelf: "end" }}>{t("admin.common.actions")}</div>
         </div>
 
         {loading ? (
@@ -131,12 +137,12 @@ export default function AdminListings() {
             <div className="skLine" />
           </div>
         ) : rows.length === 0 ? (
-          <div className="hdEmpty">Nimic de afișat.</div>
+          <div className="hdEmpty">{t("admin.common.empty")}</div>
         ) : (
           <div className="adRows">
             {rows.map((p) => {
               const thumb = p.coverImage?.url || p.images?.[0]?.url || FALLBACK_IMG;
-              const hostName = p.hostId?.name || "Host";
+              const hostName = p.hostId?.name || t("admin.common.fallbackHost");
               const hostEmail = p.hostId?.email || "";
 
               const approveOk = canApprove(p.status);
@@ -149,47 +155,60 @@ export default function AdminListings() {
                   <div className="hdProp">
                     <img className="hdThumb" src={thumb} alt="" onError={(e) => (e.currentTarget.src = FALLBACK_IMG)} />
                     <div className="hdPropText">
-                      <div className="hdPropName" title={p.title}>{p.title}</div>
+                      <div className="hdPropName" title={p.title}>
+                        {p.title}
+                      </div>
                       <div className="hdPropMeta">
-                        {p.city}{p.locality ? ` • ${p.locality}` : ""} • {p.type}
+                        {p.city}
+                        {p.locality ? ` • ${p.locality}` : ""} • {p.type}
                       </div>
                       {p.status === "rejected" && p.rejectionReason ? (
                         <div className="hdCardHint" title={p.rejectionReason}>
-                          rejected: {p.rejectionReason}
+                          {t("admin.listings.rejectedReasonPrefix")} {p.rejectionReason}
                         </div>
                       ) : null}
                     </div>
                   </div>
+
+                  {/* Mobile kebab */}
                   <div className="adListingMobileHead">
-  <details className="adKebab">
-    <summary className="hdBtn adKebabBtn" aria-label="Actions">⋯</summary>
+                    <details className="adKebab">
+                      <summary className="hdBtn adKebabBtn" aria-label={t("admin.common.actions")}>
+                        ⋯
+                      </summary>
 
-    <div className="adMenu">
-        <button className="adMenuItem" disabled={!approveOk} onClick={() => setStatusAction(p._id, "live")}>
-          Approve
-        </button>
-        <button className="adMenuItem" disabled={!pauseOk} onClick={() => setStatusAction(p._id, "paused")}>
-          Pause
-        </button>
-        <button className="adMenuItem" disabled={!resumeOk} onClick={() => setStatusAction(p._id, "live")}>
-          Resume
-        </button>
-        <div className="adMenuSep" />
-        <button className="adMenuItem" disabled={!rejectOk} onClick={() => { setRejectTarget(p); setRejectOpen(true); }}>
-          Reject
-        </button>
-      </div>
-  </details>
-</div>
-<div className="adListingMobileBadges">
-  <span className={`hdBadge tone-${statusTone(p.status)}`}>{p.status}</span>
-  <span className="hdBadge tone-muted">{hostName}</span>
-</div>
+                      <div className="adMenu">
+                        <button className="adMenuItem" disabled={!approveOk} onClick={() => setStatusAction(p._id, "live")}>
+                          {t("admin.listings.actions.approve")}
+                        </button>
+                        <button className="adMenuItem" disabled={!pauseOk} onClick={() => setStatusAction(p._id, "paused")}>
+                          {t("admin.listings.actions.pause")}
+                        </button>
+                        <button className="adMenuItem" disabled={!resumeOk} onClick={() => setStatusAction(p._id, "live")}>
+                          {t("admin.listings.actions.resume")}
+                        </button>
+                        <div className="adMenuSep" />
+                        <button
+                          className="adMenuItem"
+                          disabled={!rejectOk}
+                          onClick={() => {
+                            setRejectTarget(p);
+                            setRejectOpen(true);
+                          }}
+                        >
+                          {t("admin.listings.actions.reject")}
+                        </button>
+                      </div>
+                    </details>
+                  </div>
 
-
+                  <div className="adListingMobileBadges">
+                    <span className={`hdBadge tone-${statusTone(p.status)}`}>{t(`admin.common.status.${p.status}`)}</span>
+                    <span className="hdBadge tone-muted">{hostName}</span>
+                  </div>
 
                   <div className="hdCell">
-                    <span className={`hdBadge tone-${statusTone(p.status)}`}>{p.status}</span>
+                    <span className={`hdBadge tone-${statusTone(p.status)}`}>{t(`admin.common.status.${p.status}`)}</span>
                   </div>
 
                   <div className="hdCell">
@@ -203,40 +222,40 @@ export default function AdminListings() {
                     <button
                       className={`hdBtn ${approveOk ? "hdBtnAccent" : ""}`}
                       disabled={!approveOk}
-                      title={!approveOk ? "Poți aproba doar cererile pending" : "Approve"}
+                      title={!approveOk ? t("admin.listings.tips.approveOnlyPending") : t("admin.listings.actions.approve")}
                       onClick={() => setStatusAction(p._id, "live")}
                     >
-                      <CheckCircle2 size={16} /> Approve
+                      <CheckCircle2 size={16} /> {t("admin.listings.actions.approve")}
                     </button>
 
                     <button
                       className="hdBtn"
                       disabled={!pauseOk}
-                      title={!pauseOk ? "Poți pune pe pauză doar listing-uri live" : "Pause"}
+                      title={!pauseOk ? t("admin.listings.tips.pauseOnlyLive") : t("admin.listings.actions.pause")}
                       onClick={() => setStatusAction(p._id, "paused")}
                     >
-                      <PauseCircle size={16} /> Pause
+                      <PauseCircle size={16} /> {t("admin.listings.actions.pause")}
                     </button>
 
                     <button
                       className="hdBtn"
                       disabled={!resumeOk}
-                      title={!resumeOk ? "Poți relua doar listing-uri paused" : "Resume"}
+                      title={!resumeOk ? t("admin.listings.tips.resumeOnlyPaused") : t("admin.listings.actions.resume")}
                       onClick={() => setStatusAction(p._id, "live")}
                     >
-                      <PlayCircle size={16} /> Resume
+                      <PlayCircle size={16} /> {t("admin.listings.actions.resume")}
                     </button>
 
                     <button
                       className="hdBtn"
                       disabled={!rejectOk}
-                      title={!rejectOk ? "Poți respinge doar cererile pending" : "Reject"}
+                      title={!rejectOk ? t("admin.listings.tips.rejectOnlyPending") : t("admin.listings.actions.reject")}
                       onClick={() => {
                         setRejectTarget(p);
                         setRejectOpen(true);
                       }}
                     >
-                      <XCircle size={16} /> Reject
+                      <XCircle size={16} /> {t("admin.listings.actions.reject")}
                     </button>
                   </div>
                 </div>
@@ -248,13 +267,13 @@ export default function AdminListings() {
         {!loading && total > 0 ? (
           <div className="hdPager">
             <button className="hdBtn" disabled={page === 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
-              Înapoi
+              {t("admin.common.back")}
             </button>
             <div className="hdPagerText">
-              Pagina <b>{page}</b> din <b>{totalPages}</b>
+              {t("admin.common.pageOf", { page, totalPages })}
             </div>
             <button className="hdBtn" disabled={page === totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>
-              Înainte
+              {t("admin.common.next")}
             </button>
           </div>
         ) : null}
@@ -275,5 +294,6 @@ export default function AdminListings() {
         }}
       />
     </AdminPage>
+    
   );
 }

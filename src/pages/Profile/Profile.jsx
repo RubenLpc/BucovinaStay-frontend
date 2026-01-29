@@ -4,10 +4,12 @@ import { toast } from "sonner";
 import { LogOut, Mail, Phone, Shield, User2, Pencil, X, Save } from "lucide-react";
 import { useAuthStore } from "../../stores/authStore";
 import { authService } from "../../api/authService";
+import { useTranslation } from "react-i18next";
 import "./Profile.css";
 
 export default function Profile() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const { user, logout, setUser } = useAuthStore();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -18,8 +20,10 @@ export default function Profile() {
     phone: user?.phone || "",
   });
 
+  const locale = i18n.language?.startsWith("en") ? "en-US" : "ro-RO";
+
   const initials = useMemo(() => {
-    const name = (user?.name || "Utilizator").trim();
+    const name = (user?.name || t("roles.user")).trim();
     return name
       .split(" ")
       .filter(Boolean)
@@ -27,22 +31,17 @@ export default function Profile() {
       .map((p) => p[0])
       .join("")
       .toUpperCase();
-  }, [user]);
+  }, [user, t]);
 
   const roleLabel = useMemo(() => {
-    return (
-      {
-        guest: "Turist",
-        host: "Gazdă",
-        admin: "Administrator",
-      }[user?.role] || "Utilizator"
-    );
-  }, [user]);
+    const role = user?.role || "user";
+    return t(`roles.${role}`, { defaultValue: t("roles.user") });
+  }, [user, t]);
 
   const onLogout = () => {
     logout();
     localStorage.removeItem("token");
-    toast.success("Te-ai delogat", { description: "Pe curând 👋" });
+    toast.success(t("toasts.loggedOut"), { description: t("toasts.loggedOutDesc") });
     navigate("/", { replace: true });
   };
 
@@ -64,7 +63,7 @@ export default function Profile() {
 
   const saveEdit = async () => {
     if (!form.name.trim()) {
-      toast.error("Numele este obligatoriu");
+      toast.error(t("toasts.nameRequired"));
       return;
     }
 
@@ -76,17 +75,16 @@ export default function Profile() {
         phone: form.phone.trim(),
       });
 
-      // update store (și UI-ul)
       setUser(updatedUser);
 
-      toast.success("Profil actualizat", {
-        description: "Modificările au fost salvate cu succes.",
+      toast.success(t("toasts.profileUpdated"), {
+        description: t("toasts.profileUpdatedDesc"),
       });
 
       setIsEditing(false);
     } catch (err) {
-      toast.error("Eroare la salvare", {
-        description: err.message || "Încearcă din nou.",
+      toast.error(t("toasts.saveError"), {
+        description: err?.message || t("toasts.tryAgain"),
       });
     } finally {
       setSaving(false);
@@ -106,27 +104,25 @@ export default function Profile() {
 
             <div className="profile-meta">
               <h1 className="profile-name">{user.name}</h1>
-              <p className="profile-sub">
-                Gestionează datele contului și preferințele tale.
-              </p>
+              <p className="profile-sub">{t("profile.titleHint")}</p>
             </div>
 
             <div className="profile-top-actions">
               {!isEditing ? (
                 <button className="profile-action" onClick={startEdit} type="button">
                   <Pencil size={18} />
-                  Editează
+                  {t("profile.edit")}
                 </button>
               ) : (
                 <button className="profile-action ghost" onClick={cancelEdit} type="button">
                   <X size={18} />
-                  Anulează
+                  {t("profile.cancel")}
                 </button>
               )}
 
               <button className="profile-logout" onClick={onLogout} type="button">
                 <LogOut size={18} />
-                Deconectare
+                {t("profile.logout")}
               </button>
             </div>
           </div>
@@ -136,7 +132,7 @@ export default function Profile() {
             <div className="profile-item">
               <div className="profile-label">
                 <Mail size={16} />
-                Email
+                {t("profile.email")}
               </div>
               <div className="profile-value">{user.email || "-"}</div>
             </div>
@@ -144,7 +140,7 @@ export default function Profile() {
             <div className="profile-item">
               <div className="profile-label">
                 <Shield size={16} />
-                Rol
+                {t("profile.role")}
               </div>
               <div className="profile-value role-pill">{roleLabel}</div>
             </div>
@@ -152,7 +148,7 @@ export default function Profile() {
             <div className="profile-item">
               <div className="profile-label">
                 <Phone size={16} />
-                Telefon
+                {t("profile.phone")}
               </div>
 
               {!isEditing ? (
@@ -162,7 +158,7 @@ export default function Profile() {
                   className="profile-input"
                   value={form.phone}
                   onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
-                  placeholder="Ex: 0740 000 000"
+                  placeholder={t("profile.phonePlaceholder")}
                 />
               )}
             </div>
@@ -170,10 +166,10 @@ export default function Profile() {
             <div className="profile-item">
               <div className="profile-label">
                 <User2 size={16} />
-                Membru din
+                {t("profile.memberSince")}
               </div>
               <div className="profile-value">
-                {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "-"}
+                {user.createdAt ? new Date(user.createdAt).toLocaleDateString(locale) : "-"}
               </div>
             </div>
 
@@ -181,7 +177,7 @@ export default function Profile() {
             <div className="profile-item wide">
               <div className="profile-label">
                 <User2 size={16} />
-                Nume
+                {t("profile.name")}
               </div>
 
               {!isEditing ? (
@@ -191,7 +187,7 @@ export default function Profile() {
                   className="profile-input"
                   value={form.name}
                   onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-                  placeholder="Numele tău"
+                  placeholder={t("profile.namePlaceholder")}
                 />
               )}
             </div>
@@ -200,26 +196,21 @@ export default function Profile() {
           {/* ACTIONS */}
           <div className="profile-actions">
             {isEditing ? (
-              <button
-                className="btn btn-primary"
-                type="button"
-                onClick={saveEdit}
-                disabled={saving}
-              >
+              <button className="btn btn-primary" type="button" onClick={saveEdit} disabled={saving}>
                 <Save size={18} />
-                {saving ? "Se salvează..." : "Salvează"}
+                {saving ? t("profile.saving") : t("profile.save")}
               </button>
             ) : (
               <button className="btn btn-primary" type="button" onClick={() => navigate("/")}>
-                Înapoi la cazări
+                {t("profile.backToStays")}
               </button>
             )}
 
-            {isEditing ?  (
+            {isEditing ? (
               <button className="btn profile-secondary" type="button" onClick={cancelEdit}>
-                Renunță
+                {t("profile.discard")}
               </button>
-            ): null}
+            ) : null}
           </div>
         </div>
       </div>

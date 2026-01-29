@@ -1,0 +1,1050 @@
+{
+  "nav": {
+    "home": "Home",
+    "stays": "Stays",
+    "dashboard": "Dashboard"
+  },
+  
+  "favorites": {
+    "title": "Favorites",
+    "seeAll": "See all favorites",
+    "empty": "No favorites yet. Tap ❤️ on a stay to save it."
+  },
+  "brand": {
+    "main": "Bucovina",
+    "accent": "Stay"
+  },
+  "lang": {
+    "ro": "RO",
+    "en": "EN",
+    "switchAria": "Switch language"
+  },
+ 
+  "ai": {
+    "placeholder": "Describe your ideal stay…",
+    "search": "Search",
+    "searching": "Searching…",
+    "aria": "AI search"
+  },
+
+  "hl": {
+    "kicker": "BucovinaStay Picks",
+    "titleDefault": "Recommended stays",
+    "subtitleDefault": "Handpicked selection for Bucovina",
+    "seeAll": "See all",
+    "progressAria": "Carousel progress",
+    "scrollLeft": "Scroll left",
+    "scrollRight": "Scroll right",
+    "listAria": "Recommended stays",
+    "emptyTitle": "No recommendations right now",
+    "emptyText": "Try choosing a different area or come back later.",
+    "openAria": "Open stay {{title}}",
+    "fallbackAlt": "Stay",
+    "favAdd": "Add to favorites",
+    "favRemove": "Remove from favorites",
+    "ratingTitle": "Rating",
+    "priceNightTitle": "Price per night",
+    "perNight": "/ night",
+    "maxGuests": "up to",
+    "guests": "guests",
+    "seeDetails": "See details"
+  },
+ 
+  "badges": {
+    "top": { "label": "Top", "desc": "Excellent guest reviews" },
+    "spa": {
+      "label": "Spa & Relax",
+      "desc": "Relaxation amenities (spa, sauna, hot tub)"
+    },
+    "new": { "label": "New", "desc": "Recently published listing" },
+    "value": { "label": "Best value", "desc": "Great quality–price ratio" },
+    "view": {
+      "label": "Great view",
+      "desc": "Exceptional view (mountains / nature)"
+    },
+    "family": { "label": "Family", "desc": "Great for families or groups" },
+    "breakfast": {
+      "label": "Breakfast",
+      "desc": "Breakfast included or available"
+    },
+    "recommended": { "label": "Recommended", "desc": "Platform curated pick" }
+  },
+
+  "home": {
+    "featuredTitle": "Recommended stays",
+    "featuredSubtitle": "Handpicked selection for Bucovina",
+    "aiTitle": "Results for: “{{query}}”",
+    "aiSubtitle": "Semantic match (AI)"
+  },
+  
+
+  "trailsHero": {
+    "badge": "Mountain trails in Bucovina",
+    "titleLine1": "Discover",
+    "titleHighlight": "paths",
+    "titleLine2": "that stay with you",
+    "subtitle": "Hiking ideas with difficulty level, duration, and links to official guides. Quickly find trails perfect for a weekend escape.",
+    "ctaTrails": "View trails",
+    "ctaStays": "View stays",
+    "feature1Title": "Well-organized trails",
+    "feature1Sub": "Structured and easy to filter",
+    "feature2Title": "Clear difficulty",
+    "feature2Sub": "Easy / Medium / Hard"
+  },
+
+  "profile": {
+    "titleHint": "Manage your account details.",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "logout": "Sign out",
+    "email": "Email",
+    "role": "Role",
+    "phone": "Phone",
+    "memberSince": "Member since",
+    "name": "Name",
+    "phonePlaceholder": "e.g. +40 740 000 000",
+    "namePlaceholder": "Your name",
+    "save": "Save",
+    "saving": "Saving...",
+    "backToStays": "Back to stays",
+    "discard": "Discard"
+  },
+  "roles": {
+    "guest": "Guest",
+    "host": "Host",
+    "admin": "Admin",
+    "user": "User"
+  },
+  "toasts": {
+    "loggedOut": "Signed out",
+    "loggedOutDesc": "See you soon 👋",
+    "nameRequired": "Name is required",
+    "profileUpdated": "Profile updated",
+    "profileUpdatedDesc": "Your changes were saved successfully.",
+    "saveError": "Save failed",
+    "tryAgain": "Please try again.",
+
+    "authRequiredTitle": "You need to be signed in",
+    "authRequiredDesc": "Sign in to save stays to favorites.",
+    "favUpdateFail": "Could not update favorites.",
+
+    "highlightsLoadFail": "Could not load recommended stays",
+    "aiNoResults": "No results found.",
+    "aiNoResultsDesc": "Try a different description.",
+    "aiFailed": "AI search failed.",
+    "authRequired": "Sign in required",
+    "favUpdateFailed": "Could not update favorites."
+  },
+  
+    "auth": {
+      "loginTitle": "Sign in",
+      "loginSubtitle": "Access your BucovinaStay account",
+      "email": "Email",
+      "password": "Password",
+      "loginBtn": "Sign in",
+      "loggingIn": "Signing in...",
+      "missingFields": "Please enter your email and password.",
+      "loginFailed": "Sign in failed.",
+      "noAccount": "New here?",
+      "createOne": "Create an account",
+  
+      "registerTitle": "Create account",
+      "registerSubtitle": "Join BucovinaStay and explore Bucovina like a local.",
+      "fullName": "Full name",
+      "createAccount": "Create account",
+      "creatingAccount": "Creating account...",
+      "alreadyHave": "Already have an account?",
+      "signIn": "Sign in",
+  
+      "hostOptIn": "I want to publish stays (Host)",
+      "registerMissingFields": "Please enter your name, email, and password.",
+      "registerFailed": "Could not create your account.",
+
+      "login": "Sign in",
+      "logout": "Sign out",
+      "profile": "Profile"
+    },
+    
+      "homeCategories": {
+        "title": "Categories",
+        "seeAll": "See all"
+      },
+      "homeFinalCTA": {
+        "title": "Ready for a Bucovina getaway?",
+        "subtitle": "Explore all stays or quickly publish a listing as a host.",
+        "primary": "Explore stays",
+        "secondary": "Become a host",
+        "kicker": "BucovinaStay"
+      },
+      
+        "homeTrust": {
+          "aria": "Trust and safety",
+      
+          "kickerRating": "Guest ratings",
+          "kickerVerified": "Verified",
+          "kickerSecure": "Trust & safety",
+          "kickerStays": "Bucovina",
+      
+          "ratingDesc": "Based on {{count}} real reviews",
+          "ratingPill": "Live",
+      
+          "verifiedTitle": "{{count}} verified hosts",
+          "verifiedTitleEmpty": "Verified hosts",
+          "verifiedDesc": "Hosts complete verification steps to ensure trust and safety.",
+          "verifiedPill": "Verified",
+      
+          "secureTitle": "Secure & protected",
+          "secureDesc": "Your data is protected, and our team helps you resolve issues quickly.",
+          "securePill": "Secure",
+      
+          "staysTitle": "{{count}} curated stays",
+          "staysTitleEmpty": "Curated stays",
+          "staysDesc": "Handpicked listings focused on the Bucovina region.",
+          "pillCurated": "Curated",
+      
+          "pillLive": "Live",
+      
+          "newTitle": "New platform",
+          "newDesc": "Ratings appear after the first stays."
+        },
+      
+        "amenityCats": {
+          "essentials": "Essentials",
+          "accessParking": "Access & parking",
+          "kitchen": "Kitchen",
+          "comfort": "Comfort",
+          "entertainment": "Entertainment",
+          "family": "Family",
+          "outdoorView": "Outdoor & view",
+          "wellness": "Wellness",
+          "services": "Services",
+          "pets": "Pets",
+          "safety": "Safety"
+        },
+        "amenities": {
+          "wifi": "Wi-Fi",
+          "heating": "Heating",
+          "hotWater": "Hot water",
+          "towels": "Towels",
+          "bedLinen": "Bed linen",
+          "hairDryer": "Hair dryer",
+          "essentials": "Basic essentials",
+      
+          "parking": "Parking",
+          "freeStreetParking": "Free street parking",
+          "privateEntrance": "Private entrance",
+          "selfCheckIn": "Self check-in",
+      
+          "kitchen": "Kitchen",
+          "fridge": "Fridge",
+          "stove": "Stove / cooktop",
+          "oven": "Oven",
+          "microwave": "Microwave",
+          "coffeeMaker": "Coffee maker",
+          "kettle": "Kettle",
+          "dishesAndCutlery": "Dishes & cutlery",
+          "bbq": "BBQ grill",
+      
+          "ac": "Air conditioning",
+          "fireplace": "Fireplace",
+          "washer": "Washer",
+          "iron": "Iron",
+          "workspace": "Workspace",
+      
+          "tv": "TV",
+          "streaming": "Streaming (Netflix etc.)",
+          "boardGames": "Board games",
+      
+          "crib": "Crib",
+          "highChair": "High chair",
+      
+          "terrace": "Terrace",
+          "garden": "Garden",
+          "mountainView": "Mountain view",
+      
+          "sauna": "Sauna",
+          "hotTub": "Hot tub",
+          "spa": "Spa",
+      
+          "breakfast": "Breakfast",
+      
+          "petFriendly": "Pet-friendly",
+      
+          "smokeAlarm": "Smoke alarm",
+          "fireExtinguisher": "Fire extinguisher",
+          "firstAidKit": "First aid kit",
+          "cctvOutside": "Outdoor CCTV"
+        },
+        "propertyTypes": {
+          "cabana": { "label": "Cabins", "desc": "Nature & quiet" },
+          "pensiune": { "label": "Guesthouses", "desc": "Warm & traditional" },
+          "hotel": { "label": "Hotels", "desc": "Full comfort" },
+          "apartament": { "label": "Apartments", "desc": "Urban & practical" },
+          "vila": { "label": "Villas", "desc": "Space & privacy" },
+          "tiny_house": { "label": "Tiny houses", "desc": "Minimal & cozy" }
+        },
+        
+          "stays": {
+            "title": "Stays in Bucovina",
+            "results": "{{count}} results",
+            "list": "List",
+            "map": "Map",
+        
+            "searchPlaceholder": "Search stays, town, name…",
+            "searchAria": "Search stays",
+            "clearSearch": "Clear search",
+        
+            "filters": "Filters",
+            "filtersTitle": "Filters",
+            "filtersHint": "Refine results to find the right stay.",
+            "reset": "Reset",
+        
+            "propertyType": "Property type",
+            "allTypes": "All",
+            "allTypesDesc": "Includes all types",
+        
+            "pricePerNight": "Price per night",
+            "currency": "Currency",
+            "min": "Min",
+            "max": "Max",
+            "resetPrice": "Reset price",
+        
+            "minScore": "Minimum score",
+            "minScoreHint": "Show only stays with rating equal or above.",
+        
+            "amenities": "Amenities",
+        
+            "mapArea": "Map area",
+            "mapAreaHint": "Move the map and click “Search this area”.",
+            "searchThisArea": "Search this area",
+            "resetArea": "Reset area",
+            "areaSet": "Area set",
+        
+            "activeFiltersAria": "Active filters",
+            "remove": "Remove",
+            "tipArea": "Tip: move the map and click “Search this area”.",
+        
+            "mapTokenMissingTitle": "Missing Mapbox token",
+            "mapTokenMissingText": "The map is not configured. Check VITE_MAPBOX_TOKEN.",
+            "noPins": "No map locations for the current results.",
+        
+            "popup": {
+              "reviews": "{{count}} reviews"
+            },
+        
+            "listHeadLoading": "Loading…",
+            "loadingTitle": "Loading…",
+            "loadingText": "Fetching the best available results.",
+        
+            "errorTitle": "Error",
+            "retry": "Try again",
+        
+            "emptyTitle": "No results",
+            "emptyText": "Adjust filters or try a different search.",
+            "resetFilters": "Reset filters",
+        
+            "pagerPrev": "← Back",
+            "pagerNext": "Next →",
+            "pagerInfo": "Page {{page}} of {{total}}",
+        
+            "drawerClose": "Close",
+            "seeResults": "See results",
+        
+            "chips": {
+              "minPrice": "min {{value}}",
+              "maxPrice": "max {{value}}",
+              "more": "+{{count}}"
+            }
+          },
+          
+            "stayCard": {
+              "open": "Open {{title}}",
+              "keyAmenities": "Key amenities",
+              "rating": "Rating",
+              "capacity": "Capacity",
+              "maxGuests": "up to {{count}} guests",
+              "night": "/ night",
+              "priceHint": "Estimated price • may vary by season",
+              "seeDetails": "See details",
+              "see": "See",
+              "addFav": "Add to favorites",
+              "removeFav": "Remove from favorites",
+              "noTitle": "Untitled",
+          
+              "type": {
+                "apartament": "Apartment",
+                "pensiune": "Guesthouse",
+                "cabana": "Cabin",
+                "hotel": "Hotel",
+                "vila": "Villa",
+                "tiny_house": "Tiny house",
+                "studio": "Studio"
+              },
+          
+              "facts": {
+                "beds": "{{count}} beds",
+                "baths": "{{count}} baths",
+                "sqm": "{{count}} m²"
+              }
+            },
+            
+              "trails": {
+                "title": "Hiking trails",
+                "subtitle": "Pick a trail and open the guide in a new tab (public/official sources).",
+                "countTitle": "Results count",
+                "results": "{{count}} results",
+            
+                "searchPlaceholder": "Search: Rarău, Călimani, Vatra Dornei...",
+                "searchAria": "Search trails",
+                "filterDifficulty": "Difficulty filter",
+                "sortAria": "Sort trails",
+                "quickFilters": "Quick filters",
+                "listAria": "Trails list",
+            
+                "all": "All",
+                "see": "See",
+                "openGuideHint": "Open guide",
+                "openGuideTitle": "Open guide",
+                "openGuideAria": "Open guide for {{name}}",
+            
+                "sort": {
+                  "recommended": "Recommended",
+                  "duration": "Duration (short → long)",
+                  "difficulty": "Difficulty (easy → hard)"
+                },
+            
+                "difficulty": {
+                  "Ușor": "Easy",
+                  "Mediu": "Moderate",
+                  "Greu": "Hard"
+                },
+            
+                "meta": {
+                  "durationDistance": "{{hours}}h • {{km}} km"
+                },
+            
+                "tags": {
+                  "view": "View",
+                  "family": "Family",
+                  "forest": "Forest",
+                  "alpine": "Alpine",
+                  "nature": "Nature"
+                },
+            
+                "tagLabels": {
+                  "view": "view",
+                  "family": "family",
+                  "forest": "forest",
+                  "ridge": "ridge",
+                  "alpine": "alpine",
+                  "long": "long",
+                  "relax": "relax",
+                  "nature": "nature"
+                },
+            
+                "empty": "No trails match your current filters."
+              },
+              
+                "common": {
+                  "close": "Close"
+                },
+                "propertyPage": {
+                  "fallbackTitle": "Property",
+                  "regionFallback": "Bucovina",
+              
+                  "errors": {
+                    "title": "We couldn’t load this listing",
+                    "loadFailed": "We couldn’t load the property."
+                  },
+              
+                  "actions": {
+                    "share": "Share",
+                    "save": "Save",
+                    "saved": "Saved",
+                    "addToFav": "Add to favorites",
+                    "removeFromFav": "Remove from favorites",
+                    "showMore": "Show more",
+                    "showAllAmenities": "Show all amenities ({{count}})"
+                  },
+              
+                  "toasts": {
+                    "shared": "Shared",
+                    "linkCopied": { "title": "Link copied", "desc": "You can share the listing now." },
+                    "authRequired": { "title": "Login required", "desc": "Log in to save favorites." },
+                    "favError": { "title": "Error", "desc": "Couldn’t update favorites." },
+                    "messageSent": "Message sent",
+                    "phoneMissing": { "title": "Phone unavailable", "desc": "The host hasn’t added a phone number yet." },
+                    "reviewsSoon": { "title": "Reviews", "desc": "Detailed reviews coming soon." }
+                  },
+              
+                  "headlineWithCity": "{{type}} in {{city}}",
+                  "detailsTitle": "Listing details",
+              
+                  "facts": {
+                    "entirePlace": "Entire place • {{type}}",
+                    "guests": "{{count}} guests",
+                    "maxGuests": "Max {{count}} guests"
+                  },
+              
+                  "highlights": {
+                    "topRatedTitle": "Top-rated listing",
+                    "topRatedDesc": "High score based on guest ratings and reviews.",
+                    "relaxTitle": "Relax on-site",
+                    "relaxDesc": "Amenities designed for comfort and downtime.",
+                    "parkingTitle": "Parking available",
+                    "parkingDesc": "Convenient if you’re arriving by car."
+                  },
+              
+                  "descriptionMissing": "Description isn’t available yet.",
+                  "descriptionUnavailable": "Description unavailable.",
+              
+                  "amenitiesTitle": "What this place offers",
+                  "moreAmenities": "+ {{count}} more amenities",
+              
+                  "reviewsTitle": "Reviews",
+                  "reviewsCount": "{{count}} reviews",
+                  "reviewsBasedOn": "Based on {{count}} reviews",
+                  "verifiedReviews": {
+                    "title": "Verified reviews",
+                    "desc": "Feedback from real guests after confirmed stays."
+                  },
+                  "noReviews": {
+                    "title": "No reviews yet",
+                    "desc": "This listing is new or hasn’t received feedback yet. Check amenities and location."
+                  },
+              
+                  "mapTitle": "Where you’ll be",
+                  "mapFrameTitle": "Map",
+                  "mapApprox": "Approximate location (no exact coordinates)",
+              
+                  "perNight": "/ night",
+                  "priceUnavailable": "Price unavailable",
+              
+                  "contact": {
+                    "title": "Contact the host",
+                    "subtitle": "{{host}} • confirm details before arrival",
+                    "callNow": "Call now",
+                    "sendSms": "Send message",
+                    "hint": "Tip: confirm price, access, and check-in time. (In-app messaging coming soon)"
+                  },
+              
+                  "recap": {
+                    "nightLabel": "{{price}} • night",
+                    "location": "Location"
+                  },
+              
+                  "gallery": {
+                    "openAria": "Open photos",
+                    "mainAlt": "Main photo",
+                    "thumbAlt": "Photo {{n}}",
+                    "showAll": "Show all photos",
+                    "empty": "No photos yet.",
+                    "photosTitle": "Photos",
+                    "imagesCount": "{{count}} images",
+                    "photoAlt": "Photo {{n}}"
+                  },
+              
+                  "host": {
+                    "fallbackName": "Host"
+                  },
+              
+                  "fullDescTitle": "About this place"
+                },
+                
+                  "hero": {
+                    "kicker": "BucovinaStay",
+                    "kickerSub": "cabins • nature • comfort",
+                
+                    "title": "Find your perfect stay",
+                    "titleAccent": "in Bucovina",
+                
+                    "subtitle": "Premium cabins, authentic hosts, and mountain views — book fast, travel easy.",
+                
+                    "ctaPrimary": "Explore stays",
+                    "ctaSecondary": "How it works",
+                
+                    "trustTitle": "Trusted by travelers",
+                    "trustSub": "Real reviews • Verified hosts • Secure payments",
+                
+                    "stat1Val": "120+",
+                    "stat1Lbl": "Cabins & stays",
+                
+                    "stat2Val": "4.8",
+                    "stat2Lbl": "Average rating",
+                
+                    "stat3Val": "24/7",
+                    "stat3Lbl": "Support",
+                
+                    "mockTitle": "Cabins that feel like home.",
+                    "mockDesc": "Discover authentic Bucovina stays — wood, warmth, and mountain air.",
+                
+                    "mockCta1": "See listings",
+                    "mockCta2": "Watch video",
+                
+                    "chip1Val": "28+",
+                    "chip1Lbl": "Premium stays",
+                
+                    "chip2Val": "12K+",
+                    "chip2Lbl": "Happy guests",
+                
+                    "chip3Val": "50+",
+                    "chip3Lbl": "Top hosts",
+                
+                    "rightNote": "Tip: search “hot tub”, “mountain view”, “fireplace”"
+                   
+                  },
+                  
+                    "hostSection": {
+                      "aria": {
+                        "section": "Host information",
+                        "avatarAlt": "{{name}} avatar"
+                      },
+                      "title": "Meet your host",
+                      "fallbackHostName": "Host",
+                      "badges": {
+                        "superhost": "Superhost",
+                        "verified": "Verified"
+                      },
+                      "stats": {
+                        "reviews": "Reviews",
+                        "score": "Score",
+                        "monthsLabelFallback": "Experience",
+                        "monthsLabel": "{{months}} months hosting",
+                        "monthsLabel_one": "1 month hosting"
+                      },
+                      "right": {
+                        "host": "a host",
+                        "title": "{{name}} is {{kind}}",
+                        "textSuper": "Superhosts are highly rated and known for great communication and consistently excellent stays.",
+                        "textNormal": "Your host can help with access, check-in details, and local recommendations."
+                      },
+                      "details": {
+                        "title": "Host details",
+                        "responseRate": "Response rate:",
+                        "responseTime": "Response time:",
+                        "languages": "Languages:",
+                        "responseTimeT": {
+                          "withinHour": "within an hour",
+                          "withinDay": "within the same day",
+                          "fewDays": "in a few days"
+                        }
+                      },
+                      "cta": "Message host",
+                      "note": "For your safety, avoid off-platform payments and confirm key details in writing."
+                    },
+                  
+                    "messageHost": {
+                      "aria": {
+                        "dialog": "Message the host",
+                        "close": "Close",
+                        "avatarAlt": "{{name}} avatar"
+                      },
+                      "title": "Message",
+                      "fallbackHostName": "Host",
+                      "superhost": "Superhost",
+                      "property": "Listing:",
+                      "default": {
+                        "about": "about",
+                        "text": "Hi, {{hostName}}! I’d like a few details{{title}} (availability, price, and check-in). Thank you!"
+                      },
+                      "guest": {
+                        "name": "Name",
+                        "email": "Email",
+                        "phone": "Phone",
+                        "namePh": "Your name",
+                        "emailPh": "you@example.com",
+                        "phonePh": "+40 7xx xxx xxx"
+                      },
+                      "message": {
+                        "label": "Message",
+                        "ph": "Write your message..."
+                      },
+                      "hint": "Keep communication on the platform.",
+                      "send": "Send",
+                      "sending": "Sending...",
+                      "toasts": {
+                        "shortTitle": "Message too short",
+                        "shortDesc": "Please write at least 10 characters.",
+                        "nameTitle": "Name required",
+                        "nameDesc": "Please enter your name.",
+                        "emailTitle": "Invalid email",
+                        "emailDesc": "Please enter a valid email address.",
+                        "phoneTitle": "Invalid phone",
+                        "phoneDesc": "Please enter a valid phone number.",
+                        "sentTitle": "Message sent",
+                        "sentDesc": "The host will see it shortly.",
+                        "errorTitle": "Error",
+                        "errorDesc": "We couldn't send your message."
+                      }
+                    },
+                    
+                      "reviews": {
+                        "aria": { "section": "Property reviews" },
+                        "title": "Reviews",
+                        "you": "You",
+                        "avatarFallback": "U",
+                        "starsAria": "{{value}} out of 5",
+                        "count": "{{count}} reviews",
+                        "firstHint": "Be the first to leave a review.",
+                        "sort": {
+                          "aria": "Sort reviews",
+                          "newest": "Most recent",
+                          "ratingDesc": "Rating (high → low)"
+                        },
+                        "loginCard": {
+                          "title": "Log in to leave a review",
+                          "desc": "Reviews help other guests choose with confidence.",
+                          "cta": "Log in"
+                        },
+                        "alreadyReviewed": "You’ve already reviewed this listing.",
+                        "form": {
+                          "title": "Leave a review",
+                          "sub": "Share a quick, honest summary of your experience.",
+                          "rating": "Rating",
+                          "ratingAria": "Selected rating",
+                          "pickRatingAria": "Select rating",
+                          "starBtnAria": "{{value}} stars",
+                          "starBtnTitle": "Set {{value}}/5",
+                          "placeholder": "Write your thoughts about this stay...",
+                          "tip": "Tip: mention cleanliness, check-in, quietness, and amenities.",
+                          "submit": "Submit review",
+                          "sending": "Sending..."
+                        },
+                        "empty": {
+                          "title": "No reviews yet",
+                          "desc": "This listing is new or hasn’t received feedback yet."
+                        },
+                        "loadMore": "Load more reviews",
+                        "end": "You’ve reached the end.",
+                        "delete": "Delete",
+                        "deleteAria": "Delete my review",
+                        "confirmDelete": "Are you sure you want to delete this review?",
+                        "toasts": {
+                          "loadErrorTitle": "Error",
+                          "loadErrorDesc": "We couldn’t load reviews.",
+                          "loginTitle": "Login required",
+                          "loginDesc": "Please log in to leave a review.",
+                          "commentTitle": "Missing comment",
+                          "commentDesc": "Please write a comment before submitting.",
+                          "sentTitle": "Review posted",
+                          "sentDesc": "Thanks! Your review is now visible.",
+                          "sendErrorTitle": "Couldn’t submit",
+                          "sendErrorDesc": "Please try again.",
+                          "deletedTitle": "Review deleted",
+                          "deleteErrorTitle": "Couldn’t delete",
+                          "deleteErrorDesc": "Please try again."
+                        }
+                      },
+                      
+                        "adminTopNav": {
+                          "role": "Role",
+                          "language": "Language",
+                          "notifications": "Notifications",
+                          "menu": "Menu",
+                          "openMenu": "Open menu",
+                          "closeMenu": "Close menu",
+                          "openAdminProfile": "Open admin profile",
+                          "adminMeta": "Admin • Control Panel",
+                          "goToWebsite": "Go to website",
+                          "logout": "Logout",
+                          "switchToEN": "Switch to English",
+                          "switchToRO": "Switch to Romanian",
+                          "notificationFallbackTitle": "Notification",
+                          "tabs": {
+                            "overview": "Overview",
+                            "users": "Users",
+                            "listings": "Listings",
+                            "reviews": "Reviews",
+                            "settings": "Settings"
+                          },
+                          "langs": {
+                            "ro": "Romanian",
+                            "en": "English"
+                          },
+                          "toasts": {
+                            "languageChangedTitle": "Saved",
+                            "languageChangedRO": "UI language set to Romanian.",
+                            "languageChangedEN": "UI language set to English.",
+                            "languageFailedTitle": "Error",
+                            "languageFailedDesc": "Could not switch language. Please try again."
+                          },
+                          "aria": {
+                            "brand": "Go to Admin",
+                            "nav": "Admin navigation",
+                            "menu": "Admin menu"
+                          }
+                        },
+                        
+                        
+                          "admin": {
+                            "common": {
+                              "error": "Error",
+                              "actions": "Actions",
+                              "empty": "Nothing to show.",
+                              "deleted": "Deleted",
+                              "save": "Save",
+                              "saving": "Saving...",
+                              "send": "Send",
+                              "cancel": "Cancel",
+                              "back": "Back",
+                              "next": "Next",
+                              "pageOf": "Page {{page}} of {{totalPages}}",
+                              "resultsCount": "{{total}} results",
+                              "fallbackHost": "Host",
+                              "fallbackUser": "User",
+                              "fallbackProperty": "Property",
+                              "status": {
+                                "all": "all",
+                                "pending": "pending",
+                                "live": "live",
+                                "paused": "paused",
+                                "rejected": "rejected",
+                                "draft": "draft"
+                              }
+                            },
+                        
+                            "page": {
+                              "crumb": "Admin",
+                              "defaultTitle": "Admin Panel",
+                              "defaultSubtitle": "Moderation + users + statuses"
+                            },
+                        
+                            "overview": {
+                              "pageTitle": "Admin Panel",
+                              "pageSubtitle": "Overview + moderation",
+                              "toastLoadFailTitle": "Could not load overview",
+                              "kpis": {
+                                "users": "Users",
+                                "disabled": "disabled",
+                                "hostsAdmins": "Hosts / Admins",
+                                "activeRoles": "active roles",
+                                "listings": "Listings",
+                                "live": "live",
+                                "pending": "pending",
+                                "analytics7d": "Analytics (7 days)",
+                                "clicks": "clicks",
+                                "ctr": "CTR"
+                              },
+                              "chart": {
+                                "title": "7-day trend",
+                                "subtitle": "impressions vs clicks",
+                                "impressions": "Impressions",
+                                "clicks": "Clicks",
+                                "impr": "impr",
+                                "clk": "clk"
+                              },
+                              "hintLine": "Tip: if CTR is low, check covers + titles + badges."
+                            },
+                        
+                            "listings": {
+                              "pageTitle": "Listings moderation",
+                              "cardTitle": "Listings moderation",
+                              "toastLoadFailTitle": "Could not load listings",
+                              "toastUpdatedTitle": "Updated",
+                              "toastUpdateFailTitle": "Could not update",
+                              "searchPlaceholder": "Search: title / city / type...",
+                              "cols": {
+                                "property": "Property",
+                                "status": "Status",
+                                "host": "Host"
+                              },
+                              "rejectedReasonPrefix": "rejected:",
+                              "actions": {
+                                "approve": "Approve",
+                                "pause": "Pause",
+                                "resume": "Resume",
+                                "reject": "Reject"
+                              },
+                              "tips": {
+                                "approveOnlyPending": "You can approve only pending submissions",
+                                "pauseOnlyLive": "You can pause only live listings",
+                                "resumeOnlyPaused": "You can resume only paused listings",
+                                "rejectOnlyPending": "You can reject only pending submissions"
+                              }
+                            },
+                        
+                            "reviews": {
+                              "cardTitle": "Reviews moderation",
+                              "toastLoadFailTitle": "Could not load reviews",
+                              "toastUpdateFailTitle": "Could not update",
+                              "toastDeleteFailTitle": "Could not delete",
+                              "toastHidden": "Review hidden",
+                              "toastVisible": "Review visible",
+                              "confirmDelete": "Delete this review permanently? (irreversible)",
+                              "searchPlaceholder": "Search: user / email / property / comment...",
+                              "cols": {
+                                "review": "Review",
+                                "rating": "Rating",
+                                "status": "Status"
+                              },
+                              "filters": {
+                                "ratingAny": "rating",
+                                "sort": "Sort"
+                              },
+                              "status": {
+                                "visible": "visible",
+                                "hidden": "hidden"
+                              },
+                              "actions": {
+                                "hide": "Hide",
+                                "unhide": "Unhide",
+                                "delete": "Delete"
+                              },
+                              "tips": {
+                                "makeVisible": "Make review visible",
+                                "makeHidden": "Hide review",
+                                "delete": "Delete permanently"
+                              }
+                            },
+                        
+                            "users": {
+                              "pageTitle": "Users",
+                              "cardTitle": "Users",
+                              "toastLoadFailTitle": "Could not load users",
+                              "toastUpdatedTitle": "Updated",
+                              "toastUpdateFailTitle": "Could not update",
+                              "searchPlaceholder": "Search: email / name / phone...",
+                              "cols": {
+                                "user": "User",
+                                "role": "Role",
+                                "status": "Status"
+                              },
+                              "roles": {
+                                "all": "All",
+                                "guest": "guest",
+                                "host": "host",
+                                "admin": "admin"
+                              },
+                              "status": {
+                                "active": "active",
+                                "disabled": "disabled"
+                              },
+                              "actions": {
+                                "saveRole": "Save role",
+                                "disable": "Disable",
+                                "enable": "Enable"
+                              },
+                              "badges": {
+                                "unsaved": "unsaved"
+                              },
+                              "tips": {
+                                "setRole": "Set role",
+                                "saveRole": "Save role",
+                                "noChanges": "No changes"
+                              },
+                              "mobile": {
+                                "setRole": "Set role"
+                              }
+                            },
+                        
+                            "settings": {
+                              "pageTitle": "Settings",
+                              "pageSubtitle": "Platform control",
+                              "toastLoadFailTitle": "Could not load settings",
+                              "toastInvalidTitle": "Fix invalid values",
+                              "toastInvalidDesc": "Please review limits and fields before saving.",
+                              "toastSavedTitle": "Saved",
+                              "toastSaveFailTitle": "Could not save",
+                              "sections": {
+                                "moderation": {
+                                  "title": "Moderation rules",
+                                  "hint": "Admin permissions + guardrails"
+                                },
+                                "limits": {
+                                  "title": "Limits",
+                                  "hint": "Resource protection + platform rules"
+                                },
+                                "branding": {
+                                  "title": "Branding & Maintenance",
+                                  "hint": "Public messages + support"
+                                }
+                              },
+                              "moderation": {
+                                "requireSubmit": {
+                                  "title": "Require submit to publish",
+                                  "hint": "Admin can approve/publish only if the listing is submitted (pending)."
+                                },
+                                "allowUnpublish": {
+                                  "title": "Allow admin unpublish",
+                                  "hint": "Admin can take down a live listing (e.g., complaints)."
+                                },
+                                "allowReject": {
+                                  "title": "Allow admin reject",
+                                  "hint": "Admin can reject submitted listings (pending)."
+                                },
+                                "allowPause": {
+                                  "title": "Allow admin pause",
+                                  "hint": "Usually OFF. Pause should be a host action; admin should unpublish instead."
+                                },
+                                "minReason": {
+                                  "title": "Min rejection reason length",
+                                  "hint": "0–300. Applies in RejectReasonModal."
+                                }
+                              },
+                              "limits": {
+                                "maxListings": {
+                                  "title": "Max listings per host",
+                                  "hint": "0 = unlimited"
+                                },
+                                "maxImages": {
+                                  "title": "Max images per listing",
+                                  "hint": "1–200"
+                                }
+                              },
+                              "branding": {
+                                "supportEmail": {
+                                  "title": "Support email",
+                                  "hint": "Shown in footer/messages.",
+                                  "placeholder": "support@bucovinastay.ro"
+                                },
+                                "maintenanceMode": {
+                                  "title": "Maintenance mode",
+                                  "hint": "If ON: blocks public access (except admin)."
+                                },
+                                "maintenanceMsg": {
+                                  "title": "Maintenance message",
+                                  "hint": "0–300 characters",
+                                  "placeholder": "We’ll be back shortly. Thank you!"
+                                }
+                              }
+                            },
+                        
+                            "rejectModal": {
+                              "title": "Rejection reason",
+                              "hint": "{{min}}–{{max}} characters. This will be shown to the host.",
+                              "placeholder": "e.g., missing images, incomplete description, unclear location...",
+                              "invalidTip": "Please enter a valid reason",
+                              "close": "Close"
+                            }
+                          }
+                        
+                        
+                        
+                        
+                      
+                      
+                      
+                      
+                    
+                    
+                  
+                  
+                
+               
+                
+                
+              
+              
+            
+            
+          
+          
+          
+        
+      
+      
+    
+    
+  
+  
+}

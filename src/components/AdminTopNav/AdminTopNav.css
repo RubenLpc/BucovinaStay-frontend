@@ -425,4 +425,122 @@
   
     border: 2px solid rgba(255,255,255,0.92);
   }
-  
+  /* ---------------------------
+   Language switcher
+--------------------------- */
+.atnLangDesktop{
+  display: inline-flex;
+  align-items: center;
+}
+
+.atnLangBtn{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(17,24,39,0.12);
+  background: rgba(255,255,255,0.86);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: transform .12s ease, border-color .12s ease, background .12s ease;
+}
+
+.atnLangBtn:hover{
+  transform: translateY(-1px);
+  border-color: rgba(17,24,39,0.18);
+  background: rgba(255,255,255,0.96);
+}
+
+.atnLangBtn:focus-visible{
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.atnLangCode{
+  font-weight: 900;
+  font-size: 0.8rem;
+  letter-spacing: var(--ls-soft);
+  color: var(--ink);
+}
+
+/* Mobile: hide language from top bar */
+@media (max-width: 760px){
+  .atnLangDesktop{ display: none; }
+}
+
+/* Menu language block */
+.atnMenuLang{
+  padding: 12px 12px 6px;
+}
+
+.atnMenuLangTitle{
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  font-weight: 900;
+  font-size: 0.82rem;
+  color: var(--ink);
+  letter-spacing: var(--ls-soft);
+  margin-bottom: 10px;
+}
+
+.atnMenuLangBtns{
+  display:grid;
+  gap: 8px;
+}
+
+.atnLangChoice{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(17,24,39,0.12);
+  background: rgba(255,255,255,0.92);
+  cursor: pointer;
+  transition: transform .12s ease, background .12s ease, border-color .12s ease;
+}
+
+.atnLangChoice:hover{
+  transform: translateY(-1px);
+  background: rgba(255,255,255,0.98);
+  border-color: rgba(17,24,39,0.18);
+}
+
+.atnLangChoice.isOn{
+  border-color: rgba(255,56,92,0.35);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.05);
+}
+
+.atnLangPill{
+  min-width: 44px;
+  height: 26px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius: 999px;
+  font-weight: 950;
+  font-size: 0.78rem;
+  color: var(--ink);
+  background: rgba(17,24,39,0.06);
+  border: 1px solid rgba(17,24,39,0.12);
+}
+
+.atnLangName{
+  font-size: 0.84rem;
+  font-weight: 850;
+  color: var(--ink);
+  letter-spacing: var(--ls-soft);
+}
+
+.atnLangCheck{
+  margin-left: auto;
+}
+
+.atnLangMobile{
+  display: inline-flex;
+  align-items: center;
+}

@@ -1,12 +1,14 @@
 import React from "react";
 import { ArrowRight, Mountain, SlidersHorizontal, Route } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import "./TrailsHero.css";
 
 import heroArt from "../../assets/hero_art.png";
 
 export default function TrailsHero() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <section className="trh-section">
@@ -16,18 +18,20 @@ export default function TrailsHero() {
           <div className="trh-left">
             <div className="trh-badge">
               <Route size={14} />
-              <span>Trasee montane în Bucovina</span>
+              <span>{t("trailsHero.badge")}</span>
             </div>
 
             <h2 className="trh-title">
-              Descoperă <span className="trh-highlight">poteci</span>
+              {t("trailsHero.titleLine1")}{" "}
+              <span className="trh-highlight">
+                {t("trailsHero.titleHighlight")}
+              </span>
               <br />
-              care îți rămân în suflet
+              {t("trailsHero.titleLine2")}
             </h2>
 
             <p className="trh-subtitle">
-              Idei de drumeții, nivel de dificultate, durată și linkuri către ghiduri
-              oficiale. Alege rapid trasee potrivite pentru weekend.
+              {t("trailsHero.subtitle")}
             </p>
 
             <div className="trh-actions">
@@ -35,14 +39,14 @@ export default function TrailsHero() {
                 className="trh-btn trh-btn-primary"
                 onClick={() => navigate("/trasee")}
               >
-                Vezi trasee 
+                {t("trailsHero.ctaTrails")}
               </button>
 
               <button
                 className="trh-btn trh-btn-secondary"
                 onClick={() => navigate("/cazari")}
               >
-                Vezi cazări
+                {t("trailsHero.ctaStays")}
               </button>
             </div>
 
@@ -50,9 +54,11 @@ export default function TrailsHero() {
               <div className="trh-feature">
                 <SlidersHorizontal size={18} />
                 <div>
-                  <div className="trh-feature-title">Trasee curate</div>
+                  <div className="trh-feature-title">
+                    {t("trailsHero.feature1Title")}
+                  </div>
                   <div className="trh-feature-sub">
-                    Structurate + ușor de filtrat
+                    {t("trailsHero.feature1Sub")}
                   </div>
                 </div>
               </div>
@@ -60,9 +66,11 @@ export default function TrailsHero() {
               <div className="trh-feature">
                 <Mountain size={18} />
                 <div>
-                  <div className="trh-feature-title">Nivel clar</div>
+                  <div className="trh-feature-title">
+                    {t("trailsHero.feature2Title")}
+                  </div>
                   <div className="trh-feature-sub">
-                    Ușor / Mediu / Greu
+                    {t("trailsHero.feature2Sub")}
                   </div>
                 </div>
               </div>
@@ -71,7 +79,12 @@ export default function TrailsHero() {
 
           {/* RIGHT */}
           <div className="trh-right">
-            <img className="trh-art" src={heroArt} alt="" draggable={false} />
+            <img
+              className="trh-art"
+              src={heroArt}
+              alt=""
+              draggable={false}
+            />
           </div>
         </div>
       </div>

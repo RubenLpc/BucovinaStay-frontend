@@ -1,119 +1,118 @@
 import {
-    Wifi,
-    Heater,
-    Droplets,
-    Bath,
-    Bed,
-    Wind,
-    Package,
-    Car,
-    ParkingSquare,
-    DoorOpen,
-    KeyRound,
-    Refrigerator,
-    CookingPot,
-    Flame,
-    Soup,
-    Coffee,
-    GlassWater,
-    Utensils,
-    Beef,
-    Snowflake,
-    Home,
-    WashingMachine,
-    Shirt,
-    Laptop,
-    Tv,
-    PlaySquare,
-    Dices,
-    Baby,
-    Armchair,
-    Trees,
-    Mountain,
-    Sparkles,
-    Waves,
-    Leaf,
-    UtensilsCrossed,
-    PawPrint,
-    ShieldAlert,
-    FlameKindling,
-    Cross,
-    Cctv,
-  } from "lucide-react";
-  
-  /**
-   * IMPORTANT:
-   * - key trebuie să fie EXACT ca în backend FACILITIES
-   * - icon = component lucide
-   * - category = folosit la grouping în picker
-   */
-  export const AMENITIES_CATALOG = [
-    // Essentials
-    { key: "wifi", label: "Wi-Fi", icon: Wifi, category: "Esentiale" },
-    { key: "heating", label: "Încălzire", icon: Heater, category: "Esentiale" },
-    { key: "hotWater", label: "Apă caldă", icon: Droplets, category: "Esentiale" },
-    { key: "towels", label: "Prosoape", icon: Bath, category: "Esentiale" },
-    { key: "bedLinen", label: "Lenjerie de pat", icon: Bed, category: "Esentiale" },
-    { key: "hairDryer", label: "Uscător de păr", icon: Wind, category: "Esentiale" },
-    { key: "essentials", label: "Consumabile de bază", icon: Package, category: "Esentiale" },
-  
-    // Parking & access
-    { key: "parking", label: "Parcare", icon: Car, category: "Acces & parcare" },
-    { key: "freeStreetParking", label: "Parcare la stradă (gratuit)", icon: ParkingSquare, category: "Acces & parcare" },
-    { key: "privateEntrance", label: "Intrare privată", icon: DoorOpen, category: "Acces & parcare" },
-    { key: "selfCheckIn", label: "Self check-in", icon: KeyRound, category: "Acces & parcare" },
-  
-    // Kitchen & dining
-    { key: "kitchen", label: "Bucătărie", icon: CookingPot, category: "Bucătărie" },
-    { key: "fridge", label: "Frigider", icon: Refrigerator, category: "Bucătărie" },
-    { key: "stove", label: "Plită / aragaz", icon: Flame, category: "Bucătărie" },
-    { key: "oven", label: "Cuptor", icon: Soup, category: "Bucătărie" },
-    { key: "microwave", label: "Cuptor cu microunde", icon: Soup, category: "Bucătărie" },
-    { key: "coffeeMaker", label: "Espressor / cafea", icon: Coffee, category: "Bucătărie" },
-    { key: "kettle", label: "Fierbător", icon: GlassWater, category: "Bucătărie" },
-    { key: "dishesAndCutlery", label: "Veselă & tacâmuri", icon: Utensils, category: "Bucătărie" },
-    { key: "bbq", label: "Grătar / BBQ", icon: Beef, category: "Bucătărie" },
-  
-    // Comfort & indoor
-    { key: "ac", label: "Aer condiționat", icon: Snowflake, category: "Confort" },
-    { key: "fireplace", label: "Șemineu", icon: Home, category: "Confort" },
-    { key: "washer", label: "Mașină de spălat", icon: WashingMachine, category: "Confort" },
-    { key: "iron", label: "Fier de călcat", icon: Shirt, category: "Confort" },
-    { key: "workspace", label: "Spațiu de lucru", icon: Laptop, category: "Confort" },
-  
-    // Entertainment
-    { key: "tv", label: "TV", icon: Tv, category: "Entertainment" },
-    { key: "streaming", label: "Streaming (Netflix etc.)", icon: PlaySquare, category: "Entertainment" },
-    { key: "boardGames", label: "Jocuri de societate", icon: Dices, category: "Entertainment" },
-  
-    // Family
-    { key: "crib", label: "Pătuț copil", icon: Baby, category: "Family" },
-    { key: "highChair", label: "Scaun înalt copil", icon: Armchair, category: "Family" },
-  
-    // Outdoor / view
-    { key: "terrace", label: "Terasă", icon: Sparkles, category: "Exterior & view" },
-    { key: "garden", label: "Grădină", icon: Trees, category: "Exterior & view" },
-    { key: "mountainView", label: "Vedere la munte", icon: Mountain, category: "Exterior & view" },
-  
-    // Wellness
-    { key: "sauna", label: "Saună", icon: Waves, category: "Wellness" },
-    { key: "hotTub", label: "Ciubăr / Hot tub", icon: Waves, category: "Wellness" },
-    { key: "spa", label: "SPA", icon: Sparkles, category: "Wellness" },
-  
-    // Services
-    { key: "breakfast", label: "Mic dejun", icon: UtensilsCrossed, category: "Servicii" },
-  
-    // Pets
-    { key: "petFriendly", label: "Pet friendly", icon: PawPrint, category: "Animale" },
-  
-    // Safety
-    { key: "smokeAlarm", label: "Detector fum", icon: ShieldAlert, category: "Siguranță" },
-    { key: "fireExtinguisher", label: "Extinctor", icon: FlameKindling, category: "Siguranță" },
-    { key: "firstAidKit", label: "Trusă prim ajutor", icon: Cross, category: "Siguranță" },
-    { key: "cctvOutside", label: "Camere exterior", icon: Cctv, category: "Siguranță" },
-  ];
-  
-  // helpers
-  export const AMENITY_BY_KEY = Object.fromEntries(AMENITIES_CATALOG.map((a) => [a.key, a]));
-  export const AMENITY_CATEGORIES = Array.from(new Set(AMENITIES_CATALOG.map((a) => a.category)));
-  
+  Wifi,
+  Heater,
+  Droplets,
+  Bath,
+  Bed,
+  Wind,
+  Package,
+  Car,
+  ParkingSquare,
+  DoorOpen,
+  KeyRound,
+  Refrigerator,
+  CookingPot,
+  Flame,
+  Soup,
+  Coffee,
+  GlassWater,
+  Utensils,
+  Beef,
+  Snowflake,
+  Home,
+  WashingMachine,
+  Shirt,
+  Laptop,
+  Tv,
+  PlaySquare,
+  Dices,
+  Baby,
+  Armchair,
+  Trees,
+  Mountain,
+  Sparkles,
+  Waves,
+  UtensilsCrossed,
+  PawPrint,
+  ShieldAlert,
+  FlameKindling,
+  Cross,
+  Cctv,
+} from "lucide-react";
+
+/**
+ * IMPORTANT:
+ * - key = EXACT ca în backend FACILITIES
+ * - icon = component lucide
+ * - categoryKey = folosit la grouping (tradus din i18n)
+ * - labelKey = tradus din i18n
+ */
+export const AMENITIES_CATALOG = [
+  // Essentials
+  { key: "wifi", labelKey: "amenities.wifi", icon: Wifi, categoryKey: "amenityCats.essentials" },
+  { key: "heating", labelKey: "amenities.heating", icon: Heater, categoryKey: "amenityCats.essentials" },
+  { key: "hotWater", labelKey: "amenities.hotWater", icon: Droplets, categoryKey: "amenityCats.essentials" },
+  { key: "towels", labelKey: "amenities.towels", icon: Bath, categoryKey: "amenityCats.essentials" },
+  { key: "bedLinen", labelKey: "amenities.bedLinen", icon: Bed, categoryKey: "amenityCats.essentials" },
+  { key: "hairDryer", labelKey: "amenities.hairDryer", icon: Wind, categoryKey: "amenityCats.essentials" },
+  { key: "essentials", labelKey: "amenities.essentials", icon: Package, categoryKey: "amenityCats.essentials" },
+
+  // Parking & access
+  { key: "parking", labelKey: "amenities.parking", icon: Car, categoryKey: "amenityCats.accessParking" },
+  { key: "freeStreetParking", labelKey: "amenities.freeStreetParking", icon: ParkingSquare, categoryKey: "amenityCats.accessParking" },
+  { key: "privateEntrance", labelKey: "amenities.privateEntrance", icon: DoorOpen, categoryKey: "amenityCats.accessParking" },
+  { key: "selfCheckIn", labelKey: "amenities.selfCheckIn", icon: KeyRound, categoryKey: "amenityCats.accessParking" },
+
+  // Kitchen & dining
+  { key: "kitchen", labelKey: "amenities.kitchen", icon: CookingPot, categoryKey: "amenityCats.kitchen" },
+  { key: "fridge", labelKey: "amenities.fridge", icon: Refrigerator, categoryKey: "amenityCats.kitchen" },
+  { key: "stove", labelKey: "amenities.stove", icon: Flame, categoryKey: "amenityCats.kitchen" },
+  { key: "oven", labelKey: "amenities.oven", icon: Soup, categoryKey: "amenityCats.kitchen" },
+  { key: "microwave", labelKey: "amenities.microwave", icon: Soup, categoryKey: "amenityCats.kitchen" },
+  { key: "coffeeMaker", labelKey: "amenities.coffeeMaker", icon: Coffee, categoryKey: "amenityCats.kitchen" },
+  { key: "kettle", labelKey: "amenities.kettle", icon: GlassWater, categoryKey: "amenityCats.kitchen" },
+  { key: "dishesAndCutlery", labelKey: "amenities.dishesAndCutlery", icon: Utensils, categoryKey: "amenityCats.kitchen" },
+  { key: "bbq", labelKey: "amenities.bbq", icon: Beef, categoryKey: "amenityCats.kitchen" },
+
+  // Comfort & indoor
+  { key: "ac", labelKey: "amenities.ac", icon: Snowflake, categoryKey: "amenityCats.comfort" },
+  { key: "fireplace", labelKey: "amenities.fireplace", icon: Home, categoryKey: "amenityCats.comfort" },
+  { key: "washer", labelKey: "amenities.washer", icon: WashingMachine, categoryKey: "amenityCats.comfort" },
+  { key: "iron", labelKey: "amenities.iron", icon: Shirt, categoryKey: "amenityCats.comfort" },
+  { key: "workspace", labelKey: "amenities.workspace", icon: Laptop, categoryKey: "amenityCats.comfort" },
+
+  // Entertainment
+  { key: "tv", labelKey: "amenities.tv", icon: Tv, categoryKey: "amenityCats.entertainment" },
+  { key: "streaming", labelKey: "amenities.streaming", icon: PlaySquare, categoryKey: "amenityCats.entertainment" },
+  { key: "boardGames", labelKey: "amenities.boardGames", icon: Dices, categoryKey: "amenityCats.entertainment" },
+
+  // Family
+  { key: "crib", labelKey: "amenities.crib", icon: Baby, categoryKey: "amenityCats.family" },
+  { key: "highChair", labelKey: "amenities.highChair", icon: Armchair, categoryKey: "amenityCats.family" },
+
+  // Outdoor / view
+  { key: "terrace", labelKey: "amenities.terrace", icon: Sparkles, categoryKey: "amenityCats.outdoorView" },
+  { key: "garden", labelKey: "amenities.garden", icon: Trees, categoryKey: "amenityCats.outdoorView" },
+  { key: "mountainView", labelKey: "amenities.mountainView", icon: Mountain, categoryKey: "amenityCats.outdoorView" },
+
+  // Wellness
+  { key: "sauna", labelKey: "amenities.sauna", icon: Waves, categoryKey: "amenityCats.wellness" },
+  { key: "hotTub", labelKey: "amenities.hotTub", icon: Waves, categoryKey: "amenityCats.wellness" },
+  { key: "spa", labelKey: "amenities.spa", icon: Sparkles, categoryKey: "amenityCats.wellness" },
+
+  // Services
+  { key: "breakfast", labelKey: "amenities.breakfast", icon: UtensilsCrossed, categoryKey: "amenityCats.services" },
+
+  // Pets
+  { key: "petFriendly", labelKey: "amenities.petFriendly", icon: PawPrint, categoryKey: "amenityCats.pets" },
+
+  // Safety
+  { key: "smokeAlarm", labelKey: "amenities.smokeAlarm", icon: ShieldAlert, categoryKey: "amenityCats.safety" },
+  { key: "fireExtinguisher", labelKey: "amenities.fireExtinguisher", icon: FlameKindling, categoryKey: "amenityCats.safety" },
+  { key: "firstAidKit", labelKey: "amenities.firstAidKit", icon: Cross, categoryKey: "amenityCats.safety" },
+  { key: "cctvOutside", labelKey: "amenities.cctvOutside", icon: Cctv, categoryKey: "amenityCats.safety" },
+];
+
+// helpers (rămân ok)
+export const AMENITY_BY_KEY = Object.fromEntries(AMENITIES_CATALOG.map((a) => [a.key, a]));
+export const AMENITY_CATEGORIES = Array.from(new Set(AMENITIES_CATALOG.map((a) => a.categoryKey)));

@@ -148,7 +148,7 @@
 @media (max-width: 860px){
   .hctaSurface{ flex-direction: column; align-items: stretch; }
   .hctaActions{ width: 100%; }
-  .hctaPrimary, .hctaSecondary{ flex: 1 1 0; justify-content: center; }
+  .hctaPrimary, .hctaSecondary{  justify-content: center; }
 }
 
 @media (max-width: 520px){

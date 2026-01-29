@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { Search, EyeOff, Eye, Trash2, Star, ArrowUpDown } from "lucide-react";
 import { adminListReviews, adminPatchReview, adminDeleteReview } from "../../api/adminService";
 import "./Admin.css";
-
+import { useTranslation } from "react-i18next";
 
 function statusTone(s) {
   if (s === "visible") return "good";
@@ -17,6 +17,8 @@ function stars(n) {
 }
 
 export default function AdminReviews() {
+  const { t } = useTranslation();
+
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("all");
   const [rating, setRating] = useState("all");
@@ -47,7 +49,7 @@ export default function AdminReviews() {
         await load();
       } catch (e) {
         if (!alive) return;
-        toast.error("Nu am putut încărca review-urile", { description: e?.message || "Eroare" });
+        toast.error(t("admin.reviews.toastLoadFailTitle"), { description: e?.message || t("admin.common.error") });
         setRows([]);
         setTotal(0);
       } finally {
@@ -56,28 +58,28 @@ export default function AdminReviews() {
     })();
     return () => (alive = false);
     // eslint-disable-next-line
-  }, [page, limit, q, status, rating, sort]);
+  }, [page, limit, q, status, rating, sort, t]);
 
   const toggleVisibility = async (id, currentStatus) => {
     try {
       const next = currentStatus === "visible" ? "hidden" : "visible";
       await adminPatchReview(id, { status: next });
-      toast.success(next === "hidden" ? "Review ascuns" : "Review vizibil");
+      toast.success(next === "hidden" ? t("admin.reviews.toastHidden") : t("admin.reviews.toastVisible"));
       await load();
     } catch (e) {
-      toast.error("Nu am putut actualiza", { description: e?.message || "Eroare" });
+      toast.error(t("admin.reviews.toastUpdateFailTitle"), { description: e?.message || t("admin.common.error") });
     }
   };
 
   const del = async (id) => {
     try {
-      const ok = window.confirm("Ștergi definitiv review-ul? (irreversibil)");
+      const ok = window.confirm(t("admin.reviews.confirmDelete"));
       if (!ok) return;
       await adminDeleteReview(id);
-      toast.success("Șters");
+      toast.success(t("admin.common.deleted"));
       await load();
     } catch (e) {
-      toast.error("Nu am putut șterge", { description: e?.message || "Eroare" });
+      toast.error(t("admin.reviews.toastDeleteFailTitle"), { description: e?.message || t("admin.common.error") });
     }
   };
 
@@ -85,20 +87,20 @@ export default function AdminReviews() {
     <div className="hdCard hdTable adReviews">
       <div className="hdCardTop">
         <div>
-          <div className="hdCardLabel">Reviews moderation</div>
-          <div className="hdCardHint">{total} rezultate</div>
+          <div className="hdCardLabel">{t("admin.reviews.cardTitle")} </div>
+          <div className="hdCardHint">{t("admin.common.resultsCount", { count: total, total })}</div>
         </div>
 
         <div className="hdToolbar">
           <div className="hdFilters">
             <select className="hdSelect" value={status} onChange={(e) => setStatus(e.target.value)}>
-              <option value="all">all</option>
-              <option value="visible">visible</option>
-              <option value="hidden">hidden</option>
+              <option value="all">{t("admin.common.status.all")}</option>
+              <option value="visible">{t("admin.reviews.status.visible")}</option>
+              <option value="hidden">{t("admin.reviews.status.hidden")}</option>
             </select>
 
             <select className="hdSelect" value={rating} onChange={(e) => setRating(e.target.value)}>
-              <option value="all">rating</option>
+              <option value="all">{t("admin.reviews.filters.ratingAny")}</option>
               <option value="5">5</option>
               <option value="4">4</option>
               <option value="3">3</option>
@@ -106,8 +108,13 @@ export default function AdminReviews() {
               <option value="1">1</option>
             </select>
 
-            <button className="hdBtn" type="button" onClick={() => setSort((s) => (s === "newest" ? "rating_desc" : "newest"))}>
-              <ArrowUpDown size={16} /> Sort
+            <button
+              className="hdBtn"
+              type="button"
+              onClick={() => setSort((s) => (s === "newest" ? "rating_desc" : "newest"))}
+              title={t("admin.reviews.filters.sort")}
+            >
+              <ArrowUpDown size={16} /> {t("admin.reviews.filters.sort")}
             </button>
           </div>
 
@@ -118,7 +125,7 @@ export default function AdminReviews() {
                 className="hdSearchInput adSearch"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="Caută: user / email / property / comment..."
+                placeholder={t("admin.reviews.searchPlaceholder")}
               />
             </div>
           </div>
@@ -126,10 +133,10 @@ export default function AdminReviews() {
       </div>
 
       <div className="adReviewsHead">
-        <div>Review</div>
-        <div>Rating</div>
-        <div>Status</div>
-        <div style={{ justifySelf: "end" }}>Acțiuni</div>
+        <div>{t("admin.reviews.cols.review")}</div>
+        <div>{t("admin.reviews.cols.rating")}</div>
+        <div>{t("admin.reviews.cols.status")}</div>
+        <div style={{ justifySelf: "end" }}>{t("admin.common.actions")}</div>
       </div>
 
       {loading ? (
@@ -139,61 +146,65 @@ export default function AdminReviews() {
           <div className="skLine" />
         </div>
       ) : rows.length === 0 ? (
-        <div className="hdEmpty">Nimic de afișat.</div>
+        <div className="hdEmpty">{t("admin.common.empty")}</div>
       ) : (
         <div className="adRows">
           {rows.map((r) => {
             const user = r.userId || {};
             const prop = r.propertyId || {};
 
-            const userName = user.name || "User";
+            const userName = user.name || t("admin.common.fallbackUser");
             const userEmail = user.email || "";
-            const propTitle = prop.title || "Property";
+            const propTitle = prop.title || t("admin.common.fallbackProperty");
             const propMeta = [prop.city, prop.locality, prop.type].filter(Boolean).join(" • ");
 
             const isHidden = r.status === "hidden";
 
             return (
               <div className="adRow adReviewRow" key={r._id}>
+                {/* Mobile kebab */}
                 <div className="adReviewMobileHead">
-  <details className="adKebab">
-    <summary className="hdBtn adKebabBtn" aria-label="Actions">⋯</summary>
+                  <details className="adKebab">
+                    <summary className="hdBtn adKebabBtn" aria-label={t("admin.common.actions")}>
+                      ⋯
+                    </summary>
 
-    <div className="adMenu">
-      <button
-        className="adMenuItem"
-        type="button"
-        onClick={() => toggleVisibility(r._id, r.status)}
-      >
-        {isHidden ? "Unhide review" : "Hide review"}
-      </button>
+                    <div className="adMenu">
+                      <button className="adMenuItem" type="button" onClick={() => toggleVisibility(r._id, r.status)}>
+                        {isHidden ? t("admin.reviews.actions.unhide") : t("admin.reviews.actions.hide")}
+                      </button>
 
-      <div className="adMenuSep" />
+                      <div className="adMenuSep" />
 
-      <button className="adMenuItem" type="button" onClick={() => del(r._id)}>
-        Delete review
-      </button>
-    </div>
-  </details>
-</div>
+                      <button className="adMenuItem" type="button" onClick={() => del(r._id)}>
+                        {t("admin.reviews.actions.delete")}
+                      </button>
+                    </div>
+                  </details>
+                </div>
 
-<div className="adReviewMobileBadges">
-  <span className={`hdBadge tone-${statusTone(r.status)}`}>{r.status}</span>
-  <span className="hdBadge">
-    <Star size={14} /> {r.rating} • {stars(r.rating)}
-  </span>
-</div>
+                <div className="adReviewMobileBadges">
+                  <span className={`hdBadge tone-${statusTone(r.status)}`}>{t(`admin.reviews.status.${r.status}`)}</span>
+                  <span className="hdBadge">
+                    <Star size={14} /> {r.rating} • {stars(r.rating)}
+                  </span>
+                </div>
 
                 <div className="adReviewCell">
-                <div className="adReviewTop">
-  <div className="adReviewTitle" title={propTitle}>{propTitle}</div>
-</div>
+                  <div className="adReviewTop">
+                    <div className="adReviewTitle" title={propTitle}>
+                      {propTitle}
+                    </div>
+                  </div>
 
-<div className="adReviewUserLine" title={userEmail}>
-  {userName}
-</div>
+                  <div className="adReviewUserLine" title={userEmail}>
+                    {userName}
+                  </div>
 
-                  <div className="adReviewMeta">{propMeta}{userEmail ? ` • ${userEmail}` : ""}</div>
+                  <div className="adReviewMeta">
+                    {propMeta}
+                    {userEmail ? ` • ${userEmail}` : ""}
+                  </div>
 
                   <div className={`adReviewComment ${isHidden ? "isHidden" : ""}`} title={r.comment}>
                     {r.comment}
@@ -201,11 +212,13 @@ export default function AdminReviews() {
                 </div>
 
                 <div className="hdCell">
-                  <span className="adStars"><Star size={14} /> {r.rating} • {stars(r.rating)}</span>
+                  <span className="adStars">
+                    <Star size={14} /> {r.rating} • {stars(r.rating)}
+                  </span>
                 </div>
 
                 <div className="hdCell">
-                  <span className={`hdBadge tone-${statusTone(r.status)}`}>{r.status}</span>
+                  <span className={`hdBadge tone-${statusTone(r.status)}`}>{t(`admin.reviews.status.${r.status}`)}</span>
                 </div>
 
                 <div className="hdActionsCell">
@@ -213,14 +226,14 @@ export default function AdminReviews() {
                     className={`hdBtn ${isHidden ? "hdBtnAccent" : ""}`}
                     type="button"
                     onClick={() => toggleVisibility(r._id, r.status)}
-                    title={isHidden ? "Fă review-ul vizibil" : "Ascunde review-ul"}
+                    title={isHidden ? t("admin.reviews.tips.makeVisible") : t("admin.reviews.tips.makeHidden")}
                   >
                     {isHidden ? <Eye size={16} /> : <EyeOff size={16} />}
-                    {isHidden ? "Unhide" : "Hide"}
+                    {isHidden ? t("admin.reviews.actions.unhide") : t("admin.reviews.actions.hide")}
                   </button>
 
-                  <button className="hdBtn" type="button" onClick={() => del(r._id)} title="Șterge definitiv">
-                    <Trash2 size={16} /> Delete
+                  <button className="hdBtn" type="button" onClick={() => del(r._id)} title={t("admin.reviews.tips.delete")}>
+                    <Trash2 size={16} /> {t("admin.reviews.actions.delete")}
                   </button>
                 </div>
               </div>
@@ -232,13 +245,11 @@ export default function AdminReviews() {
       {!loading && total > 0 ? (
         <div className="hdPager">
           <button className="hdBtn" disabled={page === 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
-            Înapoi
+            {t("admin.common.back")}
           </button>
-          <div className="hdPagerText">
-            Pagina <b>{page}</b> din <b>{totalPages}</b>
-          </div>
+          <div className="hdPagerText">{t("admin.common.pageOf", { page, totalPages })}</div>
           <button className="hdBtn" disabled={page === totalPages} onClick={() => setPage((p) => Math.min(totalPages, p + 1))}>
-            Înainte
+            {t("admin.common.next")}
           </button>
         </div>
       ) : null}

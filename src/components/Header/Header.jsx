@@ -1,15 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Menu, User, LogOut, LayoutDashboard, Shield } from "lucide-react";
+import { Heart, ChevronRight, Languages } from "lucide-react";
 import { useAuthStore } from "../../stores/authStore";
-import { Heart, ChevronRight } from "lucide-react";
 import { useFavoritesPreview } from "../../hooks/useFavoritesPreview";
 import { useFavoritesStore } from "../../stores/favoritesStore";
 
+import { useTranslation } from "react-i18next";
 
 import "./Header.css";
 
 export default function Header() {
+  const { t, i18n } = useTranslation();
+
   const rootRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
@@ -21,18 +24,18 @@ export default function Header() {
 
   const [transparent, setTransparent] = useState(location.pathname === "/");
 
-  const { items: favPreview, loading: favLoading, load: loadFavPreview } = useFavoritesPreview();
+  useFavoritesPreview(); // îl păstrez ca să nu-ți rup importurile, chiar dacă folosești store preview
 
   const ensurePreview = useFavoritesStore((s) => s.ensurePreview);
   const preview = useFavoritesStore((s) => s.preview);
   const previewLoading = useFavoritesStore((s) => s.previewLoading);
   const setFavEnabled = useFavoritesStore((s) => s.setEnabled);
-  
+
   // sincronizează enabled cu auth
   useEffect(() => {
     setFavEnabled(!!isAuthenticated);
   }, [isAuthenticated, setFavEnabled]);
-  
+
   useEffect(() => {
     const isHome = location.pathname === "/";
     if (!isHome) {
@@ -79,8 +82,14 @@ export default function Header() {
   const isAdmin = user?.role === "admin";
 
   const dashboardPath = isAdmin ? "/admin" : isHost ? "/host" : null;
-  const dashboardLabel = isAdmin ? "Dashboard" : "Dashboard";
   const DashboardIcon = isAdmin ? Shield : LayoutDashboard;
+
+  const currentLang = i18n.language?.startsWith("en") ? "en" : "ro";
+  const nextLang = currentLang === "ro" ? "en" : "ro";
+
+  const toggleLang = () => {
+    i18n.changeLanguage(nextLang);
+  };
 
   return (
     <header className={`site-header theme-light ${transparent ? "is-transparent" : ""}`}>
@@ -88,130 +97,137 @@ export default function Header() {
         <div className="container header-inner" ref={rootRef}>
           {/* BRAND */}
           <Link to="/" className="brand">
-            <span className="brand-main">Bucovina</span>
-            <span className="brand-accent">Stay</span>
+            <span className="brand-main">{t("brand.main")}</span>
+            <span className="brand-accent">{t("brand.accent")}</span>
           </Link>
 
           {/* NAV DESKTOP */}
           <nav className="header-nav">
-          {dashboardPath && (
-                  <Link
-                    to={dashboardPath}
-                    className="nav-link"
-                    onClick={() => {
-                      setMobileOpen(false);
-                      setUserOpen(false);
-                    }}
-                  >
-                    {dashboardLabel}
-                  </Link>
-                )}
+            {dashboardPath && (
+              <Link
+                to={dashboardPath}
+                className="nav-link"
+                onClick={() => {
+                  setMobileOpen(false);
+                  setUserOpen(false);
+                }}
+              >
+                {t("nav.dashboard")}
+              </Link>
+            )}
+
             <NavLink to="/" className="nav-link">
-              Acasă
+              {t("nav.home")}
             </NavLink>
+
             <NavLink to="/cazari" className="nav-link">
-              Cazări
+              {t("nav.stays")}
             </NavLink>
-            
           </nav>
 
           {/* ACTIONS */}
           <div className="header-actions">
+            {/* ✅ Language switch (desktop & mobile) */}
+            <button
+              type="button"
+              className="lang-switch"
+              onClick={toggleLang}
+              aria-label={t("lang.switchAria")}
+              title={t("lang.switchAria")}
+            >
+              
+              <span className="lang-pill">
+                <span className={currentLang === "ro" ? "on" : ""}>{t("lang.ro")}</span>
+                <span className="sep">/</span>
+                <span className={currentLang === "en" ? "on" : ""}>{t("lang.en")}</span>
+              </span>
+            </button>
+
             {!isAuthenticated ? (
               <Link to="/auth/login" className="btn btn-primary">
-                Autentificare
+                {t("auth.login")}
               </Link>
             ) : (
               <>
-                {/* ✅ DASHBOARD shortcut (desktop) */}
-               
-
                 <div className="user-menu">
-                <button
-  className="avatar-btn"
-  onClick={() =>
-    setUserOpen((v) => {
-      const next = !v;
-      if (next) ensurePreview(6);
-      return next;
-    })
-  }
-  aria-label="User menu"
->
-  {initials}
-</button>
-
-
+                  <button
+                    className="avatar-btn"
+                    onClick={() =>
+                      setUserOpen((v) => {
+                        const next = !v;
+                        if (next) ensurePreview(6);
+                        return next;
+                      })
+                    }
+                    aria-label="User menu"
+                  >
+                    {initials}
+                  </button>
 
                   <div className={`user-dropdown ${userOpen ? "open" : ""}`}>
-                    {/* ✅ Dashboard și în dropdown (mai ales util pe mobil/compact) */}
                     {dashboardPath && (
-                      <Link
-                        to={dashboardPath}
-                        onClick={() => setUserOpen(false)}
-                      >
+                      <Link to={dashboardPath} onClick={() => setUserOpen(false)}>
                         <DashboardIcon size={16} />
-                        {dashboardLabel}
+                        {t("nav.dashboard")}
                       </Link>
                     )}
-                   <div className="ud-section">
-  <div className="ud-title">
-    <Heart size={16} />
-    Favorite
-  </div>
 
-  {previewLoading ? (
-    <div className="ud-skeleton">
-      <div className="ud-skel-row" />
-      <div className="ud-skel-row" />
-      <div className="ud-skel-row" />
-    </div>
-  ) : preview?.length ? (
-    <>
-      <div className="ud-fav-list">
-        {preview.slice(0, 6).map((p) => (
-          <Link
-            key={p.id}
-            to={`/cazari/${p.id}`}
-            className="ud-fav-item"
-            onClick={() => setUserOpen(false)}
-            title={p.title}
-          >
-            <div
-              className="ud-fav-thumb"
-              style={p.image ? { backgroundImage: `url(${p.image})` } : undefined}
-            />
-            <div className="ud-fav-meta">
-              <div className="ud-fav-name">{p.title}</div>
-              <div className="ud-fav-sub">
-                {(p.location || p.city || "Bucovina") +
-                  (typeof p.pricePerNight === "number"
-                    ? ` • ${p.pricePerNight} ${p.currency || "RON"}/noapte`
-                    : "")}
-              </div>
-            </div>
-            <ChevronRight size={16} className="ud-fav-arrow" />
-          </Link>
-        ))}
-      </div>
+                    <div className="ud-section">
+                      <div className="ud-title">
+                        <Heart size={16} />
+                        {t("favorites.title")}
+                      </div>
 
-      <Link to="/favorites" className="ud-fav-all" onClick={() => setUserOpen(false)}>
-        Vezi toate favoritele
-        <ChevronRight size={16} />
-      </Link>
-    </>
-  ) : (
-    <div className="ud-empty">N-ai favorite încă. Apasă ❤️ la o cazare ca să o salvezi.</div>
-  )}
-</div>
+                      {previewLoading ? (
+                        <div className="ud-skeleton">
+                          <div className="ud-skel-row" />
+                          <div className="ud-skel-row" />
+                          <div className="ud-skel-row" />
+                        </div>
+                      ) : preview?.length ? (
+                        <>
+                          <div className="ud-fav-list">
+                            {preview.slice(0, 6).map((p) => (
+                              <Link
+                                key={p.id}
+                                to={`/cazari/${p.id}`}
+                                className="ud-fav-item"
+                                onClick={() => setUserOpen(false)}
+                                title={p.title}
+                              >
+                                <div
+                                  className="ud-fav-thumb"
+                                  style={p.image ? { backgroundImage: `url(${p.image})` } : undefined}
+                                />
+                                <div className="ud-fav-meta">
+                                  <div className="ud-fav-name">{p.title}</div>
+                                  <div className="ud-fav-sub">
+                                    {(p.location || p.city || "Bucovina") +
+                                      (typeof p.pricePerNight === "number"
+                                        ? ` • ${p.pricePerNight} ${p.currency || "RON"}/noapte`
+                                        : "")}
+                                  </div>
+                                </div>
+                                <ChevronRight size={16} className="ud-fav-arrow" />
+                              </Link>
+                            ))}
+                          </div>
 
-<div className="ud-divider" />
+                          <Link to="/favorites" className="ud-fav-all" onClick={() => setUserOpen(false)}>
+                            {t("favorites.seeAll")}
+                            <ChevronRight size={16} />
+                          </Link>
+                        </>
+                      ) : (
+                        <div className="ud-empty">{t("favorites.empty")}</div>
+                      )}
+                    </div>
 
-
+                    <div className="ud-divider" />
 
                     <Link to="/profile" onClick={() => setUserOpen(false)}>
                       <User size={16} />
-                      Profil
+                      {t("auth.profile")}
                     </Link>
 
                     <button
@@ -223,7 +239,7 @@ export default function Header() {
                       }}
                     >
                       <LogOut size={16} />
-                      Deconectare
+                      {t("auth.logout")}
                     </button>
                   </div>
                 </div>
@@ -238,24 +254,35 @@ export default function Header() {
             {/* MOBILE MENU */}
             <div className={`mobile-menu ${mobileOpen ? "open" : ""}`}>
               <NavLink to="/" onClick={() => setMobileOpen(false)}>
-                Acasă
+                {t("nav.home")}
               </NavLink>
               <NavLink to="/cazari" onClick={() => setMobileOpen(false)}>
-                Cazări
+                {t("nav.stays")}
               </NavLink>
 
-              {/* ✅ Dashboard și în mobile menu */}
               {isAuthenticated && dashboardPath && (
                 <NavLink to={dashboardPath} onClick={() => setMobileOpen(false)}>
-                  {dashboardLabel}
+                  {t("nav.dashboard")}
                 </NavLink>
               )}
 
               {!isAuthenticated && (
                 <NavLink to="/auth/login" onClick={() => setMobileOpen(false)}>
-                  Autentificare
+                  {t("auth.login")}
                 </NavLink>
               )}
+
+              {/* ✅ optional: language switch also inside mobile menu (if you want) */}
+              <button
+                type="button"
+                className="mobile-lang-switch"
+                onClick={() => {
+                  toggleLang();
+                  setMobileOpen(false);
+                }}
+              >
+                {t} {currentLang.toUpperCase()}/ {nextLang.toUpperCase()}
+              </button>
             </div>
           </div>
         </div>

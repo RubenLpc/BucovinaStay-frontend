@@ -27,6 +27,7 @@ import {
 
 import { AMENITY_BY_KEY } from "../../constants/amenitiesCatalog";
 import { PROPERTY_TYPES } from "../../constants/propertyTypes";
+import { useTranslation } from "react-i18next";
 
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 const PAGE_SIZE = 9;
@@ -66,16 +67,6 @@ function boundsToParams(boundsStr) {
   };
 }
 
-function moneyLabel(value, currency = "RON") {
-  const n = Number(value ?? 0);
-  if (!Number.isFinite(n) || n <= 0) return "Vezi";
-  try {
-    return new Intl.NumberFormat("ro-RO", { style: "currency", currency, maximumFractionDigits: 0 }).format(n);
-  } catch {
-    return `${n} ${currency}`;
-  }
-}
-
 function smartStepForRange(range, currency) {
   const r = Math.max(0, Number(range) || 0);
   if (currency === "EUR") {
@@ -83,18 +74,19 @@ function smartStepForRange(range, currency) {
     if (r <= 250) return 5;
     return 10;
   }
-  // RON
   if (r <= 500) return 10;
   if (r <= 1500) return 25;
   return 50;
 }
-
 function roundToStep(v, step) {
   const s = Math.max(1, Number(step) || 1);
   return Math.round(v / s) * s;
 }
 
 export default function Stays() {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language?.startsWith("en") ? "en-US" : "ro-RO";
+
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const mapRef = useRef(null);
@@ -102,18 +94,16 @@ export default function Stays() {
   // --- token
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN || "";
 
-  // ✅ favorites (same pattern ca HorizontalListings)
+  // ✅ favorites
   const { isAuthenticated } = useAuthStore();
   const { favIds, toggle: toggleFav } = useFavorites(isAuthenticated);
 
   // ✅ initial state from URL
   const [q, setQ] = useState(searchParams.get("q") || "");
   const [sort, setSort] = useState(searchParams.get("sort") || "recommended");
-
   const [type, setType] = useState(searchParams.get("type") || "all");
 
-  // 🔥 IMPORTANT: price filters NU sunt aplicate implicit
-  // Dacă nu există în URL, sunt null => nu trimitem priceMin/priceMax la backend
+  // 🔥 price filters
   const urlMinPrice = searchParams.get("priceMin");
   const urlMaxPrice = searchParams.get("priceMax");
 
@@ -133,14 +123,13 @@ export default function Stays() {
   // 🔥 price range inteligent (derivat din rezultate)
   const [priceBounds, setPriceBounds] = useState({ min: 0, max: 0, step: 10 });
 
-  // draft sliders (apply on release) — inițial se aliniază la bounds
+  // draft sliders
   const [minPriceDraft, setMinPriceDraft] = useState(null);
   const [maxPriceDraft, setMaxPriceDraft] = useState(null);
-
   const [minRatingDraft, setMinRatingDraft] = useState(minRating);
 
   // layout state
-  const [filtersOpen, setFiltersOpen] = useState(false); // mobile drawer
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [mobileMapOpen, setMobileMapOpen] = useState(false);
 
   const [page, setPage] = useState(parseNum(searchParams.get("page"), 1));
@@ -152,7 +141,7 @@ export default function Stays() {
   // Map state (area search)
   const [boundsCommitted, setBoundsCommitted] = useState(searchParams.get("bounds") || "");
   const [areaDirty, setAreaDirty] = useState(false);
-  const [boundsDirtyStr, setBoundsDirtyStr] = useState(""); // keep encoded bounds
+  const [boundsDirtyStr, setBoundsDirtyStr] = useState("");
 
   const [activeId, setActiveId] = useState(null);
   const [popupId, setPopupId] = useState(null);
@@ -172,9 +161,7 @@ export default function Stays() {
       setActiveId(null);
     }, 140);
   };
-  useEffect(() => {
-    return () => clearTimeout(closeTimerRef.current);
-  }, []);
+  useEffect(() => () => clearTimeout(closeTimerRef.current), []);
 
   // ✅ debounce search
   const qDebounceRef = useRef(null);
@@ -190,7 +177,7 @@ export default function Stays() {
     setPage(1);
   }, [qDebounced, sort, type, minPrice, maxPrice, minRating, amenities, boundsCommitted, currency]);
 
-  // ✅ keep URL in sync (committed only)
+  // ✅ keep URL in sync
   useEffect(() => {
     const sp = new URLSearchParams(searchParams);
 
@@ -198,7 +185,6 @@ export default function Stays() {
     setParam(sp, "sort", sort !== "recommended" ? sort : "");
     setParam(sp, "type", type !== "all" ? type : "");
 
-    // price: scriem în URL doar dacă sunt aplicate efectiv (nu default)
     setParam(sp, "priceMin", minPrice != null ? String(minPrice) : "");
     setParam(sp, "priceMax", maxPrice != null ? String(maxPrice) : "");
 
@@ -215,6 +201,17 @@ export default function Stays() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [qDebounced, sort, type, minPrice, maxPrice, minRating, amenities, boundsCommitted, page, currency]);
 
+  // Format price label (locale-aware)
+  function moneyLabel(value, ccy = "RON") {
+    const n = Number(value ?? 0);
+    if (!Number.isFinite(n) || n <= 0) return "—";
+    try {
+      return new Intl.NumberFormat(locale, { style: "currency", currency: ccy, maximumFractionDigits: 0 }).format(n);
+    } catch {
+      return `${n} ${ccy}`;
+    }
+  }
+
   // Fetch
   useEffect(() => {
     let alive = true;
@@ -228,13 +225,12 @@ export default function Stays() {
           page: String(page),
           limit: String(PAGE_SIZE),
           sort,
-          currency, // RON/EUR
+          currency,
         };
 
         if (qDebounced.trim()) params.q = qDebounced.trim();
         if (type !== "all") params.type = type;
 
-        // 🔥 NU trimitem priceMin/priceMax dacă nu sunt aplicate (null)
         if (minPrice != null) params.priceMin = String(minPrice);
         if (maxPrice != null) params.priceMax = String(maxPrice);
 
@@ -248,12 +244,10 @@ export default function Stays() {
         if (!alive) return;
 
         setResults(data.items || []);
-        console.log("first item:", data.items?.[0]);
-
         setTotal(data.total ?? 0);
       } catch (e) {
         if (!alive) return;
-        setErr(e.message || "Eroare la încărcare.");
+        setErr(e?.message || "Error");
         setResults([]);
         setTotal(0);
       } finally {
@@ -266,7 +260,7 @@ export default function Stays() {
     };
   }, [qDebounced, sort, type, minPrice, maxPrice, minRating, amenities, page, boundsCommitted, currency]);
 
-  // 🔥 Price bounds inteligente din rezultate (și setup draft dacă e null)
+  // 🔥 Price bounds inteligente din rezultate
   useEffect(() => {
     const arr = Array.isArray(results) ? results : [];
     const prices = arr
@@ -275,18 +269,15 @@ export default function Stays() {
       .sort((a, b) => a - b);
 
     if (!prices.length) {
-      // fallback safe
       const fallback = currency === "EUR" ? { min: 0, max: 500 } : { min: 0, max: 2000 };
       const step = smartStepForRange(fallback.max - fallback.min, currency);
       setPriceBounds({ ...fallback, step });
 
-      // dacă draft încă null -> îl aliniez la fallback (fără să aplic filtrul)
       setMinPriceDraft((p) => (p == null ? fallback.min : p));
       setMaxPriceDraft((p) => (p == null ? fallback.max : p));
       return;
     }
 
-    // percentile-ish ca să nu te omoare outlier-urile:
     const pLow = prices[Math.floor((prices.length - 1) * 0.02)];
     const pHigh = prices[Math.floor((prices.length - 1) * 0.98)];
 
@@ -299,10 +290,6 @@ export default function Stays() {
 
     setPriceBounds({ min: niceMin, max: niceMax, step });
 
-    // IMPORTANT:
-    // - Dacă user NU are preț aplicat (minPrice/maxPrice null), păstrăm filtrele neaplicate,
-    //   dar setăm slider draft la bounds ca să arate “full range”.
-    // - Dacă are preț aplicat (din URL / user), NU îi resetăm sliderul.
     setMinPriceDraft((prev) => {
       if (prev == null) return niceMin;
       return clamp(prev, niceMin, niceMax);
@@ -312,13 +299,12 @@ export default function Stays() {
       return clamp(prev, niceMin, niceMax);
     });
 
-    // dacă există filtre aplicate, le ținem în bounds
     if (minPrice != null) setMinPrice((p) => clamp(p, niceMin, niceMax));
     if (maxPrice != null) setMaxPrice((p) => clamp(p, niceMin, niceMax));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [results, currency]);
 
-  // dacă schimbi moneda, NU vreau să “rămână” filtrul de preț aplicat în vechea monedă
+  // dacă schimbi moneda, reset preț aplicat
   useEffect(() => {
     setMinPrice(null);
     setMaxPrice(null);
@@ -342,20 +328,13 @@ export default function Stays() {
 
   const clearFilters = () => {
     setType("all");
-
-    // 🔥 reset preț => neaplicat
     setMinPrice(null);
     setMaxPrice(null);
-
-    // draft revine la bounds curente (vizual)
     setMinPriceDraft(priceBounds.min);
     setMaxPriceDraft(priceBounds.max);
-
     setMinRating(0);
     setMinRatingDraft(0);
-
     setAmenities(new Set());
-
     setBoundsCommitted("");
     setAreaDirty(false);
     setBoundsDirtyStr("");
@@ -376,7 +355,6 @@ export default function Stays() {
       .filter((s) => Array.isArray(s?.geo?.coordinates) && s.geo.coordinates.length === 2);
   }, [results]);
 
-  // Bucovina-ish fallback
   const defaultCenter = useMemo(() => ({ latitude: 47.65, longitude: 25.55, zoom: 8.6 }), []);
 
   // Map handlers
@@ -399,7 +377,7 @@ export default function Stays() {
     setAreaDirty(false);
   };
 
-  // hover sync: center map softly
+  // hover sync
   const flyToStay = (stay) => {
     const m = mapRef.current?.getMap?.();
     if (!m) return;
@@ -414,20 +392,31 @@ export default function Stays() {
     }
   };
 
+  const typeLabel = (typeKey) => {
+    if (!typeKey || typeKey === "all") return t("stays.allTypes");
+    const meta = PROPERTY_TYPES?.find?.((x) => x.key === typeKey);
+    if (!meta) return typeKey;
+    return meta.labelKey ? t(meta.labelKey) : meta.label || typeKey;
+  };
+
+  const amenityLabel = (k) => {
+    const meta = AMENITY_BY_KEY?.[k];
+    if (!meta) return k;
+    return meta.labelKey ? t(meta.labelKey) : meta.label || k;
+  };
+
   // chips
   const activeChips = useMemo(() => {
     const chips = [];
 
     if (type !== "all") {
-      const meta = PROPERTY_TYPES?.find?.((t) => t.key === type);
-      chips.push({ key: "type", label: meta?.label || type, onX: () => setType("all") });
+      chips.push({ key: "type", label: typeLabel(type), onX: () => setType("all") });
     }
 
-    // 🔥 price chips doar dacă filtrul e aplicat (minPrice/maxPrice != null)
     if (minPrice != null) {
       chips.push({
         key: "minPrice",
-        label: `min ${moneyLabel(minPrice, currency)}`,
+        label: t("stays.chips.minPrice", { value: moneyLabel(minPrice, currency) }),
         onX: () => {
           setMinPrice(null);
           setMinPriceDraft(priceBounds.min);
@@ -437,7 +426,7 @@ export default function Stays() {
     if (maxPrice != null) {
       chips.push({
         key: "maxPrice",
-        label: `max ${moneyLabel(maxPrice, currency)}`,
+        label: t("stays.chips.maxPrice", { value: moneyLabel(maxPrice, currency) }),
         onX: () => {
           setMaxPrice(null);
           setMaxPriceDraft(priceBounds.max);
@@ -464,51 +453,52 @@ export default function Stays() {
       Array.from(amenities)
         .slice(0, 3)
         .forEach((k) => {
-          const meta = AMENITY_BY_KEY?.[k];
-          chips.push({ key: `a:${k}`, label: meta?.label || k, onX: () => toggleAmenity(k) });
+          chips.push({ key: `a:${k}`, label: amenityLabel(k), onX: () => toggleAmenity(k) });
         });
-      if (amenities.size > 3) chips.push({ key: "more", label: `+${amenities.size - 3}`, onX: () => setFiltersOpen(true) });
+      if (amenities.size > 3) {
+        chips.push({
+          key: "more",
+          label: t("stays.chips.more", { count: amenities.size - 3 }),
+          onX: () => setFiltersOpen(true),
+        });
+      }
     }
 
-    if (boundsCommitted) chips.push({ key: "bounds", label: "Zonă setată", onX: () => setBoundsCommitted("") });
+    if (boundsCommitted) chips.push({ key: "bounds", label: t("stays.areaSet"), onX: () => setBoundsCommitted("") });
 
     return chips;
-  }, [type, minPrice, maxPrice, minRating, amenities, boundsCommitted, currency, priceBounds.min, priceBounds.max]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type, minPrice, maxPrice, minRating, amenities, boundsCommitted, currency, priceBounds.min, priceBounds.max, locale]); // locale helps moneyLabel format
 
   const handleToggleFav = async (id) => {
     if (!isAuthenticated) {
-      toast.info("Trebuie să fii autentificat", {
-        description: "Autentifică-te pentru a salva cazări la favorite.",
-      });
+      toast.info(t("toasts.authRequired"), { description: t("toasts.authRequiredDesc") });
       return;
     }
     try {
       await toggleFav(id);
     } catch {
-      toast.error("Nu am putut actualiza favoritele.");
+      toast.error(t("toasts.favUpdateFailed"));
     }
   };
 
-  // ---------- Sidebar filters (desktop + in mobile drawer) ----------
+  // ---------- Sidebar filters ----------
   const Filters = (
     <aside className="staysFiltersCard">
-      {/* Header */}
       <div className="staysFiltersTop">
         <div className="staysFiltersTitle">
-          <div className="staysFiltersH">Filtre</div>
-          <div className="staysFiltersSub">
-            Ajustează rezultatele pentru a găsi cazarea perfectă.
-          </div>
+          <div className="staysFiltersH">{t("stays.filtersTitle")}</div>
+          <div className="staysFiltersSub">{t("stays.filtersHint")}</div>
         </div>
         <button className="staysLinkBtn" type="button" onClick={clearFilters}>
-          Resetează
+          {t("stays.reset")}
         </button>
       </div>
-  
+
       {/* Tip proprietate */}
       <div className="staysFilterBlock">
-        <div className="staysLabel">Tip proprietate</div>
-  
+        <div className="staysLabel">{t("stays.propertyType")}</div>
+
         <div className="staysTypeGrid">
           <button
             type="button"
@@ -519,57 +509,55 @@ export default function Stays() {
               <Sparkles size={18} />
             </div>
             <div className="staysTypeTxt">
-              <div className="staysTypeName">Toate</div>
-              <div className="staysTypeDesc">Include toate tipurile</div>
+              <div className="staysTypeName">{t("stays.allTypes")}</div>
+              <div className="staysTypeDesc">{t("stays.allTypesDesc")}</div>
             </div>
           </button>
-  
-          {PROPERTY_TYPES.map(({ key, label, Icon, description }) => (
-            <button
-              key={key}
-              type="button"
-              className={`staysTypeTile ${type === key ? "isOn" : ""}`}
-              onClick={() => setType(key)}
-            >
-              <div className="staysTypeIconWrap">
-                <Icon size={18} />
-              </div>
-              <div className="staysTypeTxt">
-                <div className="staysTypeName">{label}</div>
-                <div className="staysTypeDesc">{description}</div>
-              </div>
-            </button>
-          ))}
+
+          {PROPERTY_TYPES.map(({ key, labelKey, descKey, label, description, Icon }) => {
+            const typeName = labelKey ? t(labelKey) : label || key;
+            const typeDesc = descKey ? t(descKey) : description || "";
+            return (
+              <button
+                key={key}
+                type="button"
+                className={`staysTypeTile ${type === key ? "isOn" : ""}`}
+                onClick={() => setType(key)}
+              >
+                <div className="staysTypeIconWrap">
+                  <Icon size={18} />
+                </div>
+                <div className="staysTypeTxt">
+                  <div className="staysTypeName">{typeName}</div>
+                  <div className="staysTypeDesc">{typeDesc}</div>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
-  
+
       {/* Preț */}
       <div className="staysFilterBlock">
         <div className="staysRowBetween">
-          <div className="staysLabel">Preț pe noapte</div>
-  
-          {/* Monedă – mutată logic lângă preț */}
+          <div className="staysLabel">{t("stays.pricePerNight")}</div>
+
           <div className="staysInlineSelect">
-            <span className="staysTiny">Monedă</span>
-            <select
-              value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
-              aria-label="Monedă"
-            >
+            <span className="staysTiny">{t("stays.currency")}</span>
+            <select value={currency} onChange={(e) => setCurrency(e.target.value)} aria-label={t("stays.currency")}>
               <option value="RON">RON</option>
               <option value="EUR">EUR</option>
             </select>
           </div>
         </div>
-  
+
         <div className="staysPillSmall" style={{ marginBottom: 8 }}>
-          {moneyLabel(minPriceDraft ?? priceBounds.min, currency)} –{" "}
-          {moneyLabel(maxPriceDraft ?? priceBounds.max, currency)}
+          {moneyLabel(minPriceDraft ?? priceBounds.min, currency)} – {moneyLabel(maxPriceDraft ?? priceBounds.max, currency)}
         </div>
-  
+
         <div className="staysDualRange">
           <div className="staysDualLine">
-            <span className="staysTiny">Minim</span>
+            <span className="staysTiny">{t("stays.min")}</span>
             <input
               className="staysRange"
               type="range"
@@ -578,20 +566,16 @@ export default function Stays() {
               step={priceBounds.step}
               value={minPriceDraft ?? priceBounds.min}
               onChange={(e) => {
-                const v = clamp(
-                  parseInt(e.target.value, 10),
-                  priceBounds.min,
-                  maxPriceDraft ?? priceBounds.max
-                );
+                const v = clamp(parseInt(e.target.value, 10), priceBounds.min, maxPriceDraft ?? priceBounds.max);
                 setMinPriceDraft(v);
               }}
               onMouseUp={() => setMinPrice(minPriceDraft ?? priceBounds.min)}
               onTouchEnd={() => setMinPrice(minPriceDraft ?? priceBounds.min)}
             />
           </div>
-  
+
           <div className="staysDualLine">
-            <span className="staysTiny">Maxim</span>
+            <span className="staysTiny">{t("stays.max")}</span>
             <input
               className="staysRange"
               type="range"
@@ -600,11 +584,7 @@ export default function Stays() {
               step={priceBounds.step}
               value={maxPriceDraft ?? priceBounds.max}
               onChange={(e) => {
-                const v = clamp(
-                  parseInt(e.target.value, 10),
-                  minPriceDraft ?? priceBounds.min,
-                  priceBounds.max
-                );
+                const v = clamp(parseInt(e.target.value, 10), minPriceDraft ?? priceBounds.min, priceBounds.max);
                 setMaxPriceDraft(v);
               }}
               onMouseUp={() => setMaxPrice(maxPriceDraft ?? priceBounds.max)}
@@ -612,7 +592,7 @@ export default function Stays() {
             />
           </div>
         </div>
-  
+
         {(minPrice != null || maxPrice != null) && (
           <button
             className="staysGhostBtn"
@@ -625,20 +605,18 @@ export default function Stays() {
             }}
             style={{ marginTop: 10 }}
           >
-            <X size={16} /> Resetează prețul
+            <X size={16} /> {t("stays.resetPrice")}
           </button>
         )}
       </div>
-  
+
       {/* Rating */}
       <div className="staysFilterBlock">
         <div className="staysRowBetween">
-          <div className="staysLabel">Scor minim</div>
-          <div className="staysPillSmall">
-            {minRatingDraft.toFixed(1)}+
-          </div>
+          <div className="staysLabel">{t("stays.minScore")}</div>
+          <div className="staysPillSmall">{minRatingDraft.toFixed(1)}+</div>
         </div>
-  
+
         <input
           className="staysRange"
           type="range"
@@ -646,112 +624,102 @@ export default function Stays() {
           max="5"
           step="0.1"
           value={minRatingDraft}
-          onChange={(e) =>
-            setMinRatingDraft(clamp(parseFloat(e.target.value), 0, 5))
-          }
+          onChange={(e) => setMinRatingDraft(clamp(parseFloat(e.target.value), 0, 5))}
           onMouseUp={() => setMinRating(minRatingDraft)}
           onTouchEnd={() => setMinRating(minRatingDraft)}
         />
         <div className="staysTiny" style={{ marginTop: 6 }}>
-          Arată doar cazări cu rating egal sau mai mare
+          {t("stays.minScoreHint")}
         </div>
       </div>
-  
+
       {/* Facilități */}
       <div className="staysFilterBlock">
-        <div className="staysLabel">Facilități</div>
-  
+        <div className="staysLabel">{t("stays.amenities")}</div>
+
         <div className="staysAmenityGrid">
           {Object.values(AMENITY_BY_KEY)
             .slice(0, 18)
             .map((a) => {
               const Icon = a.icon || Sparkles;
               const on = amenities.has(a.key);
+              const label = a.labelKey ? t(a.labelKey) : a.label || a.key;
+
               return (
                 <button
                   key={a.key}
                   type="button"
                   className={`staysAmenityChip ${on ? "isOn" : ""}`}
                   onClick={() => toggleAmenity(a.key)}
-                  title={a.label}
+                  title={label}
                 >
                   <Icon size={16} />
-                  <span>{a.label}</span>
+                  <span>{label}</span>
                 </button>
               );
             })}
         </div>
       </div>
-  
+
       {/* Zonă hartă */}
       <div className="staysFilterBlock">
-        <div className="staysLabel">Zonă pe hartă</div>
-        <div className="staysHintBox">
-          Mută harta și apasă <strong>„Caută în această zonă”</strong>.
-        </div>
-  
+        <div className="staysLabel">{t("stays.mapArea")}</div>
+        <div className="staysHintBox">{t("stays.mapAreaHint")}</div>
+
         {boundsCommitted && (
-          <button
-            className="staysGhostBtn"
-            type="button"
-            onClick={() => setBoundsCommitted("")}
-          >
-            <X size={16} /> Resetează zona
+          <button className="staysGhostBtn" type="button" onClick={() => setBoundsCommitted("")}>
+            <X size={16} /> {t("stays.resetArea")}
           </button>
         )}
       </div>
     </aside>
   );
-  
 
   return (
-    <div className={`staysMapLayout ${filtersOpen ? "filtersOpen" : ""} ${mobileMapOpen ? "mapOpen" : ""}`}>
-      {/* Top / header (similar to screenshot) */}
+    <div className={`container staysMapLayout ${filtersOpen ? "filtersOpen" : ""} ${mobileMapOpen ? "mapOpen" : ""}`}>
       <div className="staysTopBar">
         <div className="staysTopInner">
           <div className="staysBrandLine">
             <div className="staysTitle">
               <MapPin size={16} />
-              <span>Cazări în Bucovina</span>
+              <span>{t("stays.title")}</span>
             </div>
             <div className="staysKicker">
               <Sparkles size={16} />
               <span>
-                <strong>{total}</strong> rezultate
+                <strong>{total}</strong> {t("stays.results", { count: total }).replace(String(total), "").trim()}
               </span>
             </div>
           </div>
 
-          {/* Mobile toggle list/map */}
           <div className="staysMobileToggles">
             <button
               className={`staysToggleBtn ${!mobileMapOpen ? "isOn" : ""}`}
               type="button"
               onClick={() => setMobileMapOpen(false)}
             >
-              <ListIcon size={18} /> Listă
+              <ListIcon size={18} /> {t("stays.list")}
             </button>
             <button
               className={`staysToggleBtn ${mobileMapOpen ? "isOn" : ""}`}
               type="button"
               onClick={() => setMobileMapOpen(true)}
             >
-              <MapIcon size={18} /> Hartă
+              <MapIcon size={18} /> {t("stays.map")}
             </button>
           </div>
 
-          {/* Search + sort */}
           <div className="staysControlRow">
             <div className="staysSearch">
               <Search size={18} className="staysFieldIcon" />
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="Caută cazare, ocalitate, nume..."
-                aria-label="Caută cazări"
+                placeholder={t("stays.searchPlaceholder")}
+                aria-label={t("stays.searchAria")}
               />
               {q?.length > 0 && (
-                <button className="staysClearBtn" type="button" onClick={() => setQ("")} aria-label="Șterge căutarea">
+                <button className="staysClearBtn" type="button" onClick={() => setQ("")} aria-label={t("stays.clearSearch")}>
                   <X size={16} />
                 </button>
               )}
@@ -759,59 +727,48 @@ export default function Stays() {
 
             <button className="staysFilterBtn" type="button" onClick={() => setFiltersOpen(true)}>
               <SlidersHorizontal size={18} />
-              <span>Filtre</span>
+              <span>{t("stays.filters")}</span>
               <ChevronDown size={16} className="staysChevron" />
             </button>
 
             <div className="staysSort">
               <ArrowUpDown size={18} className="staysFieldIcon" />
-              <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Sortează">
-                <option value="recommended">Recomandate</option>
-                <option value="ratingDesc">Rating (desc)</option>
-                <option value="priceAsc">Preț (mic)</option>
-                <option value="priceDesc">Preț (mare)</option>
+              <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Sort">
+                <option value="recommended">{locale === "ro-RO" ? "Recomandate" : "Recommended"}</option>
+                <option value="ratingDesc">{locale === "ro-RO" ? "Rating (desc)" : "Rating (desc)"}</option>
+                <option value="priceAsc">{locale === "ro-RO" ? "Preț (mic)" : "Price (low)"}</option>
+                <option value="priceDesc">{locale === "ro-RO" ? "Preț (mare)" : "Price (high)"}</option>
               </select>
             </div>
-
-           
           </div>
 
-          {/* active chips */}
           {activeChips.length ? (
-            <div className="staysActiveChips" aria-label="Filtre active">
+            <div className="staysActiveChips" aria-label={t("stays.activeFiltersAria")}>
               {activeChips.map((c) => (
-                <button key={c.key} type="button" className="staysActiveChip" onClick={c.onX} title="Elimină">
+                <button key={c.key} type="button" className="staysActiveChip" onClick={c.onX} title={t("stays.remove")}>
                   {c.label} <span className="staysChipX">✕</span>
                 </button>
               ))}
             </div>
           ) : (
-            <div className="staysHintInline">Tip: mută harta și apasă “Caută în această zonă”.</div>
+            <div className="staysHintInline">{t("stays.tipArea")}</div>
           )}
         </div>
       </div>
 
-      {/* MAIN 3-col layout: filters | map | list */}
       <main className="staysMain3">
-        {/* Filters (desktop) */}
-        {/* (dacă tu deja îl render-ezi în desktop în altă parte, lasă cum ai; aici nu-ți schimb layout-ul) */}
-
-        {/* Map */}
         <section className="staysColMap">
           <div className="staysMapCard">
             {!mapboxToken ? (
               <div className="staysEmptyState">
-                <h3>Mapbox token lipsă</h3>
-                <p>
-                  Tokenul a expirat sau nu este configurat. Contactează
-                  administratorul site-ului.
-                </p>
+                <h3>{t("stays.mapTokenMissingTitle")}</h3>
+                <p>{t("stays.mapTokenMissingText")}</p>
               </div>
             ) : (
               <>
                 {areaDirty ? (
                   <button className="staysSearchAreaBtn" type="button" onClick={applyAreaSearch}>
-                    Caută în această zonă
+                    {t("stays.searchThisArea")}
                   </button>
                 ) : null}
 
@@ -848,7 +805,7 @@ export default function Stays() {
                           }}
                           onMouseEnter={() => openPopup(id)}
                           onMouseLeave={() => scheduleClosePopup()}
-                          title={s.title || s.name || "Cazare"}
+                          title={s.title || s.name || "Stay"}
                         >
                           <MapPin size={16} />
                         </button>
@@ -871,7 +828,7 @@ export default function Stays() {
                         const s = mapItems.find((x) => x.id === popupId);
                         if (!s) return null;
 
-                        const title = s.title || s.name || "Cazare";
+                        const title = s.title || s.name || (locale === "ro-RO" ? "Cazare" : "Stay");
                         const loc = s.locality || s.city || s.location || "—";
                         const img = s.image || s.coverImage?.url || s.images?.[0]?.url || "";
                         const ccy = s.currency || currency || "RON";
@@ -902,11 +859,10 @@ export default function Stays() {
                                 <div className="staysMiniTop">
                                   <div className="staysMiniTitle">{title}</div>
 
-                                  {/* ❤️ Favorite in popup */}
                                   <button
                                     type="button"
                                     className={`staysFavBtnMini ${isFav ? "active" : ""} ${!isAuthenticated ? "locked" : ""}`}
-                                    aria-label={isFav ? "Scoate din favorite" : "Adaugă la favorite"}
+                                    aria-label={isFav ? (locale === "ro-RO" ? "Scoate din favorite" : "Remove from favorites") : (locale === "ro-RO" ? "Adaugă la favorite" : "Add to favorites")}
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       handleToggleFav(s.id);
@@ -921,8 +877,9 @@ export default function Stays() {
                                 <div className="staysMiniMeta">
                                   <span className="staysMiniRating">★ {rating ? rating.toFixed(1) : "—"}</span>
                                   <span className="staysMiniDot">•</span>
-                                  <span className="staysMiniReviews">{reviews} reviews</span>
+                                  <span className="staysMiniReviews">{t("stays.popup.reviews", { count: reviews })}</span>
                                   <span className="staysMiniDot">•</span>
+                                  <span className="staysMiniPrice">{price}</span>
                                 </div>
                               </div>
                             </button>
@@ -933,39 +890,38 @@ export default function Stays() {
                   ) : null}
                 </Map>
 
-                {!mapItems.length && !loading ? (
-                  <div className="staysMapNoPins">Nu există locații pe hartă pentru rezultatele curente.</div>
-                ) : null}
+                {!mapItems.length && !loading ? <div className="staysMapNoPins">{t("stays.noPins")}</div> : null}
               </>
             )}
           </div>
         </section>
 
-        {/* List */}
         <section className="staysColList">
           <div className="staysListHead">
-            <div className="staysListTitle">{loading ? "Loading..." : `${total} rezultate`}</div>
+            <div className="staysListTitle">
+              {loading ? t("stays.listHeadLoading") : t("stays.results", { count: total })}
+            </div>
           </div>
 
           {loading ? (
             <div className="staysEmptyState">
-              <h3>Se încarcă...</h3>
-              <p>Aducem cele mai noi cazări disponibile.</p>
+              <h3>{t("stays.loadingTitle")}</h3>
+              <p>{t("stays.loadingText")}</p>
             </div>
           ) : err ? (
             <div className="staysEmptyState">
-              <h3>Eroare</h3>
+              <h3>{t("stays.errorTitle")}</h3>
               <p>{err}</p>
               <button className="staysPrimaryBtn" type="button" onClick={() => window.location.reload()}>
-                Reîncearcă
+                {t("stays.retry")}
               </button>
             </div>
           ) : results.length === 0 ? (
             <div className="staysEmptyState">
-              <h3>Nimic găsit</h3>
-              <p>Încearcă să schimbi filtrele sau să cauți altceva.</p>
+              <h3>{t("stays.emptyTitle")}</h3>
+              <p>{t("stays.emptyText")}</p>
               <button className="staysPrimaryBtn" type="button" onClick={clearFilters}>
-                Resetează filtrele
+                {t("stays.resetFilters")}
               </button>
             </div>
           ) : (
@@ -974,7 +930,6 @@ export default function Stays() {
                 {results.map((s) => {
                   const id = s.id || s._id;
                   const stay = { ...s, id };
-                  const isFav = favIds?.has?.(id);
 
                   return (
                     <div
@@ -985,7 +940,6 @@ export default function Stays() {
                         flyToStay(stay);
                       }}
                     >
-                    
                       <StayCard
                         stay={stay}
                         active={activeId === id}
@@ -1001,26 +955,14 @@ export default function Stays() {
               </div>
 
               <div className="staysPager">
-                <button
-                  className="staysPageBtn"
-                  type="button"
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                >
-                  ← Înapoi
+                <button className="staysPageBtn" type="button" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
+                  {t("stays.pagerPrev")}
                 </button>
 
-                <div className="staysPageInfo">
-                  Pagina <strong>{page}</strong> din <strong>{totalPages}</strong>
-                </div>
+                <div className="staysPageInfo">{t("stays.pagerInfo", { page, total: totalPages })}</div>
 
-                <button
-                  className="staysPageBtn"
-                  type="button"
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                >
-                  Înainte →
+                <button className="staysPageBtn" type="button" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
+                  {t("stays.pagerNext")}
                 </button>
               </div>
             </>
@@ -1028,22 +970,22 @@ export default function Stays() {
         </section>
       </main>
 
-      {/* Mobile filters drawer */}
       <div className={`staysDrawerOverlay ${filtersOpen ? "open" : ""}`} onClick={() => setFiltersOpen(false)} />
       <div className={`staysDrawer ${filtersOpen ? "open" : ""}`} role="dialog" aria-modal="true">
         <div className="staysDrawerTop">
-          <h3>Filtre</h3>
-          <button className="staysIconBtn" type="button" onClick={() => setFiltersOpen(false)}>
+          <h3>{t("stays.filtersTitle")}</h3>
+          <button className="staysIconBtn" type="button" onClick={() => setFiltersOpen(false)} aria-label={t("stays.drawerClose")}>
             <X size={18} />
           </button>
         </div>
         <div className="staysDrawerBody">{Filters}</div>
         <div className="staysDrawerBottom">
           <button className="staysGhostBtn" type="button" onClick={clearFilters}>
-            Resetează
+            {t("stays.reset")}
           </button>
           <button className="staysPrimaryBtn" type="button" onClick={() => setFiltersOpen(false)}>
-Vezi rezultate          </button>
+            {t("stays.seeResults")}
+          </button>
         </div>
       </div>
     </div>

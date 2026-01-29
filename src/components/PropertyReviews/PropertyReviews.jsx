@@ -9,25 +9,23 @@ import {
 } from "../../api/reviewService";
 import "./PropertyReviews.css";
 import { useAuthStore } from "../../stores/authStore";
-import { Star, ShieldCheck, ArrowUpDown } from "lucide-react";
+import { Star, ShieldCheck, ArrowUpDown, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
-
-
-
-function initials(name = "") {
+function initials(name = "", fallback = "U") {
   const parts = String(name).trim().split(/\s+/).filter(Boolean);
-  return parts.slice(0, 2).map((p) => p[0].toUpperCase()).join("") || "U";
+  return parts.slice(0, 2).map((p) => p[0].toUpperCase()).join("") || fallback;
 }
 
 function clamp(n, a, b) {
   return Math.max(a, Math.min(b, n));
 }
 
-function Stars({ value = 0, size = 14 }) {
+function Stars({ value = 0, t }) {
   const v = clamp(Number(value) || 0, 0, 5);
-  const full = Math.round(v);
+  const full = Math.floor(v)
   return (
-    <span className="prStarsInline" aria-label={`${v} din 5`}>
+    <span className="prStarsInline" aria-label={t("reviews.starsAria", { value: v })}>
       {"★".repeat(full)}
       {"☆".repeat(5 - full)}
     </span>
@@ -48,6 +46,7 @@ function SkeletonItem() {
 }
 
 export default function PropertyReviews({ propertyId }) {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
 
@@ -66,41 +65,29 @@ export default function PropertyReviews({ propertyId }) {
   const [hasMore, setHasMore] = useState(true);
 
   // sort
-  // backend currently sorts by newest. We'll do client-side sort for now.
   const [sort, setSort] = useState("newest"); // newest | ratingDesc
+
+  const locale = useMemo(() => {
+    // map simplu; dacă ai i18n setat "ro"/"en", merge.
+    return i18n.language?.startsWith("ro") ? "ro-RO" : "en-US";
+  }, [i18n.language]);
 
   const avg = useMemo(() => {
     if (!reviews.length) return 0;
     const s = reviews.reduce((a, r) => a + (r.rating || 0), 0) / reviews.length;
-    return Math.round(s * 10) / 10;
+    return Math.floor(s * 10) / 10;
   }, [reviews]);
-
-
-  const handleDelete = async (reviewId) => {
-    try {
-      await deletePropertyReview(propertyId, reviewId);
-      toast.success("Recenzie ștearsă");
-  
-      setReviews((prev) => prev.filter((r) => r.id !== reviewId));
-      setMyReview(null);
-  
-      // opțional: recalcul corect pentru avg în UI (doar pentru secțiune)
-      // load(1);
-    } catch (e) {
-      toast.error("Nu am putut șterge", {
-        description: e?.message || "Încearcă din nou.",
-      });
-    }
-  };
-  
 
   const sortedReviews = useMemo(() => {
     const arr = [...reviews];
     if (sort === "ratingDesc") {
-      arr.sort((a, b) => (b.rating || 0) - (a.rating || 0) || (new Date(b.createdAt) - new Date(a.createdAt)));
+      arr.sort(
+        (a, b) =>
+          (b.rating || 0) - (a.rating || 0) ||
+          (new Date(b.createdAt) - new Date(a.createdAt))
+      );
       return arr;
     }
-    // newest default
     arr.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     return arr;
   }, [reviews, sort]);
@@ -108,6 +95,7 @@ export default function PropertyReviews({ propertyId }) {
   const load = async (pageToLoad = 1) => {
     try {
       if (pageToLoad === 1) setLoading(true);
+
       const data = await getPropertyReviews(propertyId, {
         page: pageToLoad,
         limit: PAGE_SIZE,
@@ -119,7 +107,9 @@ export default function PropertyReviews({ propertyId }) {
       setHasMore(items.length === PAGE_SIZE);
       setPage(pageToLoad);
     } catch (e) {
-      toast.error("Eroare", { description: e?.message || "Nu am putut încărca recenziile." });
+      toast.error(t("reviews.toasts.loadErrorTitle"), {
+        description: e?.message || t("reviews.toasts.loadErrorDesc"),
+      });
     } finally {
       if (pageToLoad === 1) setLoading(false);
     }
@@ -128,6 +118,7 @@ export default function PropertyReviews({ propertyId }) {
   useEffect(() => {
     if (!propertyId) return;
     load(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [propertyId]);
 
   useEffect(() => {
@@ -145,48 +136,80 @@ export default function PropertyReviews({ propertyId }) {
   const userCanReview = !!user && !myReview;
 
   const handleAddReview = async () => {
-    if (!user) return navigate("/auth/login");
-    if (!comment.trim()) return;
+    if (!user) {
+      toast.info(t("reviews.toasts.loginTitle"), {
+        description: t("reviews.toasts.loginDesc"),
+      });
+      return navigate("/auth/login");
+    }
+
+    if (!comment.trim()) {
+      toast.error(t("reviews.toasts.commentTitle"), {
+        description: t("reviews.toasts.commentDesc"),
+      });
+      return;
+    }
 
     try {
       setSubmitting(true);
+
       const created = await createPropertyReview(propertyId, {
         rating,
         comment: comment.trim(),
       });
 
-      toast.success("Recenzie trimisă", { description: "Mulțumim! Recenzia ta a fost publicată." });
+      toast.success(t("reviews.toasts.sentTitle"), {
+        description: t("reviews.toasts.sentDesc"),
+      });
 
-      // add to top (newest)
+      // Add to top (newest)
       setReviews((prev) => [
         {
           id: created.id,
           rating: created.rating,
           comment: created.comment,
           createdAt: created.createdAt,
-          userName: created.userName || user?.name || "Tu",
-          userId: String(user?._id || ""), // ✅ IMPORTANT pentru butonul Șterge
+          userName: created.userName || user?.name || t("reviews.you"),
+          userId: String(user?._id || ""),
         },
         ...prev,
       ]);
-      
 
       setMyReview(created);
       setComment("");
       setRating(5);
     } catch (e) {
-      toast.error("Nu am putut trimite", { description: e?.message || "Încearcă din nou." });
+      toast.error(t("reviews.toasts.sendErrorTitle"), {
+        description: e?.message || t("reviews.toasts.sendErrorDesc"),
+      });
     } finally {
       setSubmitting(false);
     }
   };
 
+  const handleDelete = async (reviewId) => {
+    const ok = window.confirm(t("reviews.confirmDelete"));
+    if (!ok) return;
+
+    try {
+      await deletePropertyReview(propertyId, reviewId);
+      toast.success(t("reviews.toasts.deletedTitle"));
+
+      setReviews((prev) => prev.filter((r) => r.id !== reviewId));
+      setMyReview(null);
+    } catch (e) {
+      toast.error(t("reviews.toasts.deleteErrorTitle"), {
+        description: e?.message || t("reviews.toasts.deleteErrorDesc"),
+      });
+    }
+  };
+
   return (
-    <section className="prWrap">
+    <section className="prWrap" aria-label={t("reviews.aria.section")}>
       {/* Header */}
       <div className="prHeader">
         <div className="prHeaderLeft">
-          <h2 className="prTitle">Recenzii</h2>
+          <h2 className="prTitle">{t("reviews.title")}</h2>
 
           {sortedReviews.length ? (
             <div className="prSummary">
@@ -195,46 +218,50 @@ export default function PropertyReviews({ propertyId }) {
                 <b>{avg.toFixed(1).replace(".", ",")}</b>
               </span>
               <span className="prSummaryDot">•</span>
-              <span className="prSummaryCount">{sortedReviews.length} recenzii</span>
+              <span className="prSummaryCount">
+                {t("reviews.count", { count: sortedReviews.length })}
+              </span>
             </div>
           ) : (
-            <div className="prSummary prMuted">Fii primul care lasă o recenzie.</div>
+            <div className="prSummary prMuted">{t("reviews.firstHint")}</div>
           )}
         </div>
 
         <div className="prHeaderRight">
           <div className="prSort">
             <ArrowUpDown size={14} />
-            <select value={sort} onChange={(e) => setSort(e.target.value)}>
-              <option value="newest">Cele mai recente</option>
-              <option value="ratingDesc">Rating (desc)</option>
+            <select
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+              aria-label={t("reviews.sort.aria")}
+            >
+              <option value="newest">{t("reviews.sort.newest")}</option>
+              <option value="ratingDesc">{t("reviews.sort.ratingDesc")}</option>
             </select>
           </div>
         </div>
       </div>
 
-      {/* CTA - neautentificat */}
+      {/* CTA - not logged */}
       {!user ? (
         <div className="prNotice">
           <div className="prNoticeTop">
             <ShieldCheck size={16} />
             <div>
-              <div className="prNoticeTitle">Autentifică-te pentru a lăsa o recenzie</div>
-              <div className="prNoticeDesc">Recenziile ajută alți oaspeți să aleagă mai bine.</div>
+              <div className="prNoticeTitle">{t("reviews.loginCard.title")}</div>
+              <div className="prNoticeDesc">{t("reviews.loginCard.desc")}</div>
             </div>
           </div>
 
           <button className="prBtnPrimary" onClick={() => navigate("/auth/login")}>
-            Autentificare
+            {t("reviews.loginCard.cta")}
           </button>
         </div>
       ) : null}
 
-      {/* User already reviewed */}
+      {/* already reviewed */}
       {user && !userCanReview ? (
-        <div className="prNotice prNoticeSlim">
-          Ai lăsat deja o recenzie pentru această proprietate.
-        </div>
+        <div className="prNotice prNoticeSlim">{t("reviews.alreadyReviewed")}</div>
       ) : null}
 
       {/* Form */}
@@ -242,24 +269,27 @@ export default function PropertyReviews({ propertyId }) {
         <div className="prForm">
           <div className="prFormHeader">
             <div>
-              <div className="prFormTitle">Lasă o recenzie</div>
-              <div className="prFormSub">Spune pe scurt cum a fost experiența ta.</div>
+              <div className="prFormTitle">{t("reviews.form.title")}</div>
+              <div className="prFormSub">{t("reviews.form.sub")}</div>
             </div>
 
-            <div className="prRatingPill">
-              <span>Rating:</span>
-              <b>{rating}/5</b>
+            <div className="prRatingPill" aria-label={t("reviews.form.ratingAria")}>
+              <span>{t("reviews.form.rating")}:</span>
+              <b>
+                {rating}/5
+              </b>
             </div>
           </div>
 
-          <div className="prStarsPicker">
+          <div className="prStarsPicker" aria-label={t("reviews.form.pickRatingAria")}>
             {[1, 2, 3, 4, 5].map((s) => (
               <button
                 key={s}
                 type="button"
                 onClick={() => setRating(s)}
                 className={`prStarBtn ${s <= rating ? "isOn" : ""}`}
-                aria-label={`${s} stele`}
+                aria-label={t("reviews.form.starBtnAria", { value: s })}
+                title={t("reviews.form.starBtnTitle", { value: s })}
               >
                 ★
               </button>
@@ -269,21 +299,20 @@ export default function PropertyReviews({ propertyId }) {
           <textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            placeholder="Scrie părerea ta despre această cazare..."
+            placeholder={t("reviews.form.placeholder")}
             rows={4}
+            maxLength={900}
           />
 
           <div className="prFormFooter">
-            <div className="prTiny">
-              Recomandare: menționează curățenia, check-in-ul, liniștea, dotările.
-            </div>
+            <div className="prTiny">{t("reviews.form.tip")}</div>
 
             <button
               className="prBtnPrimary"
               onClick={handleAddReview}
               disabled={submitting || !comment.trim()}
             >
-              {submitting ? "Se trimite..." : "Trimite recenzia"}
+              {submitting ? t("reviews.form.sending") : t("reviews.form.submit")}
             </button>
           </div>
         </div>
@@ -299,29 +328,38 @@ export default function PropertyReviews({ propertyId }) {
           </>
         ) : sortedReviews.length === 0 ? (
           <div className="prEmpty">
-            <div className="prEmptyTitle">Nu există încă recenzii</div>
-            <div className="prEmptyDesc">Cazarea e nouă sau nu a primit încă feedback.</div>
+            <div className="prEmptyTitle">{t("reviews.empty.title")}</div>
+            <div className="prEmptyDesc">{t("reviews.empty.desc")}</div>
           </div>
         ) : (
           sortedReviews.map((r) => (
             <div key={r.id} className="prItem">
               <div className="prAvatar" title={r.userName}>
-                {initials(r.userName)}
+                {initials(r.userName, t("reviews.avatarFallback"))}
               </div>
 
               <div className="prBody">
                 <div className="prTopRow">
-  <span className="prName">{r.userName}</span>
-  <Stars value={r.rating} />
-  <span className="prDate">{new Date(r.createdAt).toLocaleDateString("ro-RO")}</span>
+                  <span className="prName">{r.userName}</span>
+                  <Stars value={r.rating} t={t} />
 
-  {user && r.userId && String(r.userId) === String(user._id) ? (
-    <button className="prBtnTiny" onClick={() => handleDelete(r.id)}>
-      Șterge
-    </button>
-  ) : null}
-</div>
+                  <span className="prDate">
+                    {r.createdAt ? new Date(r.createdAt).toLocaleDateString(locale) : "—"}
+                  </span>
 
+                  {user && r.userId && String(r.userId) === String(user._id) ? (
+                    <button
+                      className="prBtnTiny"
+                      type="button"
+                      onClick={() => handleDelete(r.id)}
+                      aria-label={t("reviews.deleteAria")}
+                      title={t("reviews.delete")}
+                    >
+                      <Trash2 size={14} />
+                      {t("reviews.delete")}
+                    </button>
+                  ) : null}
+                </div>
 
                 <p className="prComment">{r.comment}</p>
               </div>
@@ -334,15 +372,15 @@ export default function PropertyReviews({ propertyId }) {
       {!loading && hasMore ? (
         <div className="prLoadMoreWrap">
           <button className="prBtnGhost" onClick={() => load(page + 1)}>
-            Vezi mai multe recenzii
+            {t("reviews.loadMore")}
           </button>
         </div>
       ) : null}
 
-      {/* Paging loading hint */}
       {!loading && !hasMore && sortedReviews.length > 0 ? (
-        <div className="prEndHint">Ai ajuns la final.</div>
+        <div className="prEndHint">{t("reviews.end")}</div>
       ) : null}
     </section>
   );
 }
+

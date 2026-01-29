@@ -24,9 +24,10 @@ const navigate = useNavigate();
         ) : null}
 
         <div className="mtActions">
-          <button className="mtBtn" onClick={() => navigate("/")}>
-            Reîncearcă
-          </button>
+        <button className="mtBtn" onClick={() => window.location.reload()}>
+  Reîncearcă
+</button>
+
         </div>
       </div>
     </div>

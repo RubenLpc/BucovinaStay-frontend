@@ -1,0 +1,1048 @@
+{
+  "nav": {
+    "home": "Acasă",
+    "stays": "Cazări",
+    "dashboard": "Dashboard"
+  },
+  "favorites": {
+    "title": "Favorite",
+    "seeAll": "Vezi toate favoritele",
+    "empty": "N-ai favorite încă. Apasă ❤️ la o cazare ca să o salvezi."
+  },
+  "brand": {
+    "main": "Bucovina",
+    "accent": "Stay"
+  },
+  "lang": {
+    "ro": "RO",
+    "en": "EN",
+    "switchAria": "Schimbă limba"
+  },
+
+  "ai": {
+    "placeholder": "Descrie cazarea ideală…",
+    "search": "Caută",
+    "searching": "Se caută…",
+    "aria": "Căutare cu AI"
+  },
+
+  "hl": {
+    "kicker": "BucovinaStay Picks",
+    "titleDefault": "Cazări recomandate",
+    "subtitleDefault": "Selecție atent aleasă pentru Bucovina",
+    "seeAll": "Vezi toate",
+    "progressAria": "Progres carusel",
+    "scrollLeft": "Derulează la stânga",
+    "scrollRight": "Derulează la dreapta",
+    "listAria": "Cazări recomandate",
+    "emptyTitle": "Nu avem recomandări momentan",
+    "emptyText": "Încearcă să alegi alt oraș sau revino mai târziu.",
+    "openAria": "Deschide cazarea {{title}}",
+    "fallbackAlt": "Cazare",
+    "favAdd": "Adaugă la favorite",
+    "favRemove": "Scoate din favorite",
+    "ratingTitle": "Rating",
+    "priceNightTitle": "Preț pe noapte",
+    "perNight": "/ noapte",
+    "maxGuests": "max",
+    "guests": "oaspeți",
+    "seeDetails": "Vezi detalii"
+  },
+
+  "badges": {
+    "top": { "label": "Top", "desc": "Evaluări excelente de la oaspeți" },
+    "spa": {
+      "label": "Spa & Relax",
+      "desc": "Dotări pentru relaxare (spa, saună, jacuzzi)"
+    },
+    "new": { "label": "Nou", "desc": "Anunț publicat recent" },
+    "value": {
+      "label": "Best value",
+      "desc": "Raport foarte bun calitate–preț"
+    },
+    "view": {
+      "label": "Priveliște",
+      "desc": "Vedere deosebită (munte / natură)"
+    },
+    "family": {
+      "label": "Familie",
+      "desc": "Potrivit pentru familii sau grupuri"
+    },
+    "breakfast": {
+      "label": "Mic dejun",
+      "desc": "Mic dejun inclus sau disponibil"
+    },
+    "recommended": {
+      "label": "Recomandat",
+      "desc": "Selecție recomandată de platformă"
+    }
+  },
+
+  "home": {
+    "featuredTitle": "Cazări recomandate",
+    "featuredSubtitle": "Selecție atent aleasă pentru Bucovina",
+    "aiTitle": "Rezultate pentru: “{{query}}”",
+    "aiSubtitle": "Potrivire semantică (AI)"
+  },
+
+  "trailsHero": {
+    "badge": "Trasee montane în Bucovina",
+    "titleLine1": "Descoperă",
+    "titleHighlight": "poteci",
+    "titleLine2": "care îți rămân în suflet",
+    "subtitle": "Idei de drumeții, nivel de dificultate, durată și linkuri către ghiduri oficiale. Alege rapid trasee potrivite pentru weekend.",
+    "ctaTrails": "Vezi trasee",
+    "ctaStays": "Vezi cazări",
+    "feature1Title": "Trasee curate",
+    "feature1Sub": "Structurate + ușor de filtrat",
+    "feature2Title": "Nivel clar",
+    "feature2Sub": "Ușor / Mediu / Greu"
+  },
+
+  "profile": {
+    "titleHint": "Gestionează datele contului.",
+    "edit": "Editează",
+    "cancel": "Anulează",
+    "logout": "Deconectare",
+    "email": "Email",
+    "role": "Rol",
+    "phone": "Telefon",
+    "memberSince": "Membru din",
+    "name": "Nume",
+    "phonePlaceholder": "Ex: 0740 000 000",
+    "namePlaceholder": "Numele tău",
+    "save": "Salvează",
+    "saving": "Se salvează...",
+    "backToStays": "Înapoi la cazări",
+    "discard": "Renunță"
+  },
+  "roles": {
+    "guest": "Turist",
+    "host": "Gazdă",
+    "admin": "Administrator",
+    "user": "Utilizator"
+  },
+  "toasts": {
+    "loggedOut": "Te-ai delogat",
+    "loggedOutDesc": "Pe curând 👋",
+    "nameRequired": "Numele este obligatoriu",
+    "profileUpdated": "Profil actualizat",
+    "profileUpdatedDesc": "Modificările au fost salvate cu succes.",
+    "saveError": "Eroare la salvare",
+    "tryAgain": "Încearcă din nou.",
+    "highlightsLoadFail": "Nu am putut încărca cazări recomandate",
+    "aiNoResults": "Nu am găsit rezultate.",
+    "aiNoResultsDesc": "Încearcă o descriere diferită.",
+    "aiFailed": "Căutarea AI a eșuat.",
+    "authRequiredTitle": "Trebuie să fii autentificat",
+    "authRequiredDesc": "Autentifică-te pentru a salva cazări la favorite.",
+    "favUpdateFail": "Nu am putut actualiza favoritele.",
+    "authRequired": "Trebuie să fii autentificat",
+    "favUpdateFailed": "Nu am putut actualiza favoritele."
+  },
+
+  "auth": {
+    "loginTitle": "Autentificare",
+    "loginSubtitle": "Intră în contul tău BucovinaStay",
+    "email": "Email",
+    "password": "Parolă",
+    "loginBtn": "Autentificare",
+    "loggingIn": "Se autentifică...",
+    "missingFields": "Completează emailul și parola.",
+    "loginFailed": "Autentificare eșuată.",
+    "noAccount": "Nu ai cont?",
+    "createOne": "Creează unul",
+
+    "registerTitle": "Creează cont",
+    "registerSubtitle": "Alătură-te BucovinaStay și descoperă Bucovina ca un localnic.",
+    "fullName": "Nume complet",
+    "createAccount": "Creează cont",
+    "creatingAccount": "Se creează contul...",
+    "alreadyHave": "Ai deja cont?",
+    "signIn": "Autentifică-te",
+
+    "hostOptIn": "Vreau să public cazări (Host)",
+    "registerMissingFields": "Completează numele, emailul și parola.",
+    "registerFailed": "Nu am putut crea contul.",
+
+    "login": "Autentificare",
+    "logout": "Deconectare",
+    "profile": "Profil"
+  },
+
+  "homeCategories": {
+    "title": "Categorii",
+    "seeAll": "Vezi toate"
+  },
+  "homeFinalCTA": {
+    "title": "Gata de o escapadă în Bucovina?",
+    "subtitle": "Explorează toate cazările sau publică rapid un anunț ca gazdă.",
+    "primary": "Explorează cazările",
+    "secondary": "Devino gazdă",
+    "kicker": "BucovinaStay"
+  },
+
+  "homeTrust": {
+    "aria": "Încredere și siguranță",
+
+    "kickerRating": "Evaluări oaspeți",
+    "kickerVerified": "Verificat",
+    "kickerSecure": "Încredere & siguranță",
+    "kickerStays": "Bucovina",
+
+    "ratingDesc": "Bazat pe {{count}} recenzii reale",
+    "ratingPill": "Live",
+
+    "verifiedTitle": "{{count}} gazde verificate",
+    "verifiedTitleEmpty": "Gazde verificate",
+    "verifiedDesc": "Gazdele parcurg pași de verificare pentru siguranță și încredere.",
+    "verifiedPill": "Verificat",
+
+    "secureTitle": "Sigur & protejat",
+    "secureDesc": "Datele tale sunt protejate, iar echipa noastră te ajută rapid dacă apar probleme.",
+    "securePill": "Siguranță",
+
+    "staysTitle": "{{count}} cazări atent alese",
+    "staysTitleEmpty": "Cazări atent alese",
+    "staysDesc": "Listări selectate manual, dedicate zonei Bucovina.",
+    "pillCurated": "Selectat",
+
+    "pillLive": "Live",
+
+    "newTitle": "Platformă nouă",
+    "newDesc": "Primele recenzii apar după primele șederi."
+  },
+
+  "amenityCats": {
+    "essentials": "Esențiale",
+    "accessParking": "Acces & parcare",
+    "kitchen": "Bucătărie",
+    "comfort": "Confort",
+    "entertainment": "Entertainment",
+    "family": "Family",
+    "outdoorView": "Exterior & priveliște",
+    "wellness": "Wellness",
+    "services": "Servicii",
+    "pets": "Animale",
+    "safety": "Siguranță"
+  },
+  "amenities": {
+    "wifi": "Wi-Fi",
+    "heating": "Încălzire",
+    "hotWater": "Apă caldă",
+    "towels": "Prosoape",
+    "bedLinen": "Lenjerie de pat",
+    "hairDryer": "Uscător de păr",
+    "essentials": "Consumabile de bază",
+
+    "parking": "Parcare",
+    "freeStreetParking": "Parcare la stradă (gratuit)",
+    "privateEntrance": "Intrare privată",
+    "selfCheckIn": "Self check-in",
+
+    "kitchen": "Bucătărie",
+    "fridge": "Frigider",
+    "stove": "Plită / aragaz",
+    "oven": "Cuptor",
+    "microwave": "Cuptor cu microunde",
+    "coffeeMaker": "Espressor / cafea",
+    "kettle": "Fierbător",
+    "dishesAndCutlery": "Veselă & tacâmuri",
+    "bbq": "Grătar / BBQ",
+
+    "ac": "Aer condiționat",
+    "fireplace": "Șemineu",
+    "washer": "Mașină de spălat",
+    "iron": "Fier de călcat",
+    "workspace": "Spațiu de lucru",
+
+    "tv": "TV",
+    "streaming": "Streaming (Netflix etc.)",
+    "boardGames": "Jocuri de societate",
+
+    "crib": "Pătuț copil",
+    "highChair": "Scaun înalt copil",
+
+    "terrace": "Terasă",
+    "garden": "Grădină",
+    "mountainView": "Vedere la munte",
+
+    "sauna": "Saună",
+    "hotTub": "Ciubăr / hot tub",
+    "spa": "SPA",
+
+    "breakfast": "Mic dejun",
+
+    "petFriendly": "Pet friendly",
+
+    "smokeAlarm": "Detector de fum",
+    "fireExtinguisher": "Extinctor",
+    "firstAidKit": "Trusă de prim ajutor",
+    "cctvOutside": "Camere la exterior"
+  },
+  "propertyTypes": {
+    "cabana": { "label": "Cabane", "desc": "Natură & liniște" },
+    "pensiune": { "label": "Pensiuni", "desc": "Primitoare, tradiționale" },
+    "hotel": { "label": "Hoteluri", "desc": "Confort complet" },
+    "apartament": { "label": "Apartamente", "desc": "Urban & practic" },
+    "vila": { "label": "Vile", "desc": "Spațiu & intimitate" },
+    "tiny_house": { "label": "Tiny house", "desc": "Minimal & cozy" }
+  },
+
+  "stays": {
+    "title": "Cazări în Bucovina",
+    "results": "{{count}} rezultate",
+    "list": "Listă",
+    "map": "Hartă",
+
+    "searchPlaceholder": "Caută cazare, localitate, nume…",
+    "searchAria": "Caută cazări",
+    "clearSearch": "Șterge căutarea",
+
+    "filters": "Filtre",
+    "filtersTitle": "Filtre",
+    "filtersHint": "Ajustează rezultatele ca să găsești cazarea potrivită.",
+    "reset": "Resetează",
+
+    "propertyType": "Tip proprietate",
+    "allTypes": "Toate",
+    "allTypesDesc": "Include toate tipurile",
+
+    "pricePerNight": "Preț pe noapte",
+    "currency": "Monedă",
+    "min": "Minim",
+    "max": "Maxim",
+    "resetPrice": "Resetează prețul",
+
+    "minScore": "Scor minim",
+    "minScoreHint": "Arată doar cazări cu rating egal sau mai mare.",
+
+    "amenities": "Facilități",
+
+    "mapArea": "Zonă pe hartă",
+    "mapAreaHint": "Mută harta și apasă „Caută în această zonă”.",
+    "searchThisArea": "Caută în această zonă",
+    "resetArea": "Resetează zona",
+    "areaSet": "Zonă setată",
+
+    "activeFiltersAria": "Filtre active",
+    "remove": "Elimină",
+    "tipArea": "Tip: mută harta și apasă „Caută în această zonă”.",
+
+    "mapTokenMissingTitle": "Mapbox token lipsă",
+    "mapTokenMissingText": "Harta nu este configurată corect. Verifică setarea VITE_MAPBOX_TOKEN.",
+    "noPins": "Nu există locații pe hartă pentru rezultatele curente.",
+
+    "popup": {
+      "reviews": "{{count}} recenzii"
+    },
+
+    "listHeadLoading": "Se încarcă…",
+    "loadingTitle": "Se încarcă…",
+    "loadingText": "Îți aducem cele mai bune rezultate disponibile.",
+
+    "errorTitle": "Eroare",
+    "retry": "Reîncearcă",
+
+    "emptyTitle": "Nimic găsit",
+    "emptyText": "Schimbă filtrele sau încearcă o căutare diferită.",
+    "resetFilters": "Resetează filtrele",
+
+    "pagerPrev": "← Înapoi",
+    "pagerNext": "Înainte →",
+    "pagerInfo": "Pagina {{page}} din {{total}}",
+
+    "drawerClose": "Închide",
+    "seeResults": "Vezi rezultate",
+
+    "chips": {
+      "minPrice": "min {{value}}",
+      "maxPrice": "max {{value}}",
+      "more": "+{{count}}"
+    }
+  },
+
+  "stayCard": {
+    "open": "Deschide {{title}}",
+    "keyAmenities": "Facilități cheie",
+    "rating": "Rating",
+    "capacity": "Capacitate",
+    "maxGuests": "max {{count}} oaspeți",
+    "night": "/ noapte",
+    "priceHint": "Preț orientativ • poate varia sezonier",
+    "seeDetails": "Vezi detalii",
+    "see": "Vezi",
+    "addFav": "Adaugă la favorite",
+    "removeFav": "Scoate din favorite",
+    "noTitle": "Fără titlu",
+
+    "type": {
+      "apartament": "Apartament",
+      "pensiune": "Pensiune",
+      "cabana": "Cabană",
+      "hotel": "Hotel",
+      "vila": "Vilă",
+      "tiny_house": "Tiny House",
+      "studio": "Studio"
+    },
+
+    "facts": {
+      "beds": "{{count}} paturi",
+      "baths": "{{count}} băi",
+      "sqm": "{{count}} m²"
+    }
+  },
+
+  "trails": {
+    "title": "Trasee montane",
+    "subtitle": "Alege un traseu și deschide ghidul într-un tab nou (surse publice/oficiale).",
+    "countTitle": "Număr rezultate",
+    "results": "{{count}} rezultate",
+
+    "searchPlaceholder": "Caută: Rarău, Călimani, Vatra Dornei...",
+    "searchAria": "Caută trasee",
+    "filterDifficulty": "Filtru dificultate",
+    "sortAria": "Sortează trasee",
+    "quickFilters": "Filtre rapide",
+    "listAria": "Lista trasee",
+
+    "all": "Toate",
+    "see": "Vezi",
+    "openGuideHint": "Deschide ghidul",
+    "openGuideTitle": "Deschide ghidul",
+    "openGuideAria": "Deschide ghidul pentru {{name}}",
+
+    "sort": {
+      "recommended": "Recomandate",
+      "duration": "Durată (mică → mare)",
+      "difficulty": "Dificultate (ușor → greu)"
+    },
+
+    "difficulty": {
+      "Ușor": "Ușor",
+      "Mediu": "Mediu",
+      "Greu": "Greu"
+    },
+
+    "meta": {
+      "durationDistance": "{{hours}}h • {{km}} km"
+    },
+
+    "tags": {
+      "view": "Priveliște",
+      "family": "Familie",
+      "forest": "Pădure",
+      "alpine": "Alpin",
+      "nature": "Natură"
+    },
+
+    "tagLabels": {
+      "view": "priveliște",
+      "family": "familie",
+      "forest": "pădure",
+      "ridge": "creastă",
+      "alpine": "alpin",
+      "long": "lung",
+      "relax": "relax",
+      "nature": "natură"
+    },
+
+    "empty": "Nu am găsit trasee pentru filtrul ales."
+  },
+
+  "common": {
+    "close": "Închide"
+  },
+  "propertyPage": {
+    "fallbackTitle": "Proprietate",
+    "regionFallback": "Bucovina",
+
+    "errors": {
+      "title": "Nu am putut încărca anunțul",
+      "loadFailed": "Nu am putut încărca proprietatea."
+    },
+
+    "actions": {
+      "share": "Distribuie",
+      "save": "Salvează",
+      "saved": "Salvat",
+      "addToFav": "Adaugă la favorite",
+      "removeFromFav": "Scoate din favorite",
+      "showMore": "Afișează mai multe",
+      "showAllAmenities": "Afișează toate dotările ({{count}})"
+    },
+
+    "toasts": {
+      "shared": "Distribuit",
+      "linkCopied": {
+        "title": "Link copiat",
+        "desc": "Poți distribui acum anunțul."
+      },
+      "authRequired": {
+        "title": "Autentificare necesară",
+        "desc": "Autentifică-te ca să salvezi la favorite."
+      },
+      "favError": {
+        "title": "Eroare",
+        "desc": "Nu am putut actualiza favoritele."
+      },
+      "messageSent": "Mesaj trimis",
+      "phoneMissing": {
+        "title": "Număr indisponibil",
+        "desc": "Gazda nu a setat încă un număr de telefon."
+      },
+      "reviewsSoon": {
+        "title": "Recenzii",
+        "desc": "În curând: recenzii detaliate."
+      }
+    },
+
+    "headlineWithCity": "{{type}} în {{city}}",
+    "detailsTitle": "Detalii cazare",
+
+    "facts": {
+      "entirePlace": "Întreaga unitate • {{type}}",
+      "guests": "{{count}} oaspeți",
+      "maxGuests": "Max {{count}} oaspeți"
+    },
+
+    "highlights": {
+      "topRatedTitle": "Printre cele mai apreciate anunțuri",
+      "topRatedDesc": "Scor ridicat, bazat pe evaluări și recenzii.",
+      "relaxTitle": "Relaxare la locație",
+      "relaxDesc": "Dotări pentru confort și momente de respiro.",
+      "parkingTitle": "Parcare disponibilă",
+      "parkingDesc": "Practic dacă vii cu mașina."
+    },
+
+    "descriptionMissing": "Descrierea nu este disponibilă încă.",
+    "descriptionUnavailable": "Descriere indisponibilă.",
+
+    "amenitiesTitle": "Ce oferă acest loc",
+    "moreAmenities": "+ încă {{count}} dotări",
+
+    "reviewsTitle": "Recenzii",
+    "reviewsCount": "{{count}} recenzii",
+    "reviewsBasedOn": "Bazat pe {{count}} recenzii",
+    "verifiedReviews": {
+      "title": "Recenzii verificate",
+      "desc": "Feedback de la oaspeți reali, după șederi confirmate."
+    },
+    "noReviews": {
+      "title": "Încă nu există recenzii",
+      "desc": "Cazarea e nouă sau nu a primit încă feedback. Verifică dotările și locația."
+    },
+
+    "mapTitle": "Unde vei fi",
+    "mapFrameTitle": "Harta",
+    "mapApprox": "Locație aproximativă (fără coordonate exacte)",
+
+    "perNight": "/ noapte",
+    "priceUnavailable": "Preț indisponibil",
+
+    "contact": {
+      "title": "Contactează gazda",
+      "subtitle": "{{host}} • confirmă detaliile înainte de sosire",
+      "callNow": "Sună acum",
+      "sendSms": "Trimite mesaj",
+      "hint": "Sfat: confirmă prețul, accesul și ora de check-in. (În curând: mesagerie în platformă)"
+    },
+
+    "recap": {
+      "nightLabel": "{{price}} • noapte",
+      "location": "Locație"
+    },
+
+    "gallery": {
+      "openAria": "Deschide fotografii",
+      "mainAlt": "Foto principală",
+      "thumbAlt": "Foto {{n}}",
+      "showAll": "Afișează toate fotografiile",
+      "empty": "Nu există fotografii încă.",
+      "photosTitle": "Fotografii",
+      "imagesCount": "{{count}} imagini",
+      "photoAlt": "Foto {{n}}"
+    },
+
+    "host": {
+      "fallbackName": "Gazda"
+    },
+
+    "fullDescTitle": "Despre acest spațiu"
+  },
+
+  "hero": {
+    "kicker": "BucovinaStay",
+    "kickerSub": "cabane • natură • confort",
+
+    "title": "Găsește cazarea perfectă",
+    "titleAccent": "în Bucovina",
+
+    "subtitle": "Cabane premium, gazde autentice și priveliști de munte — rezervă rapid, călătorește ușor.",
+
+    "ctaPrimary": "Explorează cazări",
+    "ctaSecondary": "Cum funcționează",
+
+    "trustTitle": "Apreciat de călători",
+    "trustSub": "Recenzii reale • Gazde verificate • Plăți sigure",
+
+    "stat1Val": "120+",
+    "stat1Lbl": "Cabane & cazări",
+
+    "stat2Val": "4.8",
+    "stat2Lbl": "Rating mediu",
+
+    "stat3Val": "24/7",
+    "stat3Lbl": "Suport",
+
+    "mockTitle": "Cabane care se simt ca acasă.",
+    "mockDesc": "Descoperă cazări autentice din Bucovina — lemn, căldură și aer de munte.",
+
+    "mockCta1": "Vezi cazări",
+    "mockCta2": "Vezi video",
+
+    "chip1Val": "28+",
+    "chip1Lbl": "Cazări premium",
+
+    "chip2Val": "12K+",
+    "chip2Lbl": "Oaspeți fericiți",
+
+    "chip3Val": "50+",
+    "chip3Lbl": "Gazde de top",
+
+    "rightNote": "Sfat: caută „ciubăr”, „vedere la munte”, „șemineu”"
+  },
+  
+    "hostSection": {
+      "aria": {
+        "section": "Informații despre gazdă",
+        "avatarAlt": "Avatar {{name}}"
+      },
+      "title": "Fă cunoștință cu gazda ta",
+      "fallbackHostName": "Gazdă",
+      "badges": {
+        "superhost": "Super-gazdă",
+        "verified": "Verificat"
+      },
+      "stats": {
+        "reviews": "Recenzii",
+        "score": "Scor",
+        "monthsLabelFallback": "Experiență",
+        "monthsLabel": "{{months}} luni ca gazdă",
+        "monthsLabel_one": "Lună ca gazdă"
+      },
+      "right": {
+        "host": "gazdă",
+        "title": "{{name}} este {{kind}}",
+        "textSuper": "Super-gazdele au activitate constantă și sunt apreciate pentru comunicare și experiența oferită.",
+        "textNormal": "Gazda te poate ajuta cu detalii despre locație, acces, check-in și recomandări locale."
+      },
+      "details": {
+        "title": "Detalii despre gazdă",
+        "responseRate": "Rată de răspuns:",
+        "responseTime": "Timp de răspuns:",
+        "languages": "Limbi vorbite:",
+        "responseTimeT": {
+          "withinHour": "în mai puțin de o oră",
+          "withinDay": "în aceeași zi",
+          "fewDays": "în câteva zile"
+        }
+      },
+      "cta": "Trimite un mesaj",
+      "note": "Pentru siguranța ta, evită plățile în afara platformei și confirmă toate detaliile în scris."
+    },
+  
+    "messageHost": {
+      "aria": {
+        "dialog": "Trimite mesaj gazdei",
+        "close": "Închide",
+        "avatarAlt": "Avatar {{name}}"
+      },
+      "title": "Trimite mesaj lui",
+      "fallbackHostName": "Gazdă",
+      "superhost": "Super-gazdă",
+      "property": "Proprietate:",
+      "default": {
+        "about": "despre",
+        "text": "Bună, {{hostName}}! Aș vrea câteva detalii{{title}} (disponibilitate, preț și check-in). Mulțumesc!"
+      },
+      "guest": {
+        "name": "Nume",
+        "email": "Email",
+        "phone": "Telefon",
+        "namePh": "Numele tău",
+        "emailPh": "email@exemplu.com",
+        "phonePh": "+40 7xx xxx xxx"
+      },
+      "message": {
+        "label": "Mesaj",
+        "ph": "Scrie mesajul tău..."
+      },
+      "hint": "Păstrează comunicarea în platformă.",
+      "send": "Trimite",
+      "sending": "Se trimite...",
+      "toasts": {
+        "shortTitle": "Mesaj prea scurt",
+        "shortDesc": "Scrie cel puțin 10 caractere.",
+        "nameTitle": "Nume obligatoriu",
+        "nameDesc": "Te rog scrie numele tău.",
+        "emailTitle": "Email invalid",
+        "emailDesc": "Te rog introdu un email valid.",
+        "phoneTitle": "Telefon invalid",
+        "phoneDesc": "Completează un număr de telefon valid.",
+        "sentTitle": "Mesaj trimis",
+        "sentDesc": "Gazda îl va vedea în curând.",
+        "errorTitle": "Eroare",
+        "errorDesc": "Nu am putut trimite mesajul."
+      }
+    },
+    
+      "reviews": {
+        "aria": { "section": "Recenzii proprietate" },
+        "title": "Recenzii",
+        "you": "Tu",
+        "avatarFallback": "U",
+        "starsAria": "{{value}} din 5",
+        "count": "{{count}} recenzii",
+        "firstHint": "Fii primul care lasă o recenzie.",
+        "sort": {
+          "aria": "Sortează recenziile",
+          "newest": "Cele mai recente",
+          "ratingDesc": "Rating (desc)"
+        },
+        "loginCard": {
+          "title": "Autentifică-te pentru a lăsa o recenzie",
+          "desc": "Recenziile ajută alți oaspeți să aleagă mai bine.",
+          "cta": "Autentificare"
+        },
+        "alreadyReviewed": "Ai lăsat deja o recenzie pentru această proprietate.",
+        "form": {
+          "title": "Lasă o recenzie",
+          "sub": "Spune pe scurt cum a fost experiența ta.",
+          "rating": "Rating",
+          "ratingAria": "Rating selectat",
+          "pickRatingAria": "Selectează ratingul",
+          "starBtnAria": "{{value}} stele",
+          "starBtnTitle": "Setează {{value}}/5",
+          "placeholder": "Scrie părerea ta despre această cazare...",
+          "tip": "Recomandare: menționează curățenia, check-in-ul, liniștea și dotările.",
+          "submit": "Trimite recenzia",
+          "sending": "Se trimite..."
+        },
+        "empty": {
+          "title": "Nu există încă recenzii",
+          "desc": "Cazarea e nouă sau nu a primit încă feedback."
+        },
+        "loadMore": "Vezi mai multe recenzii",
+        "end": "Ai ajuns la final.",
+        "delete": "Șterge",
+        "deleteAria": "Șterge recenzia mea",
+        "confirmDelete": "Sigur vrei să ștergi această recenzie?",
+        "toasts": {
+          "loadErrorTitle": "Eroare",
+          "loadErrorDesc": "Nu am putut încărca recenziile.",
+          "loginTitle": "Autentificare",
+          "loginDesc": "Autentifică-te pentru a lăsa o recenzie.",
+          "commentTitle": "Comentariu lipsă",
+          "commentDesc": "Te rog scrie un comentariu înainte de a trimite.",
+          "sentTitle": "Recenzie trimisă",
+          "sentDesc": "Mulțumim! Recenzia ta a fost publicată.",
+          "sendErrorTitle": "Nu am putut trimite",
+          "sendErrorDesc": "Încearcă din nou.",
+          "deletedTitle": "Recenzie ștearsă",
+          "deleteErrorTitle": "Nu am putut șterge",
+          "deleteErrorDesc": "Încearcă din nou."
+        }
+      },
+      
+        "adminTopNav": {
+          "role": "Rol",
+          "language": "Limbă",
+          "notifications": "Notificări",
+          "menu": "Meniu",
+          "openMenu": "Deschide meniul",
+          "closeMenu": "Închide meniul",
+          "openAdminProfile": "Deschide profilul admin",
+          "adminMeta": "Admin • Panou de control",
+          "goToWebsite": "Mergi pe website",
+          "logout": "Deconectare",
+          "switchToEN": "Schimbă în English",
+          "switchToRO": "Schimbă în Română",
+          "notificationFallbackTitle": "Notificare",
+          "tabs": {
+            "overview": "Prezentare",
+            "users": "Utilizatori",
+            "listings": "Anunțuri",
+            "reviews": "Recenzii",
+            "settings": "Setări"
+          },
+          "langs": {
+            "ro": "Română",
+            "en": "English"
+          },
+          "toasts": {
+            "languageChangedTitle": "Setări salvate",
+            "languageChangedRO": "Interfața a fost schimbată în Română.",
+            "languageChangedEN": "Interfața a fost schimbată în English.",
+            "languageFailedTitle": "Eroare",
+            "languageFailedDesc": "Nu am putut schimba limba. Încearcă din nou."
+          },
+          "aria": {
+            "brand": "Mergi la Admin",
+            "nav": "Navigație admin",
+            "menu": "Meniu admin"
+          }
+        },
+        "admin": {
+  "common": {
+    "error": "Eroare",
+    "actions": "Acțiuni",
+    "empty": "Nimic de afișat.",
+    "deleted": "Șters",
+    "save": "Salvează",
+    "saving": "Se salvează...",
+    "send": "Trimite",
+    "cancel": "Renunță",
+    "back": "Înapoi",
+    "next": "Înainte",
+    "pageOf": "Pagina {{page}} din {{totalPages}}",
+    "resultsCount": "{{total}} rezultate",
+    "fallbackHost": "Gazdă",
+    "fallbackUser": "Utilizator",
+    "fallbackProperty": "Proprietate",
+    "status": {
+      "all": "toate",
+      "pending": "în așteptare",
+      "live": "publicat",
+      "paused": "în pauză",
+      "rejected": "respins",
+      "draft": "ciornă"
+    }
+  },
+
+  "page": {
+    "crumb": "Admin",
+    "defaultTitle": "Panou Admin",
+    "defaultSubtitle": "Moderare + utilizatori + statusuri"
+  },
+
+  "overview": {
+    "pageTitle": "Panou Admin",
+    "pageSubtitle": "Prezentare + moderare",
+    "toastLoadFailTitle": "Nu am putut încărca prezentarea",
+    "kpis": {
+      "users": "Utilizatori",
+      "disabled": "dezactivați",
+      "hostsAdmins": "Gazde / Admini",
+      "activeRoles": "roluri active",
+      "listings": "Anunțuri",
+      "live": "publicate",
+      "pending": "în așteptare",
+      "analytics7d": "Analitice (7 zile)",
+      "clicks": "clickuri",
+      "ctr": "CTR"
+    },
+    "chart": {
+      "title": "Trend 7 zile",
+      "subtitle": "afișări vs clickuri",
+      "impressions": "Afișări",
+      "clicks": "Clickuri",
+      "impr": "afiș",
+      "clk": "clk"
+    },
+    "hintLine": "Sfat: dacă CTR e mic, verifică imaginile (cover) + titlurile + badge-urile."
+  },
+
+  "listings": {
+    "pageTitle": "Moderare anunțuri",
+    "cardTitle": "Moderare anunțuri",
+    "toastLoadFailTitle": "Nu am putut încărca anunțurile",
+    "toastUpdatedTitle": "Actualizat",
+    "toastUpdateFailTitle": "Nu am putut actualiza",
+    "searchPlaceholder": "Caută: titlu / oraș / tip...",
+    "cols": {
+      "property": "Proprietate",
+      "status": "Status",
+      "host": "Gazdă"
+    },
+    "rejectedReasonPrefix": "respins:",
+    "actions": {
+      "approve": "Aprobă",
+      "pause": "Pune pe pauză",
+      "resume": "Reia",
+      "reject": "Respinge"
+    },
+    "tips": {
+      "approveOnlyPending": "Poți aproba doar cererile aflate în așteptare",
+      "pauseOnlyLive": "Poți pune pe pauză doar anunțurile publicate",
+      "resumeOnlyPaused": "Poți relua doar anunțurile aflate în pauză",
+      "rejectOnlyPending": "Poți respinge doar cererile aflate în așteptare"
+    }
+  },
+
+  "reviews": {
+    "cardTitle": "Moderare recenzii",
+    "toastLoadFailTitle": "Nu am putut încărca recenziile",
+    "toastUpdateFailTitle": "Nu am putut actualiza",
+    "toastDeleteFailTitle": "Nu am putut șterge",
+    "toastHidden": "Recenzie ascunsă",
+    "toastVisible": "Recenzie vizibilă",
+    "confirmDelete": "Ștergi definitiv această recenzie? (ireversibil)",
+    "searchPlaceholder": "Caută: utilizator / email / proprietate / comentariu...",
+    "cols": {
+      "review": "Recenzie",
+      "rating": "Rating",
+      "status": "Status"
+    },
+    "filters": {
+      "ratingAny": "rating",
+      "sort": "Sortare"
+    },
+    "status": {
+      "visible": "vizibilă",
+      "hidden": "ascunsă"
+    },
+    "actions": {
+      "hide": "Ascunde",
+      "unhide": "Afișează",
+      "delete": "Șterge"
+    },
+    "tips": {
+      "makeVisible": "Fă recenzia vizibilă",
+      "makeHidden": "Ascunde recenzia",
+      "delete": "Șterge definitiv"
+    }
+  },
+
+  "users": {
+    "pageTitle": "Utilizatori",
+    "cardTitle": "Utilizatori",
+    "toastLoadFailTitle": "Nu am putut încărca utilizatorii",
+    "toastUpdatedTitle": "Actualizat",
+    "toastUpdateFailTitle": "Nu am putut actualiza",
+    "searchPlaceholder": "Caută: email / nume / telefon...",
+    "cols": {
+      "user": "Utilizator",
+      "role": "Rol",
+      "status": "Status"
+    },
+    "roles": {
+      "all": "Toate",
+      "guest": "turist",
+      "host": "gazdă",
+      "admin": "admin"
+    },
+    "status": {
+      "active": "activ",
+      "disabled": "dezactivat"
+    },
+    "actions": {
+      "saveRole": "Salvează rol",
+      "disable": "Dezactivează",
+      "enable": "Activează"
+    },
+    "badges": {
+      "unsaved": "nesalvat"
+    },
+    "tips": {
+      "setRole": "Setează rol",
+      "saveRole": "Salvează rol",
+      "noChanges": "Nicio schimbare"
+    },
+    "mobile": {
+      "setRole": "Setează rol"
+    }
+  },
+
+  "settings": {
+    "pageTitle": "Setări",
+    "pageSubtitle": "Control platformă",
+    "toastLoadFailTitle": "Nu am putut încărca setările",
+    "toastInvalidTitle": "Corectează valorile invalide",
+    "toastInvalidDesc": "Verifică limitele și câmpurile înainte de salvare.",
+    "toastSavedTitle": "Salvat",
+    "toastSaveFailTitle": "Nu am putut salva",
+    "sections": {
+      "moderation": {
+        "title": "Reguli de moderare",
+        "hint": "Permisiuni admin + reguli de siguranță"
+      },
+      "limits": {
+        "title": "Limite",
+        "hint": "Protecție resurse + reguli ale platformei"
+      },
+      "branding": {
+        "title": "Branding & mentenanță",
+        "hint": "Mesaje publice + suport"
+      }
+    },
+    "moderation": {
+      "requireSubmit": {
+        "title": "Cere trimitere înainte de publicare",
+        "hint": "Adminul poate aproba/publica doar dacă anunțul este trimis (în așteptare)."
+      },
+      "allowUnpublish": {
+        "title": "Permite adminului să retragă un anunț",
+        "hint": "Adminul poate da jos un anunț publicat (ex: reclamații)."
+      },
+      "allowReject": {
+        "title": "Permite adminului să respingă",
+        "hint": "Adminul poate respinge anunțuri trimise (în așteptare)."
+      },
+      "allowPause": {
+        "title": "Permite adminului pauză",
+        "hint": "De obicei OFF. Pauza e acțiune de gazdă; adminul ar trebui să retragă anunțul, nu să-l pună pe pauză."
+      },
+      "minReason": {
+        "title": "Lungime minimă motiv respingere",
+        "hint": "0–300. Se aplică în RejectReasonModal."
+      }
+    },
+    "limits": {
+      "maxListings": {
+        "title": "Număr maxim de anunțuri per gazdă",
+        "hint": "0 = nelimitat"
+      },
+      "maxImages": {
+        "title": "Număr maxim de imagini per anunț",
+        "hint": "1–200"
+      }
+    },
+    "branding": {
+      "supportEmail": {
+        "title": "Email suport",
+        "hint": "Apare în footer/mesaje.",
+        "placeholder": "support@bucovinastay.ro"
+      },
+      "maintenanceMode": {
+        "title": "Mod mentenanță",
+        "hint": "Dacă e ON: blochează accesul public (exceptând admin)."
+      },
+      "maintenanceMsg": {
+        "title": "Mesaj mentenanță",
+        "hint": "0–300 caractere",
+        "placeholder": "Revenim imediat. Mulțumim!"
+      }
+    }
+  },
+
+  "rejectModal": {
+    "title": "Motiv respingere",
+    "hint": "{{min}}–{{max}} caractere. Motivul va fi afișat gazdei.",
+    "placeholder": "Ex: lipsesc imagini, descriere incompletă, locație neclară...",
+    "invalidTip": "Te rog completează un motiv valid",
+    "close": "Închide"
+  }
+}
+
+        
+        
+        
+        
+      
+      
+    
+    
+  
+  
+}

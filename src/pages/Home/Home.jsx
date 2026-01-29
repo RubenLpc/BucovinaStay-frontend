@@ -9,10 +9,13 @@ import HomeFinalCTA from "../../components/Home/HomeFinalCTA";
 import { getHighlights } from "../../api/staysHighlightsService";
 import { aiSemanticSearch } from "../../api/aiSearchService";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const MAX_FEATURED = 8;
 
 export default function Home() {
+  const { t } = useTranslation();
+
   const [items, setItems] = useState([]);
   const [loadingFeatured, setLoadingFeatured] = useState(true);
 
@@ -28,7 +31,7 @@ export default function Home() {
       setMode("highlights");
       setAiQuery("");
     } catch (e) {
-      toast.error("Nu am putut încărca cazări recomandate");
+      toast.error(t("toasts.highlightsLoadFail"));
       setItems([]);
     } finally {
       setLoadingFeatured(false);
@@ -37,6 +40,7 @@ export default function Home() {
 
   useEffect(() => {
     let alive = true;
+
     (async () => {
       try {
         setLoadingFeatured(true);
@@ -44,7 +48,7 @@ export default function Home() {
         if (!alive) return;
         setItems(data.items || []);
       } catch {
-        toast.error("Nu am putut încărca cazări recomandate");
+        toast.error(t("toasts.highlightsLoadFail"));
         setItems([]);
       } finally {
         if (alive) setLoadingFeatured(false);
@@ -54,9 +58,8 @@ export default function Home() {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [t]);
 
-  // ✅ callback primit de Hero
   const handleAISearch = async (q) => {
     try {
       const query = String(q || "").trim();
@@ -77,25 +80,28 @@ export default function Home() {
           block: "start",
         });
       });
-      
 
       if (!next.length) {
-        toast.info("Nu am găsit rezultate.", { description: "Încearcă o descriere diferită." });
+        toast.info(t("toasts.aiNoResults"), { description: t("toasts.aiNoResultsDesc") });
       }
     } catch (e) {
-      toast.error("Căutarea AI a eșuat.", { description: e?.message || "Încearcă din nou." });
+      toast.error(t("toasts.aiFailed"), {
+        description: e?.message || t("toasts.tryAgain"),
+      });
     } finally {
       setAiLoading(false);
     }
   };
 
   const title =
-    mode === "ai" ? `Rezultate pentru: “${aiQuery}”` : "Cazări recomandate";
+    mode === "ai"
+      ? t("home.aiTitle", { query: aiQuery })
+      : t("home.featuredTitle");
 
   const subtitle =
     mode === "ai"
-      ? "Potrivire semantică (AI)"
-      : "Selecție atent aleasă pentru Bucovina";
+      ? t("home.aiSubtitle")
+      : t("home.featuredSubtitle");
 
   return (
     <>
@@ -107,7 +113,6 @@ export default function Home() {
         items={items}
         loading={loadingFeatured || aiLoading}
         onOpen={(id) => console.log("open listing", id)}
-        // opțional: un buton de reset dacă ești în AI mode
         onSeeAll={mode === "ai" ? loadHighlights : undefined}
       />
 

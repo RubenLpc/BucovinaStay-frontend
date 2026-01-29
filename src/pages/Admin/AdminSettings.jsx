@@ -1,8 +1,8 @@
-// client/src/pages/Admin/AdminSettings.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import AdminPage from "./AdminPage";
 import { adminGetSettings, adminSaveSettings } from "../../api/adminService";
+import { useTranslation } from "react-i18next";
 
 const DEFAULTS = {
   moderation: {
@@ -29,11 +29,12 @@ function num(v, fallback) {
 }
 
 export default function AdminSettings() {
+  const { t } = useTranslation();
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [settings, setSettings] = useState(DEFAULTS);
 
-  // helper: update nested
   const setPath = (path, value) => {
     const [a, b] = path.split(".");
     setSettings((s) => ({
@@ -50,7 +51,6 @@ export default function AdminSettings() {
         const res = await adminGetSettings();
         if (!alive) return;
         if (res?.settings) {
-          // merge defaults so missing keys don't break UI
           setSettings({
             moderation: { ...DEFAULTS.moderation, ...(res.settings.moderation || {}) },
             limits: { ...DEFAULTS.limits, ...(res.settings.limits || {}) },
@@ -58,34 +58,22 @@ export default function AdminSettings() {
           });
         }
       } catch (e) {
-        toast.error("Nu am putut încărca setările", { description: e?.message || "Eroare" });
+        toast.error(t("admin.settings.toastLoadFailTitle"), { description: e?.message || t("admin.common.error") });
       } finally {
         if (alive) setLoading(false);
       }
     })();
     return () => (alive = false);
-  }, []);
+  }, [t]);
 
   const canSave = useMemo(() => {
     const m = settings?.moderation || {};
     const l = settings?.limits || {};
     const b = settings?.branding || {};
 
-    const okReasonLen =
-      Number.isFinite(Number(m.minRejectionReasonLength)) &&
-      Number(m.minRejectionReasonLength) >= 0 &&
-      Number(m.minRejectionReasonLength) <= 300;
-
-    const okImg =
-      Number.isFinite(Number(l.maxImagesPerListing)) &&
-      Number(l.maxImagesPerListing) >= 1 &&
-      Number(l.maxImagesPerListing) <= 200;
-
-    const okListings =
-      Number.isFinite(Number(l.maxListingsPerHost)) &&
-      Number(l.maxListingsPerHost) >= 0 &&
-      Number(l.maxListingsPerHost) <= 100000;
-
+    const okReasonLen = Number.isFinite(Number(m.minRejectionReasonLength)) && Number(m.minRejectionReasonLength) >= 0 && Number(m.minRejectionReasonLength) <= 300;
+    const okImg = Number.isFinite(Number(l.maxImagesPerListing)) && Number(l.maxImagesPerListing) >= 1 && Number(l.maxImagesPerListing) <= 200;
+    const okListings = Number.isFinite(Number(l.maxListingsPerHost)) && Number(l.maxListingsPerHost) >= 0 && Number(l.maxListingsPerHost) <= 100000;
     const okEmail = String(b.supportEmail || "").length <= 120;
     const okMsg = String(b.maintenanceMessage || "").length <= 300;
 
@@ -94,7 +82,9 @@ export default function AdminSettings() {
 
   const save = async () => {
     if (!canSave) {
-      toast.error("Corectează valorile invalide înainte de Save.");
+      toast.error(t("admin.settings.toastInvalidTitle"), {
+        description: t("admin.settings.toastInvalidDesc"),
+      });
       return;
     }
     try {
@@ -114,23 +104,23 @@ export default function AdminSettings() {
         },
       };
       await adminSaveSettings(payload);
-      toast.success("Salvat");
+      toast.success(t("admin.settings.toastSavedTitle"));
     } catch (e) {
-      toast.error("Nu am putut salva", { description: e?.message || "Eroare" });
+      toast.error(t("admin.settings.toastSaveFailTitle"), { description: e?.message || t("admin.common.error") });
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <AdminPage title="Settings" subtitle="Control platformă">
+    <AdminPage titleKey="admin.settings.pageTitle" subtitleKey="admin.settings.pageSubtitle">
       <div className="hdGrid adSettingsGrid">
         {/* Moderation */}
         <div className="hdCard">
           <div className="hdCardTop">
             <div>
-              <div className="hdCardLabel">Moderation rules</div>
-              <div className="hdCardHint">Ce are voie adminul + guardrails</div>
+              <div className="hdCardLabel">{t("admin.settings.sections.moderation.title")}</div>
+              <div className="hdCardHint">{t("admin.settings.sections.moderation.hint")}</div>
             </div>
           </div>
 
@@ -143,8 +133,8 @@ export default function AdminSettings() {
           ) : (
             <div className="adForm">
               <Row
-                title="Require submit to publish"
-                hint="Admin poate aproba/pune live doar dacă listing-ul e trimis (pending)."
+                title={t("admin.settings.moderation.requireSubmit.title")}
+                hint={t("admin.settings.moderation.requireSubmit.hint")}
                 right={
                   <input
                     type="checkbox"
@@ -155,8 +145,8 @@ export default function AdminSettings() {
               />
 
               <Row
-                title="Allow admin unpublish"
-                hint="Admin poate da jos un listing live (ex: reclamații)."
+                title={t("admin.settings.moderation.allowUnpublish.title")}
+                hint={t("admin.settings.moderation.allowUnpublish.hint")}
                 right={
                   <input
                     type="checkbox"
@@ -167,8 +157,8 @@ export default function AdminSettings() {
               />
 
               <Row
-                title="Allow admin reject"
-                hint="Admin poate respinge listing-uri trimise (pending)."
+                title={t("admin.settings.moderation.allowReject.title")}
+                hint={t("admin.settings.moderation.allowReject.hint")}
                 right={
                   <input
                     type="checkbox"
@@ -179,8 +169,8 @@ export default function AdminSettings() {
               />
 
               <Row
-                title="Allow admin pause"
-                hint="De obicei OFF. Pauza e acțiune de host; adminul unpublish, nu pause."
+                title={t("admin.settings.moderation.allowPause.title")}
+                hint={t("admin.settings.moderation.allowPause.hint")}
                 right={
                   <input
                     type="checkbox"
@@ -191,8 +181,8 @@ export default function AdminSettings() {
               />
 
               <label className="adField">
-                <div className="adFieldLabel">Min rejection reason length</div>
-                <div className="adFieldHint">0–300. Se aplică în RejectReasonModal.</div>
+                <div className="adFieldLabel">{t("admin.settings.moderation.minReason.title")}</div>
+                <div className="adFieldHint">{t("admin.settings.moderation.minReason.hint")}</div>
                 <input
                   className="adInput"
                   type="number"
@@ -210,8 +200,8 @@ export default function AdminSettings() {
         <div className="hdCard">
           <div className="hdCardTop">
             <div>
-              <div className="hdCardLabel">Limits</div>
-              <div className="hdCardHint">Protecție resurse + reguli platformă</div>
+              <div className="hdCardLabel">{t("admin.settings.sections.limits.title")}</div>
+              <div className="hdCardHint">{t("admin.settings.sections.limits.hint")}</div>
             </div>
           </div>
 
@@ -223,8 +213,8 @@ export default function AdminSettings() {
           ) : (
             <div className="adForm">
               <label className="adField">
-                <div className="adFieldLabel">Max listings per host</div>
-                <div className="adFieldHint">0 = unlimited</div>
+                <div className="adFieldLabel">{t("admin.settings.limits.maxListings.title")}</div>
+                <div className="adFieldHint">{t("admin.settings.limits.maxListings.hint")}</div>
                 <input
                   className="adInput"
                   type="number"
@@ -236,8 +226,8 @@ export default function AdminSettings() {
               </label>
 
               <label className="adField">
-                <div className="adFieldLabel">Max images per listing</div>
-                <div className="adFieldHint">1–200</div>
+                <div className="adFieldLabel">{t("admin.settings.limits.maxImages.title")}</div>
+                <div className="adFieldHint">{t("admin.settings.limits.maxImages.hint")}</div>
                 <input
                   className="adInput"
                   type="number"
@@ -255,8 +245,8 @@ export default function AdminSettings() {
         <div className="hdCard">
           <div className="hdCardTop">
             <div>
-              <div className="hdCardLabel">Branding & Maintenance</div>
-              <div className="hdCardHint">Mesaje publice + support</div>
+              <div className="hdCardLabel">{t("admin.settings.sections.branding.title")}</div>
+              <div className="hdCardHint">{t("admin.settings.sections.branding.hint")}</div>
             </div>
           </div>
 
@@ -268,19 +258,19 @@ export default function AdminSettings() {
           ) : (
             <div className="adForm">
               <label className="adField">
-                <div className="adFieldLabel">Support email</div>
-                <div className="adFieldHint">Apare în footer/mesaje.</div>
+                <div className="adFieldLabel">{t("admin.settings.branding.supportEmail.title")}</div>
+                <div className="adFieldHint">{t("admin.settings.branding.supportEmail.hint")}</div>
                 <input
                   className="adInput"
                   value={settings.branding.supportEmail}
                   onChange={(e) => setPath("branding.supportEmail", e.target.value)}
-                  placeholder="support@bucovinastay.ro"
+                  placeholder={t("admin.settings.branding.supportEmail.placeholder")}
                 />
               </label>
 
               <Row
-                title="Maintenance mode"
-                hint="Dacă e ON: blochezi accesul public (except admin)."
+                title={t("admin.settings.branding.maintenanceMode.title")}
+                hint={t("admin.settings.branding.maintenanceMode.hint")}
                 right={
                   <input
                     type="checkbox"
@@ -291,20 +281,20 @@ export default function AdminSettings() {
               />
 
               <label className="adField">
-                <div className="adFieldLabel">Maintenance message</div>
-                <div className="adFieldHint">0–300 caractere</div>
+                <div className="adFieldLabel">{t("admin.settings.branding.maintenanceMsg.title")}</div>
+                <div className="adFieldHint">{t("admin.settings.branding.maintenanceMsg.hint")}</div>
                 <textarea
                   className="adTextarea"
                   rows={4}
                   value={settings.branding.maintenanceMessage}
                   onChange={(e) => setPath("branding.maintenanceMessage", e.target.value)}
-                  placeholder="Revenim imediat. Mulțumim!"
+                  placeholder={t("admin.settings.branding.maintenanceMsg.placeholder")}
                 />
               </label>
 
               <div className="adActions">
                 <button className="hdBtn" type="button" disabled={!canSave || saving} onClick={save}>
-                  {saving ? "Saving..." : "Save settings"}
+                  {saving ? t("admin.common.saving") : t("admin.common.save")}
                 </button>
               </div>
             </div>

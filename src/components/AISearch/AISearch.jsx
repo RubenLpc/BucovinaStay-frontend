@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Sparkles } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import "./AISearch.css";
 
 export default function AISearch({ onSearch, loading }) {
+  const { t } = useTranslation();
   const [value, setValue] = useState("");
 
   const submit = (e) => {
@@ -22,12 +24,12 @@ export default function AISearch({ onSearch, loading }) {
       <input
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        placeholder="Describe your ideal stay…"
-        aria-label="AI search"
+        placeholder={t("ai.placeholder")}
+        aria-label={t("ai.aria")}
       />
 
       <button type="submit" disabled={loading || !value.trim()}>
-        {loading ? "Searching…" : "Search"}
+        {loading ? t("ai.searching") : t("ai.search")}
       </button>
     </form>
   );

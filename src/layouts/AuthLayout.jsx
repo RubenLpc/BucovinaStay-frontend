@@ -1,11 +1,8 @@
-import { Outlet } from "react-router-dom";
-import "../pages/Auth/Auth.css";
-import heroImage from "../assets/images/hero-bucovina.png";
+import { Outlet, useNavigate } from "react-router-dom";
 import { Toaster } from "sonner";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { onMaintenance } from "../api/client";
-
+import Header from "../components/Header/Header";
 
 export default function AuthLayout() {
   const navigate = useNavigate();
@@ -17,18 +14,12 @@ export default function AuthLayout() {
       navigate("/maintenance", { replace: true, state: payload || null });
     });
   }, [navigate]);
-  return (
-    <div className="auth-page">
-      {/* Fundal */}
-      <div
-        className="auth-bg"
-        style={{ backgroundImage: `url(${heroImage})` }}
-      />
-      <div className="auth-overlay" />
 
-      <main className="auth-content">
-        <Outlet />
-      </main>
-    </div>
+  return (
+    <>
+          <Header />
+    
+      <Outlet />
+    </>
   );
 }

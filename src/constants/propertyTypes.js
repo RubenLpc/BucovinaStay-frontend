@@ -1,58 +1,49 @@
-import {
-    Trees,
-    Home,
-    Hotel,
-    Building2,
-    Warehouse,
-    Store,
-  } from "lucide-react";
-  
-  export const PROPERTY_TYPES = [
-    {
-      key: "cabana",
-      label: "Cabane",
-      Icon: Trees,
-      description: "Natură & liniște",
-      popular: true,
-      tone: "forest",
-    },
-    {
-      key: "pensiune",
-      label: "Pensiuni",
-      Icon: Store,
-      description: "Primitoare, tradiționale",
-      popular: true,
-      tone: "warm",
-    },
-    {
-      key: "hotel",
-      label: "Hoteluri",
-      Icon: Hotel,
-      description: "Confort complet",
-      tone: "neutral",
-    },
-    {
-      key: "apartament",
-      label: "Apartamente",
-      Icon: Building2,
-      description: "Urban & practic",
-      popular: true,
-      tone: "urban",
-    },
-    
-    {
-      key: "vila",
-      label: "Vile",
-      Icon: Warehouse,
-      description: "Spațiu & intimitate",
-      tone: "lux",
-    },
-    {
-      key: "tiny_house",
-      label: "Tiny house",
-      Icon: Home,
-      description: "Minimal & cozy",
-      tone: "cozy",
-    },
-  ];
-  
+import { Trees, Home, Hotel, Building2, Warehouse, Store } from "lucide-react";
+
+export const PROPERTY_TYPES = [
+  {
+    key: "cabana",
+    labelKey: "propertyTypes.cabana.label",
+    descKey: "propertyTypes.cabana.desc",
+    Icon: Trees,
+    popular: true,
+    tone: "forest",
+  },
+  {
+    key: "pensiune",
+    labelKey: "propertyTypes.pensiune.label",
+    descKey: "propertyTypes.pensiune.desc",
+    Icon: Store,
+    popular: true,
+    tone: "warm",
+  },
+  {
+    key: "hotel",
+    labelKey: "propertyTypes.hotel.label",
+    descKey: "propertyTypes.hotel.desc",
+    Icon: Hotel,
+    tone: "neutral",
+  },
+  {
+    key: "apartament",
+    labelKey: "propertyTypes.apartament.label",
+    descKey: "propertyTypes.apartament.desc",
+    Icon: Building2,
+    popular: true,
+    tone: "urban",
+  },
+  {
+    key: "vila",
+    labelKey: "propertyTypes.vila.label",
+    descKey: "propertyTypes.vila.desc",
+    Icon: Warehouse,
+    tone: "lux",
+  },
+  {
+    key: "tiny_house",
+    labelKey: "propertyTypes.tiny_house.label",
+    descKey: "propertyTypes.tiny_house.desc",
+    Icon: Home,
+    tone: "cozy",
+  },
+];

@@ -1,140 +1,589 @@
-.hero {
-  position: relative;
-  min-height: 100vh;
-  overflow: hidden;
+/* =========================================================
+   HERO V2 — WHITE / PREMIUM / TOKEN-BASED
+   Uses: .container, --accent, --ink, --muted, --border, shadows, radius
+   ========================================================= */
+
+   .heroV2{
+    position: relative;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--ink);
+  }
+  
+  /* ---------- BG ---------- */
+  .heroV2Bg{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+  }
+  
+  .heroV2Grid{
+    position:absolute;
+    inset:-2px;
+    background-image:
+      linear-gradient(to right, rgba(17,24,39,0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(17,24,39,0.05) 1px, transparent 1px);
+    background-size: 64px 64px;
+    opacity: .95;
+    mask-image: radial-gradient(ellipse at 40% 18%, #000 36%, transparent 72%);
+  }
+  
+  .heroV2Blob{
+    position:absolute;
+    width: 820px;
+    height: 820px;
+    border-radius: 999px;
+    filter: blur(44px);
+    opacity: .65;
+    transform: translateZ(0);
+  }
+  
+  .heroV2BlobA{
+    left: -300px;
+    top: -320px;
+    background:
+      radial-gradient(circle at 35% 30%, var(--accent-soft-2), transparent 60%),
+      radial-gradient(circle at 70% 70%, rgba(17,24,39,0.06), transparent 62%);
+  }
+  
+  .heroV2BlobB{
+    right: -340px;
+    bottom: -360px;
+    background:
+      radial-gradient(circle at 30% 30%, var(--accent-soft), transparent 62%),
+      radial-gradient(circle at 75% 70%, rgba(17,24,39,0.06), transparent 60%);
+  }
+  
+  /* ---------- LAYOUT ---------- */
+  .heroV2Container{
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    padding-bottom: 56px;
+  
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr; /* RIGHT BIG */
+    align-items: center;
+    gap: clamp(18px, 3vw, 40px);
+  }
+  
+  
+  /* ---------- LEFT ---------- */
+  .heroV2Left{
+    display:flex;
+    flex-direction:column;
+    gap: 14px;
+  }
+  
+  .heroV2Kicker{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+  
+  .heroV2Dot{
+    width: 10px; height: 10px;
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 0 0 6px var(--accent-soft);
+  }
+  
+  .heroV2Brand{
+    font-weight: 900;
+    color: var(--ink);
+    letter-spacing: var(--ls);
+  }
+  
+  .heroV2Sep{
+    width: 1px;
+    height: 16px;
+    background: var(--border);
+  }
+  
+  .heroV2KickerSub{
+    color: var(--muted);
+  }
+  
+  .heroV2Title{
+    margin: 0;
+    font-weight: 950;
+    letter-spacing: var(--ls-tight);
+    line-height: 1.02;
+    font-size: clamp(2.1rem, 4.8vw, 3.55rem);
+  }
+  
+  .heroV2TitleAccent{
+    color: var(--accent);
+    text-shadow: 0 18px 52px rgba(255,56,92,0.18);
+  }
+  
+  .heroV2Subtitle{
+    margin: 0;
+    max-width: 62ch;
+    color: var(--ink-2);
+    line-height: 1.62;
+    font-size: 0.98rem;
+  }
+  
+  .heroV2Actions{
+    display:flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  
+  /* We use your .btn but override primary to ACCENT (as requested) */
+  .heroV2BtnPrimary{
+    position: relative;
+    border-radius: var(--r-md);
+    border: 1px solid var(--accent-border);
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 18px 60px rgba(255,56,92,0.18);
+    overflow: hidden;
+  }
+  
+  .heroV2BtnPrimary:hover{
+    background: var(--accent-hover);
+    border-color: rgba(255,56,92,0.40);
+  }
+  
+  .heroV2BtnGlow{
+    position:absolute;
+    inset:-40%;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(255,255,255,0.22), transparent 55%),
+      radial-gradient(circle at 70% 70%, rgba(255,255,255,0.14), transparent 58%);
+    transform: rotate(10deg);
+    opacity: .9;
+    pointer-events:none;
+  }
+  
+  .heroV2BtnGhost{
+    border-radius: var(--r-md);
+  }
+  
+  .heroV2Search{
+    margin-top: 10px;
+  }
+  
+  /* Trust line */
+  .heroV2Trust{
+    display:flex;
+    align-items:center;
+    gap: 12px;
+    margin-top: 4px;
+  }
+  
+  .heroV2Avatars{
+    display:flex;
+    align-items:center;
+  }
+  
+  .heroV2Avatar{
+    width: 34px; height: 34px;
+    border-radius: 999px;
+    border: 2px solid rgba(255,255,255,0.92);
+    margin-left: -10px;
+    background: linear-gradient(135deg, rgba(17,24,39,0.10), rgba(17,24,39,0.05));
+    box-shadow: var(--shadow-sm);
+  }
+  .heroV2Avatar:first-child{ margin-left: 0; }
+  
+  .heroV2AvatarMore{
+    display:grid;
+    place-items:center;
+    font-size: .82rem;
+    font-weight: 950;
+    color: var(--ink-2);
+    background: var(--surface);
+    backdrop-filter: blur(10px);
+  }
+  
+  .heroV2TrustText{ line-height: 1.15; }
+  .heroV2TrustLine1{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    color: var(--ink);
+  }
+  .heroV2Star{
+    color: var(--accent);
+    text-shadow: 0 14px 40px rgba(255,56,92,0.16);
+  }
+  .heroV2TrustLine2{
+    margin-top: 2px;
+    font-size: .92rem;
+    color: var(--muted);
+  }
+  
+  /* mini stats */
+  .heroV2MiniStats{
+    margin-top: 8px;
+    display:flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .heroV2MiniStat{
+    border-radius: var(--r-md);
+    border: 1px solid var(--border);
+    background: var(--card);
+    box-shadow: var(--shadow-sm);
+    padding: 10px 12px;
+    min-width: 160px;
+  }
+  
+  .heroV2MiniVal{
+    font-weight: 950;
+    letter-spacing: var(--ls);
+    color: var(--ink);
+  }
+  
+  .heroV2MiniLbl{
+    margin-top: 2px;
+    font-size: .86rem;
+    color: var(--muted);
+  }
+  
+  /* ---------- RIGHT / MOCK ---------- */
+  .heroV2Right{
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+  }
+  
+  .heroV2Mock{
+    border-radius: var(--r-lg);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    backdrop-filter: blur(14px);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+  
+  .heroV2MockTop{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(17,24,39,0.06);
+  }
+  
+  .heroV2MockLogo{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    font-weight: 950;
+    letter-spacing: var(--ls);
+    color: var(--ink);
+  }
+  
+  .heroV2MockMark{
+    width: 12px; height: 12px;
+    border-radius: 6px;
+    background: var(--accent);
+    box-shadow: 0 0 0 6px var(--accent-soft);
+  }
+  
+  .heroV2MockName{
+    opacity: .95;
+  }
+  
+  .heroV2MockNav{
+    display:flex;
+    align-items:center;
+    gap: 12px;
+    font-size: .86rem;
+    color: var(--muted);
+  }
+  
+  .heroV2MockNavBtn{
+    padding: 8px 10px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 900;
+    border: 1px solid var(--accent-border);
+    box-shadow: 0 14px 44px rgba(255,56,92,0.16);
+  }
+  
+  .heroV2MockBody{
+    padding: 18px 16px 16px;
+    display:grid;
+    gap: 14px;
+  }
+  
+  .heroV2MockCopy{
+    display:flex;
+    flex-direction:column;
+    gap: 8px;
+  }
+  
+  .heroV2MockHeadline{
+    font-weight: 950;
+    letter-spacing: var(--ls);
+    font-size: 1.25rem;
+    color: var(--ink);
+  }
+  
+  .heroV2MockDesc{
+    color: var(--muted);
+    line-height: 1.55;
+    font-size: 0.95rem;
+  }
+  
+  .heroV2MockBtns{
+    display:flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  
+  /* mock buttons follow DS */
+  .heroV2MockBtnPrimary{
+    background: var(--accent);
+    color: #fff;
+    border: 1px solid var(--accent-border);
+    box-shadow: 0 16px 50px rgba(255,56,92,0.16);
+  }
+  .heroV2MockBtnPrimary:hover{ background: var(--accent-hover); }
+  
+  .heroV2MockBtnSecondary{
+    background: var(--btn-bg);
+    border: 1px solid var(--btn-border);
+    color: var(--ink);
+  }
+  
+  .heroV2Art{
+    position: relative;
+    min-height: 560px;          /* SUPER BIG */
+    display: grid;
+    place-items: center;
+    overflow: visible;          /* să poată “ieși” dacă o scalezi */
+  }
+  
+  .heroV2Illu{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;          /* NU taie cabana/mâna */
+    object-position: center;
+    display: block;
+  
+    transform: scale(1.55) translateY(10px); /* SUPER MARE */
+    transform-origin: center;
+    filter: saturate(1.04) contrast(1.03);
+  }
+  
+  
+  /* floating chips */
+  .heroV2Chip{
+    position:absolute;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.78);
+    backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-md);
+    padding: 10px 12px;
+    min-width: 128px;
+    animation: heroV2Float 5.8s ease-in-out infinite;
+  }
+  
+  .heroV2ChipVal{
+    font-weight: 950;
+    letter-spacing: var(--ls);
+    color: var(--ink);
+  }
+  
+  .heroV2ChipLbl{
+    margin-top: 2px;
+    font-size: .84rem;
+    color: var(--muted);
+  }
+  
+  .heroV2ChipA{ top: 14px; left: 14px; }
+  .heroV2ChipB{ top: 40%; right: 14px; animation-delay: .6s; }
+  .heroV2ChipC{ bottom: 14px; left: 18px; animation-delay: 1.1s; }
+  
+  @keyframes heroV2Float{
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-10px); }
+  }
+  
+  @media (prefers-reduced-motion: reduce){
+    .heroV2Chip{ animation: none; }
+  }
+  
+  .heroV2Note{
+    font-size: .9rem;
+    color: var(--muted);
+    padding-left: 4px;
+  }
+  
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 980px){
+    .heroV2Container{
+      grid-template-columns: 1fr;
+      min-height: auto;
+      padding-bottom: 34px;
+    }
+  }
+  
+  @media (max-width: 520px){
+    .heroV2Container{
+      padding-top: calc(var(--header-h) + 18px);
+      gap: 16px;
+    }
+  
+    .heroV2Title{
+      font-size: clamp(1.9rem, 9vw, 2.55rem);
+      line-height: 1.05;
+    }
+  
+    .heroV2MockNav{ display:none; }
+    .heroV2Art{ min-height: 280px; }
+  
+    .heroV2Chip{
+      min-width: 118px;
+      padding: 9px 10px;
+    }
+  }
+  
+  /* dvh fix */
+  @supports (height: 100dvh){
+    .heroV2Container{ min-height: 100dvh; }
+  }
+  
+  .heroV2Mock{
+    max-width: 720px;      /* control pe desktop */
+    margin-left: auto;     /* lipit spre dreapta */
+  }
+  
+  @media (min-width: 1200px){
+    .heroV2Art{ min-height: 640px; }
+    .heroV2Illu{ transform: scale(1.75) translateY(14px); }
+  }
+  
+  @media (min-width: 1500px){
+    .heroV2Art{ min-height: 720px; }
+    .heroV2Illu{ transform: scale(1.95) translateY(18px); }
+  }
+  
+
+
+  /* =========================================================
+   HERO V2 — Responsive Typography Patch (mobile-first)
+   Drop at the end of HeroV2.css
+   ========================================================= */
+
+/* ---- Fluid base sizes (apply globally in hero) ---- */
+.heroV2{
+  --hero-kicker: clamp(0.78rem, 1.1vw, 0.92rem);
+  --hero-title:  clamp(1.65rem, 6.2vw, 3.55rem);
+  --hero-sub:    clamp(0.88rem, 1.35vw, 0.98rem);
+  --hero-note:   clamp(0.82rem, 1.2vw, 0.90rem);
+  --hero-btn:    clamp(0.86rem, 1.25vw, 0.95rem);
 }
 
-/* IMAGINEA */
-.hero-image {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  transform: scale(1.08);
-  filter: brightness(0.92) saturate(1.15);
+/* wire tokens into elements */
+.heroV2Kicker{ font-size: var(--hero-kicker); }
+.heroV2Title{ font-size: var(--hero-title); }
+.heroV2Subtitle{ font-size: var(--hero-sub); }
+.heroV2Note{ font-size: var(--hero-note); }
+
+/* buttons (assumes .btn exists) */
+.heroV2Actions .btn,
+.heroV2MockBtns .btn{
+  font-size: var(--hero-btn);
+  padding: 10px 14px; /* tighter by default */
 }
 
-/* VIDEO */
-.hero-video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+/* trust + mini stats typography */
+.heroV2TrustLine1{ font-size: clamp(0.90rem, 1.2vw, 1rem); }
+.heroV2TrustLine2{ font-size: clamp(0.82rem, 1.1vw, 0.92rem); }
 
-  z-index: 0;
-}
-/* OVERLAY */
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.35) 0%,
-    rgba(0, 0, 0, 0.15) 45%,
-    rgba(0, 0, 0, 0.55) 100%
-  );
-}
+.heroV2MiniVal{ font-size: clamp(0.95rem, 1.25vw, 1.02rem); }
+.heroV2MiniLbl{ font-size: clamp(0.78rem, 1.05vw, 0.86rem); }
 
-/* CONȚINUT */
-.hero-content {
-  position: relative;
-  z-index: 2;
+/* mock typography */
+.heroV2MockNav{ font-size: clamp(0.78rem, 1.05vw, 0.86rem); }
+.heroV2MockHeadline{ font-size: clamp(1.05rem, 3.4vw, 1.25rem); }
+.heroV2MockDesc{ font-size: clamp(0.86rem, 1.35vw, 0.95rem); }
 
-  min-height: 100vh;
-  max-width: 1200px;
-  margin: 0 auto;
-
-  padding: calc(var(--header-h) + 28px) 1.5rem 40px;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 1.4rem;
-
-  color: #fff;
-}
-
-.hero-text h1 {
-  margin: 0;
-
-  /* DISPLAY TITLE — excepție intenționată */
-  font-size: clamp(2.6rem, 5.4vw, 3.9rem);
-  line-height: 1.02;
-  letter-spacing: -0.035em;
-
-  font-weight: 950;
-  color: #fff;
-}
-
-.hero-text h1 span {
-  display: block;
-  font-weight: 650;
-  opacity: 0.9;
-}
-
-
-.hero-text p {
-  margin: 0;
-  font-size: 0.98rem; /* ~text-body din DS */
-  max-width: 52ch;
-  opacity: 0.92;
-  line-height: 1.55;
-  letter-spacing: var(--ls-soft);
-}
-
-/* ================= HERO – SMALL MOBILE (360–430px) ================= */
-@media (max-width: 430px) {
-  .hero {
-    min-height: 100svh;
+/* ---------------------------------------------------------
+   Mobile tuning — smaller + better spacing
+--------------------------------------------------------- */
+@media (max-width: 520px){
+  .heroV2{
+    --hero-kicker: 0.80rem;
+    --hero-title:  clamp(1.55rem, 8.2vw, 2.15rem);
+    --hero-sub:    0.90rem;
+    --hero-note:   0.82rem;
+    --hero-btn:    0.88rem;
   }
 
-  .hero-content {
-    min-height: 100svh;
-    padding: calc(var(--header-h) + 18px) 1rem 28px;
-    gap: 1.05rem;
+  .heroV2Left{ gap: 12px; }
+  .heroV2Subtitle{ line-height: 1.55; max-width: 48ch; }
+
+  .heroV2Actions{ gap: 8px; }
+  .heroV2Actions .btn,
+  .heroV2MockBtns .btn{
+    padding: 9px 12px;
+    border-radius: var(--r-md);
   }
 
-  .hero-text h1 {
-    font-size: clamp(1.65rem, 7.6vw, 2.25rem);
-    line-height: 1.08;
+  /* make trust row more compact */
+  .heroV2Avatar{ width: 30px; height: 30px; margin-left: -9px; }
+  .heroV2Trust{ gap: 10px; }
+
+  /* mini stats fit phone */
+  .heroV2MiniStats{ gap: 8px; }
+  .heroV2MiniStat{
+    min-width: 0;
+    flex: 1 1 140px;
+    padding: 9px 10px;
   }
 
-  .hero-text p {
-    font-size: 0.92rem; /* compact, în stilul tău */
-    max-width: 100%;
-    line-height: 1.5;
-  }
+  /* mock padding smaller */
+  .heroV2MockTop{ padding: 12px 12px; }
+  .heroV2MockBody{ padding: 14px 12px 12px; }
 
-  .hero-image {
-    transform: scale(1.18);
-    background-position: 55% 45%;
-    filter: brightness(0.9) saturate(1.1);
-  }
-
-  .hero-overlay {
-    background: linear-gradient(
-      180deg,
-      rgba(0, 0, 0, 0.42) 0%,
-      rgba(0, 0, 0, 0.18) 45%,
-      rgba(0, 0, 0, 0.62) 100%
-    );
-  }
+  /* chips smaller text */
+  .heroV2ChipVal{ font-size: 0.95rem; }
+  .heroV2ChipLbl{ font-size: 0.78rem; }
 }
 
-/* dvh fix */
-@supports (height: 100dvh) {
-  .hero,
-  .hero-content {
-    min-height: 100dvh;
+/* ---------------------------------------------------------
+   Extra-small phones (iPhone SE etc.)
+--------------------------------------------------------- */
+@media (max-width: 380px){
+  .heroV2{
+    --hero-kicker: 0.78rem;
+    --hero-title:  clamp(1.45rem, 9.2vw, 1.95rem);
+    --hero-sub:    0.86rem;
+    --hero-btn:    0.86rem;
   }
+
+  .heroV2Actions .btn,
+  .heroV2MockBtns .btn{
+    width: 100%;           /* stack buttons nicely */
+    justify-content: center;
+  }
+
+  .heroV2TrustLine1{ gap: 6px; }
+  .heroV2TrustLine2{ font-size: 0.80rem; }
+
+  .heroV2Chip{ min-width: 110px; padding: 8px 9px; border-radius: 12px; }
 }
-@media (max-width: 430px) {
-  .hero-text h1 {
-    font-size: clamp(1.95rem, 9vw, 2.6rem);
-    line-height: 1.06;
+
+/* ---------------------------------------------------------
+   Large screens keep your premium feel but avoid HUGE text
+--------------------------------------------------------- */
+@media (min-width: 1400px){
+  .heroV2Title{
+    font-size: clamp(2.4rem, 4.2vw, 3.55rem);
   }
 }

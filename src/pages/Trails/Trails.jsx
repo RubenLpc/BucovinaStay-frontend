@@ -13,7 +13,7 @@ import "./Trails.css";
 import trailsdata from "./trailsData";
 import headerArt from "../../assets/header-path-compass.png";
 import heroArt from "../../assets/heroart.png";
-
+import { useTranslation } from "react-i18next";
 
 const TRAILS = trailsdata;
 
@@ -53,25 +53,27 @@ function smartRank(trail) {
 }
 
 const CHIP_TAGS = [
-  { key: "view", label: "Priveliște" },
-  { key: "family", label: "Familie" },
-  { key: "forest", label: "Pădure" },
-  { key: "alpine", label: "Alpin" },
-  { key: "nature", label: "Natură" },
+  { key: "view", labelKey: "trails.tags.view" },
+  { key: "family", labelKey: "trails.tags.family" },
+  { key: "forest", labelKey: "trails.tags.forest" },
+  { key: "alpine", labelKey: "trails.tags.alpine" },
+  { key: "nature", labelKey: "trails.tags.nature" },
 ];
 
-function tagLabel(tag) {
+function tagLabel(tag, t) {
+  // în UI: label “frumos”, fără să schimbi tag-ul din data
   const map = {
-    view: "priveliște",
-    family: "familie",
-    forest: "pădure",
-    ridge: "creastă",
-    alpine: "alpin",
-    long: "lung",
-    relax: "relax",
-    nature: "natură",
+    view: "trails.tagLabels.view",
+    family: "trails.tagLabels.family",
+    forest: "trails.tagLabels.forest",
+    ridge: "trails.tagLabels.ridge",
+    alpine: "trails.tagLabels.alpine",
+    long: "trails.tagLabels.long",
+    relax: "trails.tagLabels.relax",
+    nature: "trails.tagLabels.nature",
   };
-  return map[tag] || tag;
+  const k = map[tag];
+  return k ? t(k) : tag;
 }
 
 // preview fallback (până ai imagini reale)
@@ -80,24 +82,44 @@ function previewSeed(t) {
   return `https://picsum.photos/seed/trail-${base}/900/600`;
 }
 
+// EN<->RO difficulty mapping (pentru filtrare corectă dacă UI e în EN)
+const DIFF_UI = {
+  ro: ["Toate", "Ușor", "Mediu", "Greu"],
+  en: ["All", "Easy", "Moderate", "Hard"],
+};
+const DIFF_TO_RO = {
+  All: "Toate",
+  Easy: "Ușor",
+  Moderate: "Mediu",
+  Hard: "Greu",
+  Toate: "Toate",
+  "Ușor": "Ușor",
+  "Mediu": "Mediu",
+  "Greu": "Greu",
+};
+
 export default function Trails() {
+  const { t, i18n } = useTranslation();
+  const isEn = i18n.language?.startsWith("en");
+
   const [q, setQ] = useState("");
-  const [diff, setDiff] = useState("Toate");
+  const [diff, setDiff] = useState(isEn ? "All" : "Toate");
   const [sort, setSort] = useState("recomandate");
   const [chip, setChip] = useState("all");
 
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase();
 
-    let list = TRAILS.filter((t) => {
-      const matchQ =
-        !query ||
-        t.name.toLowerCase().includes(query) ||
-        t.area.toLowerCase().includes(query);
+    // IMPORTANT: data e în RO (Ușor/Mediu/Greu). Convertim selecția UI -> RO.
+    const diffRo = DIFF_TO_RO[diff] || "Toate";
 
-      const matchDiff = diff === "Toate" ? true : t.difficulty === diff;
+    let list = TRAILS.filter((tr) => {
+      const name = String(tr.name || "").toLowerCase();
+      const area = String(tr.area || "").toLowerCase();
 
-      const matchChip = chip === "all" ? true : (t.tags || []).includes(chip);
+      const matchQ = !query || name.includes(query) || area.includes(query);
+      const matchDiff = diffRo === "Toate" ? true : tr.difficulty === diffRo;
+      const matchChip = chip === "all" ? true : (tr.tags || []).includes(chip);
 
       return matchQ && matchDiff && matchChip;
     });
@@ -113,34 +135,31 @@ export default function Trails() {
     return list;
   }, [q, diff, sort, chip]);
 
+  const diffOptions = isEn ? DIFF_UI.en : DIFF_UI.ro;
+
   return (
     <main className="tr-page">
-       <div className="tr-heroTop" aria-hidden="true">
-  <img
-    src={heroArt}
-    alt=""
-    className="tr-heroTopImg"
-  />
-</div>
+      <div className="tr-heroTop" aria-hidden="true">
+        <img src={heroArt} alt="" className="tr-heroTopImg" />
+      </div>
+
       <div className="container tr-container">
         <header className="tr-head">
-       
           <div className="tr-headTop">
             <div>
-              <h1 className="tr-title">Trasee montane</h1>
+              <h1 className="tr-title">{t("trails.title")}</h1>
               <p className="tr-subtitle text-muted">
-                Alege un traseu și deschide ghidul într-un tab nou (surse publice/oficiale).
+                {t("trails.subtitle")}
               </p>
             </div>
 
-            <div className="tr-count" title="Număr rezultate">
+            <div className="tr-count" title={t("trails.countTitle")}>
               <Sparkles size={16} />
-              <span>{filtered.length} rezultate</span>
+              <span>{t("trails.results", { count: filtered.length })}</span>
             </div>
           </div>
 
           <img className="tr-headArt" src={headerArt} alt="" aria-hidden="true" />
-
 
           {/* STICKY controls */}
           <div className="tr-controls">
@@ -148,39 +167,39 @@ export default function Trails() {
               <Search size={18} />
               <input
                 className="tr-input"
-                placeholder="Caută: Rarău, Călimani, Vatra Dornei..."
+                placeholder={t("trails.searchPlaceholder")}
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
+                aria-label={t("trails.searchAria")}
               />
             </div>
 
             <div className="tr-filters">
               <div className="tr-select">
                 <Filter size={16} />
-                <select value={diff} onChange={(e) => setDiff(e.target.value)}>
-                  <option>Toate</option>
-                  <option>Ușor</option>
-                  <option>Mediu</option>
-                  <option>Greu</option>
+                <select value={diff} onChange={(e) => setDiff(e.target.value)} aria-label={t("trails.filterDifficulty")}>
+                  {diffOptions.map((opt) => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
                 </select>
               </div>
 
               <div className="tr-select">
                 <TrendingUp size={16} />
-                <select value={sort} onChange={(e) => setSort(e.target.value)}>
-                  <option value="recomandate">Recomandate</option>
-                  <option value="durata">Durată (mică → mare)</option>
-                  <option value="dificultate">Dificultate (ușor → greu)</option>
+                <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label={t("trails.sortAria")}>
+                  <option value="recomandate">{t("trails.sort.recommended")}</option>
+                  <option value="durata">{t("trails.sort.duration")}</option>
+                  <option value="dificultate">{t("trails.sort.difficulty")}</option>
                 </select>
               </div>
             </div>
 
-            <div className="tr-chips" role="tablist" aria-label="Filtre rapide">
+            <div className="tr-chips" role="tablist" aria-label={t("trails.quickFilters")}>
               <button
                 className={`tr-chip ${chip === "all" ? "is-active" : ""}`}
                 onClick={() => setChip("all")}
               >
-                Toate
+                {t("trails.all")}
               </button>
               {CHIP_TAGS.map((x) => (
                 <button
@@ -188,32 +207,32 @@ export default function Trails() {
                   className={`tr-chip ${chip === x.key ? "is-active" : ""}`}
                   onClick={() => setChip(x.key)}
                 >
-                  {x.label}
+                  {t(x.labelKey)}
                 </button>
               ))}
             </div>
           </div>
         </header>
 
-        <section className="tr-grid" aria-label="Lista trasee">
-          {filtered.map((t) => (
+        <section className="tr-grid" aria-label={t("trails.listAria")}>
+          {filtered.map((tr) => (
             <article
-              key={t.id}
+              key={tr.id}
               className="tr-card"
-              onClick={() => window.open(t.url, "_blank", "noopener,noreferrer")}
+              onClick={() => window.open(tr.url, "_blank", "noopener,noreferrer")}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
-                  window.open(t.url, "_blank", "noopener,noreferrer");
+                  window.open(tr.url, "_blank", "noopener,noreferrer");
                 }
               }}
-              aria-label={`Deschide ghidul pentru ${t.name}`}
+              aria-label={t("trails.openGuideAria", { name: tr.name })}
             >
               <div className="tr-media">
                 <img
-                  src={t.image || previewSeed(t)}
+                  src={tr.image || previewSeed(tr)}
                   alt=""
                   loading="lazy"
                   onError={(e) => {
@@ -222,16 +241,17 @@ export default function Trails() {
                 />
                 <div className="tr-mediaOverlay" />
                 <div className="tr-cardTop">
-                  <span className={`tr-pill ${pillForDifficulty(t.difficulty)}`}>
-                    {t.difficulty}
+                  <span className={`tr-pill ${pillForDifficulty(tr.difficulty)}`}>
+                    {/* badge difficulty: tradus doar în UI */}
+                    {t(`trails.difficulty.${tr.difficulty}`, { defaultValue: tr.difficulty })}
                   </span>
 
                   <a
                     className="tr-open"
-                    href={t.url}
+                    href={tr.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    title="Deschide ghidul"
+                    title={t("trails.openGuideTitle")}
                     onClick={(e) => e.stopPropagation()}
                   >
                     <ExternalLink size={18} />
@@ -240,35 +260,35 @@ export default function Trails() {
               </div>
 
               <div className="tr-body">
-                <h3 className="tr-card-title">{t.name}</h3>
+                <h3 className="tr-card-title">{tr.name}</h3>
 
                 <div className="tr-meta">
                   <span className="tr-meta-item">
                     <MapPin size={16} />
-                    {t.area}
+                    {tr.area}
                   </span>
                   <span className="tr-meta-item">
                     <Timer size={16} />
-                    {t.durationHrs}h • {t.distanceKm} km
+                    {t("trails.meta.durationDistance", { hours: tr.durationHrs, km: tr.distanceKm })}
                   </span>
                 </div>
 
                 <div className="tr-tags">
-                  {(t.tags || []).slice(0, 3).map((tag) => (
+                  {(tr.tags || []).slice(0, 3).map((tag) => (
                     <span key={tag} className="tr-tag">
-                      {tagLabel(tag)}
+                      {tagLabel(tag, t)}
                     </span>
                   ))}
-                  <span className="tr-season">{t.season}</span>
+                  <span className="tr-season">{tr.season}</span>
                 </div>
 
                 <div className="tr-ctaRow">
                   <span className="tr-hint">
                     <ImageIcon size={16} />
-                    Deschide ghidul
+                    {t("trails.openGuideHint")}
                   </span>
                   <span className="tr-ctaMini">
-                    Vezi <ExternalLink size={16} />
+                    {t("trails.see")} <ExternalLink size={16} />
                   </span>
                 </div>
               </div>
@@ -277,7 +297,7 @@ export default function Trails() {
         </section>
 
         {filtered.length === 0 ? (
-          <div className="ui-empty tr-empty">Nu am găsit trasee pentru filtrul ales.</div>
+          <div className="ui-empty tr-empty">{t("trails.empty")}</div>
         ) : null}
       </div>
     </main>

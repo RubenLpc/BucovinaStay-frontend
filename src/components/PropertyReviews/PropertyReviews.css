@@ -500,3 +500,69 @@
     .prItem{ padding: 11px; }
   }
   
+
+  /* ===========================
+   PropertyReviews — polish patch
+   (append at end of file)
+   =========================== */
+
+/* Better focus for star buttons (accessibility) */
+.prStarBtn:focus-visible{
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: 10px;
+}
+
+/* Stars: slightly better readability on light backgrounds */
+.prStarsInline{
+  text-shadow: 0 1px 0 rgba(0,0,0,0.06);
+}
+
+/* Tiny delete button: more "danger" but still classy */
+.prBtnTiny{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.prBtnTiny{
+  border-color: rgba(239, 68, 68, 0.22);
+}
+
+.prBtnTiny:hover{
+  border-color: rgba(239, 68, 68, 0.35);
+  box-shadow: 0 10px 22px rgba(239, 68, 68, 0.10);
+}
+
+/* If you want it visibly "danger" only on hover */
+.prBtnTiny{
+  color: rgba(17,24,39,0.88);
+}
+
+.prBtnTiny:hover{
+  color: rgba(185, 28, 28, 0.92);
+}
+
+/* Keep top row clean: don't push layout too much */
+.prTopRow{
+  row-gap: 8px;
+}
+
+/* On small screens, make delete button look like a chip */
+@media (max-width: 430px){
+  .prBtnTiny{
+    margin-left: 0;       /* don't force right-align on tiny widths */
+    padding: 6px 10px;
+  }
+  .prTopRow{
+    justify-content: flex-start;
+  }
+}
+
+/* Optional: slightly softer empty state border on mobile */
+@media (max-width: 430px){
+  .prEmpty{
+    border-style: dashed;
+    border-color: rgba(17,24,39,0.16);
+  }
+}
