@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { X, Search, CheckCircle2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { AMENITIES_CATALOG, AMENITY_CATEGORIES } from "../../constants/amenitiesCatalog";
 import "./AmenitiesModal.css";
 
@@ -19,6 +20,7 @@ export default function AmenitiesModal({
   subtitle = "Bifează ce este disponibil. Poți căuta rapid.",
   max = 60, // optional limit
 }) {
+  const { t } = useTranslation();
   const [q, setQ] = useState("");
   const [tab, setTab] = useState("all"); // all or category key
   const [local, setLocal] = useState(() => Array.isArray(value) ? value : []);
@@ -57,18 +59,20 @@ export default function AmenitiesModal({
   const filtered = useMemo(() => {
     const nq = norm(q);
     return AMENITIES_CATALOG.filter((a) => {
-      if (tab !== "all" && (a.category || "Altele") !== tab) return false;
+      const categoryLabel = a.categoryKey ? t(a.categoryKey) : (a.category || "Altele");
+      const amenityLabel = a.labelKey ? t(a.labelKey) : (a.label || a.key);
+      if (tab !== "all" && (a.categoryKey || a.category || "Altele") !== tab) return false;
       if (!nq) return true;
-      const hay = norm(`${a.label} ${a.key} ${(a.category || "")}`);
+      const hay = norm(`${amenityLabel} ${a.key} ${categoryLabel}`);
       return hay.includes(nq);
     });
-  }, [q, tab]);
+  }, [q, tab, t]);
 
   const selectedCountByCategory = useMemo(() => {
     const m = new Map();
     for (const k of local) {
       const a = AMENITIES_CATALOG.find((x) => x.key === k);
-      const c = (a?.category || "Altele");
+      const c = (a?.categoryKey || a?.category || "Altele");
       m.set(c, (m.get(c) || 0) + 1);
     }
     return m;
@@ -149,7 +153,7 @@ export default function AmenitiesModal({
                 className={`amodalTab ${tab === c ? "active" : ""}`}
                 onClick={() => setTab(c)}
               >
-                {c}
+                {c === "all" ? "Toate" : (c.includes(".") ? t(c) : c)}
                 {cnt ? <span className="amodalBadge">{cnt}</span> : null}
               </button>
             );
@@ -176,8 +180,10 @@ export default function AmenitiesModal({
                   <span className="amodalItemIcon">{Icon ? <Icon size={18} /> : null}</span>
 
                   <span className="amodalItemText">
-                    <span className="amodalItemLabel">{a.label}</span>
-                    <span className="amodalItemMeta">{a.category || "Altele"}</span>
+                    <span className="amodalItemLabel">{a.labelKey ? t(a.labelKey) : (a.label || a.key)}</span>
+                    <span className="amodalItemMeta">
+                      {a.categoryKey ? t(a.categoryKey) : (a.category || "Altele")}
+                    </span>
                   </span>
 
                   <span className={`amodalCheck ${checked ? "on" : ""}`} aria-hidden="true">

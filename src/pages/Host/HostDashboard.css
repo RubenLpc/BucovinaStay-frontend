@@ -8,7 +8,7 @@
    .hdPage{
     min-height: 100dvh;
     color: var(--ink);
-    background: var(--bg);
+    /*background: var(--bg);*/
   }
   
   /* subtle background texture */
@@ -163,34 +163,114 @@
   .hdLegend{
     display:flex;
     align-items:center;
-    gap: 10px;
+    gap: 14px;
     color: var(--muted);
     font-weight: 800;
     font-size: 12px;
+    flex-shrink: 0;
   }
   
   .hdLegendDot{
     width: 8px;
     height: 8px;
     border-radius: 999px;
-    background: rgba(17,24,39,0.60);
+    background: rgba(17,24,39,0.55);
   }
   
   .hdLegendDot.alt{
-    background: rgba(255,56,92,0.55);
+    background: rgba(255,56,92,0.70);
   }
   
   .hdChartArea{
-    margin-top: 12px;
-    height: 220px;
-    border-radius: 16px;
-    background: rgba(17,24,39,0.03);
-    border: 1px solid var(--border);
-    padding: 14px;
+    margin-top: 10px;
+    height: 210px;
+    border-radius: 14px;
+    background: rgba(17,24,39,0.025);
+    border: 1px solid rgba(17,24,39,0.08);
+    padding: 0;
     overflow: hidden;
   
     display: flex;
-    align-items: flex-end;
+    align-items: stretch;
+  }
+
+  .hdChartWrap{
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hdLineChart{
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hdChartEmpty{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--muted);
+    font-weight: 800;
+    font-size: 13px;
+  }
+
+  .hdChartTooltip{
+    position: absolute;
+    top: 10px;
+    transform: translateX(-50%);
+    background: rgba(17,24,39,0.90);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #fff;
+    border-radius: 10px;
+    padding: 8px 12px;
+    pointer-events: none;
+    font-size: 12px;
+    font-weight: 800;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.30);
+    min-width: 130px;
+    z-index: 10;
+    white-space: nowrap;
+  }
+
+  .hdTtDate{
+    font-size: 11px;
+    font-weight: 900;
+    opacity: .70;
+    margin-bottom: 4px;
+    letter-spacing: .1em;
+  }
+
+  .hdTtRow{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 3px;
+  }
+
+  .hdTtRow.muted{
+    opacity: .65;
+  }
+
+  .hdTtRow strong{
+    color: inherit;
+    font-weight: 900;
+  }
+
+  .hdTtDot{
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.70);
+    flex-shrink: 0;
+  }
+
+  .hdTtDot.accent{
+    background: rgba(255,56,92,0.90);
   }
   
   .hdBars{
@@ -281,7 +361,7 @@
   
   /* table */
   .hdTable{
-    padding: 6px;
+    /*padding: 6px;*/
   }
   
   .hdTableHead{
@@ -921,4 +1001,99 @@
 
   .hdMsg2Meta{ font-size: 12px; }
   .hdMsg2Text{ font-size: 12.5px; }
+}
+
+.hostShell[data-host-theme="dark"] .hdPage{
+  background:
+    radial-gradient(1200px 700px at 15% 10%, rgba(255,56,92,0.08), transparent 60%),
+    radial-gradient(900px 650px at 85% 0%, rgba(59,130,246,0.08), transparent 55%),
+    linear-gradient(180deg, #081019 0%, #0b1220 100%);
+}
+
+.hostShell[data-host-theme="dark"] .hdChip,
+.hostShell[data-host-theme="dark"] .hdSelect,
+.hostShell[data-host-theme="dark"] .hdSearchInput,
+.hostShell[data-host-theme="dark"] .hdBtn.ghost{
+  background: rgba(15,23,42,0.82);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+}
+
+.hostShell[data-host-theme="dark"] .hdChip:hover,
+.hostShell[data-host-theme="dark"] .hdSelect:hover{
+  background: rgba(15,23,42,0.94);
+  border-color: rgba(148,163,184,0.24);
+}
+
+.hostShell[data-host-theme="dark"] .hdCard,
+.hostShell[data-host-theme="dark"] .hdRow,
+.hostShell[data-host-theme="dark"] .hdMsg,
+.hostShell[data-host-theme="dark"] .hdMsg2,
+.hostShell[data-host-theme="dark"] .hdStatCard{
+  background: rgba(15,23,42,0.84);
+  border-color: rgba(148,163,184,0.16);
+  box-shadow: 0 18px 48px rgba(2,6,23,0.36);
+}
+
+.hostShell[data-host-theme="dark"] .hdMsg2.isNew{
+  background: linear-gradient(180deg, rgba(255,56,92,0.12), rgba(15,23,42,0.90));
+  border-color: rgba(255,56,92,0.20);
+}
+
+.hostShell[data-host-theme="dark"] .hdCardMini,
+.hostShell[data-host-theme="dark"] .hdMsgAvatar,
+.hostShell[data-host-theme="dark"] .hdThumb,
+.hostShell[data-host-theme="dark"] .hdMsg2Avatar{
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(148,163,184,0.16);
+}
+
+.hostShell[data-host-theme="dark"] .hdSpark,
+.hostShell[data-host-theme="dark"] .hdSparkEmpty,
+.hostShell[data-host-theme="dark"] .hdChartArea{
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(148,163,184,0.14);
+}
+
+.hostShell[data-host-theme="dark"] .hdLegendDot{
+  background: rgba(248,250,252,0.68);
+}
+
+.hostShell[data-host-theme="dark"] .hdLegendDot.alt{
+  background: rgba(255,107,132,0.90);
+}
+
+.hostShell[data-host-theme="dark"] .hdChartTooltip{
+  background: rgba(8,11,19,0.94);
+  border: 1px solid rgba(148,163,184,0.16);
+  box-shadow: 0 12px 30px rgba(2,6,23,0.44);
+}
+
+.hostShell[data-host-theme="dark"] .hdEmpty{
+  background: rgba(15,23,42,0.72);
+  border-color: rgba(148,163,184,0.22);
+}
+
+.hostShell[data-host-theme="dark"] .hdPager{
+  border-top-color: rgba(148,163,184,0.14);
+}
+
+.hostShell[data-host-theme="dark"] .hdInboxCount,
+.hostShell[data-host-theme="dark"] .hdUnread2{
+  background: rgba(255,56,92,0.16);
+  border-color: rgba(255,56,92,0.22);
+  color: #fda4af;
+}
+
+.hostShell[data-host-theme="dark"] .hdMsg2Name{
+  color: var(--ink);
+}
+
+.hostShell[data-host-theme="dark"] .hdMsg2Time,
+.hostShell[data-host-theme="dark"] .hdMsg2Meta{
+  color: var(--muted);
+}
+
+.hostShell[data-host-theme="dark"] .hdMsg2Text{
+  color: var(--ink-2);
 }

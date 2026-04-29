@@ -133,4 +133,15 @@
     .favGrid{ grid-template-columns: 1fr; }
     .favImg{ height: 200px; }
   }
+
+.siteShell[data-site-theme="dark"] .favGateCard,
+.siteShell[data-site-theme="dark"] .favEmptyCard,
+.siteShell[data-site-theme="dark"] .favCard{
+  background: rgba(15,23,42,0.84);
+  border-color: rgba(148,163,184,0.16);
+}
+
+.siteShell[data-site-theme="dark"] .favImg{
+  background: rgba(255,255,255,0.04);
+}
   

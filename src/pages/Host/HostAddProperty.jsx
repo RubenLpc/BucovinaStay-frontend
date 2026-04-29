@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import {
   Image as ImageIcon,
   Save,
@@ -19,6 +20,7 @@ import {
 } from "lucide-react";
 
 import { useAuthStore } from "../../stores/authStore";
+import { useSettingsStore } from "../../stores/settingsStore";
 import { hostPropertyService } from "../../api/hostPropertyService";
 import { hostProfileService } from "../../api/hostProfileService";
 import HostProfileModal from "../../components/HostProfileModal/HostProfileModal";
@@ -105,8 +107,10 @@ function isHostProfileComplete(profile) {
 }
 
 export default function HostAddPropertyScroll({ editId = null }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const { currency: preferredCurrency } = useSettingsStore();
 
   const [saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -134,7 +138,7 @@ export default function HostAddPropertyScroll({ editId = null }) {
     locality: "",
     addressLine: "",
     pricePerNight: 250,
-    currency: "RON",
+    currency: preferredCurrency || "RON",
     capacity: 2,
     facilities: [],
     images: [],
@@ -863,7 +867,7 @@ export default function HostAddPropertyScroll({ editId = null }) {
     <div className="haPreviewChips" style={{ marginTop: 10 }}>
       {form.facilities.slice(0, 6).map((k) => (
         <span key={k} className="haTinyChip">
-          {AMENITY_BY_KEY[k]?.label || k}
+          {AMENITY_BY_KEY[k]?.labelKey ? t(AMENITY_BY_KEY[k].labelKey) : (AMENITY_BY_KEY[k]?.label || k)}
         </span>
       ))}
       {form.facilities.length > 6 ? (

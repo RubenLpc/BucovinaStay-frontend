@@ -788,4 +788,143 @@
       height: 88px;
     }
   }
-  
+
+/* =========================
+   New UI elements (security tab, avatar)
+   ========================= */
+
+/* Danger button — red tint, for destructive actions like "Șterge avatar" */
+.hsBtnDanger {
+  border-color: rgba(239, 68, 68, 0.28) !important;
+  color: #dc2626 !important;
+}
+.hsBtnDanger:hover {
+  background: rgba(239, 68, 68, 0.10) !important;
+  border-color: rgba(239, 68, 68, 0.38) !important;
+}
+
+/* Password field wrapper — holds input + eye-toggle button */
+.hsFieldInner {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Make room on the right for the eye button */
+.hsField .hsFieldInner input {
+  padding-right: 40px;
+  width: 100%;
+}
+
+/* Eye toggle button inside password field */
+.hsEyeBtn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: transparent;
+  color: var(--muted-2, rgba(17,24,39,0.46));
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  flex-shrink: 0;
+  transition: color .12s, background .12s;
+}
+.hsEyeBtn:hover {
+  color: var(--ink, rgba(17,24,39,0.92));
+  background: rgba(17,24,39,0.06);
+}
+.hsEyeBtn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255,56,92,0.22);
+}
+
+/* Error state on input — red border + shadow */
+.hsField input.hsInputError,
+.hsField .hsFieldInner input.hsInputError {
+  border-color: rgba(239, 68, 68, 0.45) !important;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.10) !important;
+}
+
+/* Error message below field */
+.hsFieldError {
+  margin-top: 5px;
+  font-size: 12px;
+  font-weight: 750;
+  color: #dc2626;
+}
+
+/* Password strength bar */
+.hsPwdStrength {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 7px;
+  font-size: 11.5px;
+  font-weight: 850;
+}
+
+.hsPwdBar {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(17,24,39,0.10);
+  overflow: hidden;
+}
+
+.hsPwdFill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width .25s ease, background .25s ease;
+}
+
+.hsPwdFill--weak   { width: 33%;  background: #dc2626; }
+.hsPwdFill--medium { width: 66%;  background: #d97706; }
+.hsPwdFill--strong { width: 100%; background: #059669; }
+
+/* Toggle text wrapper (label + description stack) */
+.hsToggleText {
+  min-width: 0;
+  flex: 1;
+}
+
+.hostShell[data-host-theme="dark"] .hsPage{
+  background:
+    radial-gradient(1200px 700px at 15% 10%, rgba(255,56,92,0.08), transparent 60%),
+    radial-gradient(900px 650px at 85% 0%, rgba(59,130,246,0.08), transparent 55%),
+    linear-gradient(180deg, #081019 0%, #0b1220 100%);
+}
+
+.hostShell[data-host-theme="dark"] .hsGhostLink,
+.hostShell[data-host-theme="dark"] .hsTab,
+.hostShell[data-host-theme="dark"] .hsBtn,
+.hostShell[data-host-theme="dark"] .hsField input,
+.hostShell[data-host-theme="dark"] .hsField textarea,
+.hostShell[data-host-theme="dark"] .hsField select,
+.hostShell[data-host-theme="dark"] .hsChip{
+  background: rgba(15,23,42,0.82);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+}
+
+.hostShell[data-host-theme="dark"] .hsCard,
+.hostShell[data-host-theme="dark"] .hsProfileHero,
+.hostShell[data-host-theme="dark"] .hsPreviewCard,
+.hostShell[data-host-theme="dark"] .hsBlock,
+.hostShell[data-host-theme="dark"] .hsSkelCard,
+.hostShell[data-host-theme="dark"] .hsStickyBar{
+  background: rgba(15,23,42,0.84);
+  border-color: rgba(148,163,184,0.16);
+  box-shadow: 0 18px 48px rgba(2,6,23,0.36);
+}
+
+.hostShell[data-host-theme="dark"] .hsCallout,
+.hostShell[data-host-theme="dark"] .hsSwitch,
+.hostShell[data-host-theme="dark"] .hsEyeBtn:hover{
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(148,163,184,0.16);
+}

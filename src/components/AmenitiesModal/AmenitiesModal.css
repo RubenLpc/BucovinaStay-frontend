@@ -255,7 +255,79 @@
     color: white;
     border-color: rgba(0,0,0,0.12);
   }
-  .amodalBtn.ghost{
-    background: transparent;
-  }
+.amodalBtn.ghost{
+  background: transparent;
+}
+
+.hostShell[data-host-theme="dark"] .amodal,
+.hostShell[data-host-theme="dark"] .amodalItem,
+.hostShell[data-host-theme="dark"] .amodalBtn,
+.hostShell[data-host-theme="dark"] .amodalCheck,
+.hostShell[data-host-theme="dark"] .amodalCounter,
+.hostShell[data-host-theme="dark"] .amodalSearch,
+.hostShell[data-host-theme="dark"] .amodalTab,
+.hostShell[data-host-theme="dark"] .amodalClose{
+  background: rgba(15,23,42,0.84);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+}
+
+.hostShell[data-host-theme="dark"] .amodalHeader,
+.hostShell[data-host-theme="dark"] .amodalFooter{
+  border-color: rgba(148,163,184,0.14);
+}
+
+.hostShell[data-host-theme="dark"] .amodalSub,
+.hostShell[data-host-theme="dark"] .amodalItemMeta,
+.hostShell[data-host-theme="dark"] .amodalCounter,
+.hostShell[data-host-theme="dark"] .amodalEmpty{
+  color: var(--muted);
+}
+
+.hostShell[data-host-theme="dark"] .amodalSearch input{
+  color: var(--ink);
+}
+
+.hostShell[data-host-theme="dark"] .amodalSearch input::placeholder{
+  color: rgba(148,163,184,0.72);
+}
+
+.hostShell[data-host-theme="dark"] .amodalItemIcon,
+.hostShell[data-host-theme="dark"] .amodalCheckDot,
+.hostShell[data-host-theme="dark"] .amodalBadge{
+  background: rgba(255,255,255,0.08);
+}
+
+.hostShell[data-host-theme="dark"] .amodalItem:hover{
+  border-color: rgba(148,163,184,0.24);
+}
+
+.hostShell[data-host-theme="dark"] .amodalItem.checked{
+  background: rgba(255,56,92,0.10);
+  border-color: rgba(255,56,92,0.22);
+}
+
+.hostShell[data-host-theme="dark"] .amodalTab.active{
+  background: rgba(255,56,92,0.12);
+  border-color: rgba(255,56,92,0.22);
+  color: #fda4af;
+}
+
+.hostShell[data-host-theme="dark"] .amodalBtn.primary{
+  color: white;
+}
+
+.siteShell[data-site-theme="dark"] .amodal,
+.siteShell[data-site-theme="dark"] .amodalItem,
+.siteShell[data-site-theme="dark"] .amodalBtn,
+.siteShell[data-site-theme="dark"] .amodalCheck{
+  background: rgba(15,23,42,0.84);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+}
+
+.siteShell[data-site-theme="dark"] .amodalItemIcon,
+.siteShell[data-site-theme="dark"] .amodalCheckDot{
+  background: rgba(255,255,255,0.08);
+}
   

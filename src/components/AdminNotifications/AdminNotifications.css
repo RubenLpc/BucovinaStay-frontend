@@ -1,209 +1,259 @@
 /* =========================================================
-   ADMIN NOTIFICATIONS — aligned to index.css tokens
+   ADMIN NOTIFICATIONS
    ========================================================= */
 
-   .anRoot{ position: fixed; inset: 0; z-index: 2400; }
+.anRoot { position: fixed; inset: 0; z-index: 2400; }
 
-   .anBackdrop{
-     position: absolute; inset: 0; width: 100%;
-     border: 0; cursor: pointer;
-     background: rgba(0,0,0,.42);
-     backdrop-filter: blur(3px);
-   }
-   
-   /* Desktop dropdown anchored under admin header */
-   .anPanel{
-     position: absolute;
-     top: calc(var(--header-h) - 8px);
-     right: 14px;
-   
-     width: min(440px, calc(100vw - 24px));
-     max-height: min(72vh, 680px);
-   
-     display: flex;
-     flex-direction: column;
-   
-     background: var(--bg-soft);
-     border: 1px solid var(--border);
-     border-radius: var(--r-md);
-     box-shadow: var(--shadow-md);
-     overflow: hidden;
-   }
-   
-   /* Top */
-   .anTop{
-     display:flex; align-items:center; justify-content: space-between; gap: var(--space-sm);
-     padding: 14px 14px 10px;
-     border-bottom: 1px solid var(--border);
-     background: linear-gradient(to bottom, rgba(255,255,255,0.86), rgba(255,255,255,0.72));
-   }
-   .anTitle{
-     font-size: 15.5px;
-     font-weight: 950;
-     letter-spacing: var(--ls);
-     color: var(--ink);
-   }
-   .anClose{
-     width: 38px; height: 38px;
-     border-radius: var(--r-sm);
-     border: 1px solid var(--btn-border);
-     background: var(--btn-bg);
-     display: grid; place-items: center;
-     cursor: pointer;
-     transition: transform .12s ease, background .12s ease, border-color .12s ease;
-   }
-   .anClose:hover{ transform: translateY(-1px); background: var(--btn-bg-hover); border-color: var(--btn-border-hover); }
-   .anClose:focus-visible{ outline: none; box-shadow: var(--focus-ring); }
-   
-   /* Tabs + actions row */
-   .anTabs{
-     display:flex; align-items:center; gap: 10px;
-     padding: 10px 14px 12px;
-     border-bottom: 1px solid var(--border);
-     background: var(--surface);
-   }
-   .anTab{
-     height: 34px; padding: 0 12px;
-     border-radius: 999px;
-     border: 1px solid var(--btn-border);
-     background: var(--btn-bg);
-     font-weight: 900;
-     font-size: 12.5px;
-     color: var(--ink);
-     cursor: pointer;
-     transition: transform .12s ease, background .12s ease, border-color .12s ease;
-     white-space: nowrap;
-   }
-   .anTab:hover{ transform: translateY(-1px); background: var(--btn-bg-hover); border-color: var(--btn-border-hover); }
-   .anTab.isActive{ background: var(--accent-soft); border-color: var(--accent-border); }
-   .anTab:focus-visible{ outline: none; box-shadow: var(--focus-ring); }
-   
-   .anSpacer{ flex: 1; }
-   
-   .anIconAction{
-     width: 34px; height: 34px;
-     border-radius: 999px;
-     border: 1px solid var(--btn-border);
-     background: var(--btn-bg);
-     display: grid; place-items: center;
-     cursor: pointer;
-     transition: transform .12s ease, background .12s ease, border-color .12s ease;
-   }
-   .anIconAction:hover{ transform: translateY(-1px); background: var(--btn-bg-hover); border-color: var(--btn-border-hover); }
-   .anIconAction:disabled{ opacity: .55; cursor: not-allowed; }
-   .anIconAction:focus-visible{ outline: none; box-shadow: var(--focus-ring); }
-   
-   /* List */
-   .anList{
-     padding: 10px;
-     overflow: auto;
-     min-height: 220px; /* ajută empty state */
-     scrollbar-width: thin;
-   }
-   .anList::-webkit-scrollbar{ width: 10px; }
-   .anList::-webkit-scrollbar-thumb{
-     background: rgba(17,24,39,0.18);
-     border-radius: 999px;
-     border: 3px solid rgba(255,255,255,0.65);
-   }
-   
-   /* Item */
-   .anItem{
-     width: 100%;
-     display:flex; gap: 12px;
-     padding: 12px;
-     border-radius: var(--r-md);
-     border: 1px solid var(--border);
-     background: var(--card);
-     text-align: left;
-     margin-bottom: 10px;
-     cursor: pointer;
-     transition: transform .14s ease, box-shadow .14s ease, background .14s ease, border-color .14s ease;
-     will-change: transform;
-   }
-   @media (hover: hover) and (pointer: fine){
-     .anItem:hover{ transform: translateY(-1px); background: var(--surface); box-shadow: var(--shadow-sm); }
-   }
-   .anItem.isNew{ border-color: var(--accent-border); }
-   .anItem:focus-visible{ outline: none; box-shadow: var(--focus-ring); }
-   
-   /* Icon */
-   .anIcon{
-     width: 40px; height: 40px;
-     border-radius: var(--r-sm);
-     border: 1px solid var(--border);
-     background: var(--btn-bg);
-     display: grid; place-items: center;
-     flex: 0 0 auto;
-   }
-   
-   /* Body */
-   .anBody{ flex: 1; min-width: 0; position: relative; }
-   .anRow{ display:flex; justify-content: space-between; align-items: baseline; gap: 10px; }
-   .anItemTitle{
-     font-weight: 950;
-     letter-spacing: var(--ls-soft);
-     color: var(--ink);
-     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-   }
-   .anTime{ font-size: var(--fs-xs); color: var(--muted-2); white-space: nowrap; }
-   .anText{
-     margin-top: 4px;
-     font-size: 13px;
-     color: var(--ink-2);
-     line-height: 1.35;
-     display: -webkit-box;
-     -webkit-line-clamp: 2;
-     -webkit-box-orient: vertical;
-     overflow: hidden;
-   }
-   
-   /* Badge */
-   .anBadge{
-     position: absolute; right: 0; bottom: 0;
-     font-size: var(--fs-xs);
-     font-weight: 950;
-     padding: 4px 8px;
-     border-radius: 999px;
-     background: var(--accent-soft);
-     border: 1px solid var(--accent-border);
-     color: var(--ink);
-   }
-   
-   /* Empty */
-   .anEmpty{ padding: 18px 14px; color: var(--muted); }
-   .anEmptyCenter{
-     min-height: 240px;
-     display: grid;
-     place-items: center;
-     text-align: center;
-     padding: 22px 16px;
-   }
-   .anEmptyIcon{ margin-bottom: 10px; opacity: .85; }
-   .anEmptyTitle{ font-weight: 950; color: var(--ink); }
-   .anEmptySub{ margin-top: 6px; color: var(--muted); }
-   
-   /* Mobile: full screen like YouTube */
-   @media (max-width: 560px){
-     .anPanel{
-       top: 0; right: 0;
-       width: 100vw; height: 100vh;
-       max-height: none;
-       border-radius: 0;
-     }
-     .anTop{
-       position: sticky; top: 0; z-index: 2;
-     }
-     .anTabs{
-       position: sticky;
-       top: 56px;
-       z-index: 2;
-     }
-   }
-   @media (max-width: 380px){
-     .anTabs{ gap: 8px; padding: 10px 10px 12px; }
-     .anTab{ padding: 0 10px; }
-     .anItem{ padding: 11px; gap: 10px; }
-     .anIcon{ width: 38px; height: 38px; }
-   }
-   
+.anBackdrop {
+  position: absolute; inset: 0; width: 100%;
+  border: 0; cursor: pointer;
+  background: rgba(0,0,0,.38);
+  backdrop-filter: blur(3px);
+}
+
+/* Panel */
+.anPanel {
+  position: absolute;
+  top: calc(var(--header-h) - 8px);
+  right: 14px;
+  width: min(440px, calc(100vw - 24px));
+  max-height: min(72vh, 660px);
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+/* Top */
+.anTop {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-sm);
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(255,255,255,0.74));
+  flex-shrink: 0;
+}
+.anTitle {
+  font-size: 15.5px;
+  font-weight: 950;
+  letter-spacing: var(--ls);
+  color: var(--ink);
+}
+.anClose {
+  width: 36px; height: 36px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--btn-border);
+  background: var(--btn-bg);
+  color: var(--ink);
+  display: grid; place-items: center;
+  cursor: pointer;
+  transition: transform .12s, background .12s, border-color .12s;
+}
+.anClose:hover { transform: translateY(-1px); background: var(--btn-bg-hover); border-color: var(--btn-border-hover); }
+.anClose:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* Tabs */
+.anTabs {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px 11px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+.anTab {
+  height: 32px; padding: 0 11px;
+  border-radius: 999px;
+  border: 1px solid var(--btn-border);
+  background: var(--btn-bg);
+  font-weight: 900; font-size: 12px;
+  color: var(--ink);
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: transform .12s, background .12s, border-color .12s;
+  white-space: nowrap;
+}
+.anTab:hover { transform: translateY(-1px); background: var(--btn-bg-hover); border-color: var(--btn-border-hover); }
+.anTab.isActive { background: var(--accent-soft); border-color: var(--accent-border); }
+.anTab:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+.anTabBadge {
+  min-width: 20px; height: 17px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px; font-weight: 950;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+
+.anSpacer { flex: 1; }
+
+.anIconAction {
+  width: 32px; height: 32px;
+  border-radius: 999px;
+  border: 1px solid var(--btn-border);
+  background: var(--btn-bg);
+  color: var(--ink);
+  display: grid; place-items: center;
+  cursor: pointer;
+  transition: transform .12s, background .12s, border-color .12s;
+  flex-shrink: 0;
+}
+.anIconAction:hover { transform: translateY(-1px); background: var(--btn-bg-hover); border-color: var(--btn-border-hover); }
+.anIconAction:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.anIconAction:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* List */
+.anList {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(17,24,39,0.14) transparent;
+}
+.anList::-webkit-scrollbar { width: 4px; }
+.anList::-webkit-scrollbar-thumb { background: rgba(17,24,39,0.14); border-radius: 4px; }
+
+/* Item */
+.anItem {
+  width: 100%;
+  display: flex; gap: 11px;
+  padding: 11px 12px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  border-left: 3px solid transparent;
+  background: var(--card);
+  text-align: left;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: transform .14s, box-shadow .14s, background .14s, border-color .14s;
+  will-change: transform;
+}
+@media (hover: hover) and (pointer: fine) {
+  .anItem:hover { transform: translateY(-1px); background: var(--surface); box-shadow: var(--shadow-sm); }
+}
+.anItem:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+.anItem.isNew {
+  border-color: var(--accent-border);
+  border-left-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+/* Icon */
+.anIcon {
+  width: 38px; height: 38px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--btn-bg);
+  color: var(--muted);
+  display: grid; place-items: center;
+  flex-shrink: 0;
+  transition: background .14s, color .14s, border-color .14s;
+}
+.anIcon--good { background: rgba(16,185,129,0.10); color: #059669; border-color: rgba(16,185,129,0.22); }
+.anIcon--warn { background: rgba(245,158,11,0.10); color: #d97706; border-color: rgba(245,158,11,0.22); }
+.anIcon--bad  { background: rgba(239,68,68,0.10);  color: #dc2626; border-color: rgba(239,68,68,0.22); }
+
+/* Body */
+.anBody {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.anRow { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.anItemTitle {
+  font-size: 13px; font-weight: 950;
+  letter-spacing: var(--ls-soft);
+  color: var(--ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  min-width: 0;
+}
+.anTime { font-size: var(--fs-xs); color: var(--muted-2); white-space: nowrap; flex-shrink: 0; }
+.anText {
+  font-size: 12.5px; color: var(--ink-2); line-height: 1.38;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Badge NOU */
+.anBadge {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 5px;
+  font-size: 10px; font-weight: 950;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  align-self: flex-start;
+}
+
+/* Empty */
+.anEmpty { padding: 20px 14px; color: var(--muted); }
+.anEmptyCenter {
+  flex: 1;
+  min-height: 220px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: var(--space-xl) var(--space-md);
+  gap: 4px;
+}
+.anEmptyIcon { opacity: .7; margin-bottom: 6px; }
+.anEmptyTitle { font-weight: 950; color: var(--ink); font-size: 14px; }
+.anEmptySub { color: var(--muted); font-size: 12.5px; margin-top: 4px; }
+
+/* ── Mobile full screen ── */
+@media (max-width: 560px) {
+  .anPanel {
+    top: 0; right: 0;
+    width: 100vw; height: 100dvh;
+    max-height: none;
+    border-radius: 0;
+  }
+  .anTop  { position: sticky; top: 0; z-index: 2; }
+  .anTabs { position: sticky; top: 52px; z-index: 2; }
+}
+
+/* ── Small phones (≤ 390px) ── */
+@media (max-width: 390px) {
+  .anTabs { gap: 6px; padding: 9px 10px 10px; }
+  .anTab  { height: 30px; padding: 0 9px; font-size: 11.5px; }
+  .anIconAction { width: 30px; height: 30px; }
+  .anItem { padding: 10px 10px 10px 9px; gap: 9px; }
+  .anIcon { width: 34px; height: 34px; }
+  .anItemTitle { font-size: 12.5px; }
+}
+
+/* ── Extra small (≤ 320px) ── */
+@media (max-width: 320px) {
+  .anTop  { padding: 12px 12px 9px; }
+  .anTitle { font-size: 14.5px; }
+  .anTab  { height: 28px; padding: 0 8px; font-size: 11px; }
+  .anItem { padding: 9px 9px 9px 8px; }
+  .anIcon { width: 32px; height: 32px; }
+  .anTabBadge { min-width: 17px; height: 15px; font-size: 9px; }
+}
+
+.adShell[data-admin-theme="dark"] .anBackdrop{
+  background: rgba(2,6,23,0.54);
+}
+
+.adShell[data-admin-theme="dark"] .anTop{
+  background: linear-gradient(to bottom, rgba(8,11,19,0.96), rgba(15,23,42,0.88));
+}
+
+.adShell[data-admin-theme="dark"] .anList{
+  scrollbar-color: rgba(148,163,184,0.24) transparent;
+}
+
+.adShell[data-admin-theme="dark"] .anList::-webkit-scrollbar-thumb{
+  background: rgba(148,163,184,0.24);
+}

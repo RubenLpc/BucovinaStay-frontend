@@ -18,9 +18,9 @@
     border-radius: 22px;
     padding: 10px 12px;
   
-    background: rgba(16, 18, 28, 0.86);
-    border: 1px solid rgba(255,255,255,0.10);
-    box-shadow: 0 18px 50px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.04);
+    background: var(--ad-nav-bg);
+    border: 1px solid var(--ad-nav-border);
+    box-shadow: var(--ad-nav-shadow);
   
     backdrop-filter: blur(14px) saturate(1.1);
     -webkit-backdrop-filter: blur(14px) saturate(1.1);
@@ -51,13 +51,13 @@
     place-items:center;
   
     background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.16), rgba(255,255,255,0.06));
-    border: 1px solid rgba(255,255,255,0.12);
+    border: 1px solid var(--ad-nav-border);
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
-    color: rgba(255,255,255,0.92);
+    color: var(--ad-nav-text);
   }
   
   .atnBrandText{
-    color: rgba(255,255,255,0.94);
+    color: var(--ad-nav-text);
     font-weight: 950;
     letter-spacing: var(--ls-soft);
     white-space: nowrap;
@@ -86,8 +86,8 @@
     padding: 6px;
     border-radius: 999px;
   
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.10);
+    background: var(--ad-nav-soft);
+    border: 1px solid var(--ad-nav-border);
   
     overflow-x: auto;
     scrollbar-width: none;
@@ -102,7 +102,7 @@
     border: 0;
     background: transparent;
   
-    color: rgba(255,255,255,0.72);
+    color: var(--ad-nav-muted);
     font-weight: 900;
     font-size: 13px;
     letter-spacing: 0.2px;
@@ -114,13 +114,13 @@
   }
   
   .atnTab:hover{
-    color: rgba(255,255,255,0.96);
+    color: var(--ad-nav-text);
     transform: translateY(-1px);
   }
   
   .atnTab.isActive{
-    background: rgba(255,255,255,0.12);
-    color: rgba(255,255,255,0.98);
+    background: var(--ad-nav-soft-2);
+    color: var(--ad-nav-text);
     box-shadow: 0 8px 20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06);
     transform: none;
   }
@@ -139,14 +139,14 @@
     padding: 0 12px;
     border-radius: 999px;
   
-    border: 1px solid rgba(255,255,255,0.12);
-    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--ad-nav-border);
+    background: var(--ad-nav-soft);
   
     display:inline-flex;
     align-items:center;
     gap: 10px;
   
-    color: rgba(255,255,255,0.92);
+    color: var(--ad-nav-text);
     cursor:pointer;
   
     font-weight: 950;
@@ -159,8 +159,8 @@
   }
   .atnRolePill:hover{
     transform: translateY(-1px);
-    background: rgba(255,255,255,0.09);
-    border-color: rgba(255,255,255,0.18);
+    background: var(--ad-nav-soft-2);
+    border-color: var(--ad-nav-border);
   }
   .atnRolePill:active{ transform: translateY(0px); }
   
@@ -170,7 +170,7 @@
     width: 5px;
     height: 5px;
     border-radius: 999px;
-    background: rgba(255,255,255,0.28);
+    background: var(--ad-nav-muted);
   }
   
   /* Icon buttons */
@@ -179,9 +179,9 @@
     height: 40px;
     border-radius: 999px;
   
-    border: 1px solid rgba(255,255,255,0.12);
-    background: rgba(255,255,255,0.06);
-    color: rgba(255,255,255,0.92);
+    border: 1px solid var(--ad-nav-border);
+    background: var(--ad-nav-soft);
+    color: var(--ad-nav-text);
   
     cursor:pointer;
     display:grid;
@@ -193,8 +193,8 @@
   }
   .atnIconBtn:hover{
     transform: translateY(-1px);
-    background: rgba(255,255,255,0.09);
-    border-color: rgba(255,255,255,0.18);
+    background: var(--ad-nav-soft-2);
+    border-color: var(--ad-nav-border);
   }
   .atnIconBtn:active{ transform: translateY(0px); }
   
@@ -219,9 +219,9 @@
     display:grid;
     place-items:center;
   
-    background: rgba(255,255,255,0.10);
-    border: 1px solid rgba(255,255,255,0.16);
-    color: rgba(255,255,255,0.96);
+    background: var(--ad-nav-soft-2);
+    border: 1px solid var(--ad-nav-border);
+    color: var(--ad-nav-text);
   
     font-weight: 950;
     font-size: 12px;
@@ -245,19 +245,19 @@
     border-radius: 16px;
     padding: 10px;
   
-    background: rgba(16,18,28,0.94);
-    border: 1px solid rgba(255,255,255,0.12);
+    background: var(--ad-nav-bg);
+    border: 1px solid var(--ad-nav-border);
     box-shadow: 0 24px 70px rgba(0,0,0,0.55);
   
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
   }
   
-  .atnMenuHead{
+.atnMenuHead{
     padding: 10px 10px 12px;
     border-radius: 14px;
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: var(--ad-nav-soft);
+    border: 1px solid var(--ad-nav-border);
     margin-bottom: 8px;
   }
   
@@ -433,6 +433,29 @@
   align-items: center;
 }
 
+.atnMenuAction{
+  width: 100%;
+  margin-top: 10px;
+  height: 38px;
+  border-radius: 12px;
+  border: 1px solid var(--ad-nav-border);
+  background: var(--ad-nav-soft);
+  color: var(--ad-nav-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform .12s ease, background .12s ease;
+}
+
+.atnMenuAction:hover{
+  transform: translateY(-1px);
+  background: var(--ad-nav-soft-2);
+}
+
 .atnLangBtn{
   display: inline-flex;
   align-items: center;
@@ -543,4 +566,36 @@
 .atnLangMobile{
   display: inline-flex;
   align-items: center;
+}
+
+.adShell[data-admin-theme="dark"] .atnLangBtn{
+  border-color: var(--border);
+  background: rgba(15,23,42,0.82);
+}
+
+.adShell[data-admin-theme="dark"] .atnLangBtn:hover{
+  border-color: var(--border-2);
+  background: rgba(15,23,42,0.94);
+}
+
+.adShell[data-admin-theme="dark"] .atnLangChoice{
+  border-color: var(--border);
+  background: rgba(15,23,42,0.84);
+}
+
+.adShell[data-admin-theme="dark"] .atnLangChoice:hover{
+  border-color: var(--border-2);
+  background: rgba(15,23,42,0.96);
+}
+
+.adShell[data-admin-theme="dark"] .atnLangChoice.isOn{
+  border-color: rgba(255,56,92,0.35);
+  background: rgba(255,56,92,0.12);
+  box-shadow: 0 12px 28px rgba(2,6,23,0.26);
+}
+
+.adShell[data-admin-theme="dark"] .atnLangPill{
+  color: var(--ink);
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(148,163,184,0.18);
 }

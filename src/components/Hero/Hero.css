@@ -372,10 +372,11 @@
     object-fit: contain;          /* NU taie cabana/mâna */
     object-position: center;
     display: block;
-  
+
     transform: scale(1.55) translateY(10px); /* SUPER MARE */
     transform-origin: center;
     filter: saturate(1.04) contrast(1.03);
+    pointer-events: none;
   }
   
   
@@ -586,4 +587,19 @@
   .heroV2Title{
     font-size: clamp(2.4rem, 4.2vw, 3.55rem);
   }
+}
+
+.siteShell[data-site-theme="dark"] .heroV2{
+  background:
+    radial-gradient(1200px 700px at 15% 10%, rgba(255,56,92,0.10), transparent 60%),
+    radial-gradient(900px 650px at 85% 0%, rgba(59,130,246,0.10), transparent 55%),
+    linear-gradient(180deg, #081019 0%, #0b1220 100%);
+}
+
+.siteShell[data-site-theme="dark"] .heroV2MockTop,
+.siteShell[data-site-theme="dark"] .heroV2MockBody,
+.siteShell[data-site-theme="dark"] .heroV2MiniStat,
+.siteShell[data-site-theme="dark"] .heroV2Chip{
+  background: rgba(15,23,42,0.84);
+  border-color: rgba(148,163,184,0.16);
 }

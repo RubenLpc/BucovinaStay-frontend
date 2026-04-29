@@ -329,4 +329,80 @@
     background: rgba(255, 56, 92, 0.10);
     color: rgba(17, 24, 39, 0.92);
   }
+
+.siteShell[data-site-theme="dark"] .hsWrap{
+  border-top-color: rgba(148,163,184,0.16);
+}
+
+.siteShell[data-site-theme="dark"] .hsCard,
+.siteShell[data-site-theme="dark"] .hsRightBox{
+  background: rgba(15,23,42,0.84);
+  border-color: rgba(148,163,184,0.16);
+  box-shadow:
+    0 22px 60px rgba(0, 0, 0, 0.22),
+    0 2px 10px rgba(0, 0, 0, 0.12);
+}
+
+.siteShell[data-site-theme="dark"] .hsAvatarWrap{
+  border-color: rgba(148,163,184,0.16);
+  background: rgba(255,255,255,0.04);
+}
+
+.siteShell[data-site-theme="dark"] .hsBadge{
+  background: rgba(8,11,19,0.94);
+  border-color: rgba(15,23,42,0.92);
+}
+
+.siteShell[data-site-theme="dark"] .hsVerified{
+  border-color: rgba(255,56,92,0.22);
+  background: rgba(255,56,92,0.12);
+  color: #fbcfe8;
+}
+
+.siteShell[data-site-theme="dark"] .hsName,
+.siteShell[data-site-theme="dark"] .hsRightTitle,
+.siteShell[data-site-theme="dark"] .hsVal,
+.siteShell[data-site-theme="dark"] .hsBtn{
+  color: var(--ink);
+}
+
+.siteShell[data-site-theme="dark"] .hsSubtitle,
+.siteShell[data-site-theme="dark"] .hsBio,
+.siteShell[data-site-theme="dark"] .hsRightText,
+.siteShell[data-site-theme="dark"] .hsKey,
+.siteShell[data-site-theme="dark"] .hsDisclaimer a,
+.siteShell[data-site-theme="dark"] .hsNote{
+  color: var(--muted);
+}
+
+.siteShell[data-site-theme="dark"] .hsStats,
+.siteShell[data-site-theme="dark"] .hsNote{
+  border-top-color: rgba(148,163,184,0.16);
+}
+
+.siteShell[data-site-theme="dark"] .hsDivider{
+  background: rgba(148,163,184,0.16);
+}
+
+.siteShell[data-site-theme="dark"] .hsLangChip{
+  background: rgba(255,255,255,0.08);
+  color: var(--ink);
+  border-color: rgba(148,163,184,0.16);
+}
+
+.siteShell[data-site-theme="dark"] .hsBadgeInline.super,
+.siteShell[data-site-theme="dark"] .hsBadgeInline.verified{
+  background: rgba(255,56,92,0.12);
+  border-color: rgba(255,56,92,0.22);
+  color: #fda4af;
+}
+
+.siteShell[data-site-theme="dark"] .hsBtn{
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(148,163,184,0.16);
+}
+
+.siteShell[data-site-theme="dark"] .hsBtn:hover{
+  background: rgba(255,255,255,0.12);
+}
   

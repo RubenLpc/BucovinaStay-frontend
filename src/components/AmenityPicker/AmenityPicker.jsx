@@ -1,9 +1,11 @@
 import { useMemo, useState } from "react";
 import { Search, Check } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { AMENITIES_CATALOG, AMENITY_CATEGORIES } from "../../constants/amenitiesCatalog";
 import "./AmenityPicker.css";
 
 export default function AmenityPicker({ value = [], onChange }) {
+  const { t } = useTranslation();
   const [q, setQ] = useState("");
 
   const selected = useMemo(() => new Set(value || []), [value]);
@@ -12,18 +14,20 @@ export default function AmenityPicker({ value = [], onChange }) {
     const s = q.trim().toLowerCase();
     if (!s) return AMENITIES_CATALOG;
     return AMENITIES_CATALOG.filter((a) => {
+      const amenityLabel = a.labelKey ? t(a.labelKey) : (a.label || a.key);
+      const categoryLabel = a.categoryKey ? t(a.categoryKey) : (a.category || "");
       return (
-        a.label.toLowerCase().includes(s) ||
+        amenityLabel.toLowerCase().includes(s) ||
         a.key.toLowerCase().includes(s) ||
-        a.category.toLowerCase().includes(s)
+        categoryLabel.toLowerCase().includes(s)
       );
     });
-  }, [q]);
+  }, [q, t]);
 
   const grouped = useMemo(() => {
     const map = new Map();
     for (const cat of AMENITY_CATEGORIES) map.set(cat, []);
-    for (const a of filtered) map.get(a.category)?.push(a);
+    for (const a of filtered) map.get(a.categoryKey || a.category)?.push(a);
     return map;
   }, [filtered]);
 
@@ -55,7 +59,7 @@ export default function AmenityPicker({ value = [], onChange }) {
         if (!items?.length) return null;
         return (
           <div className="apGroup" key={cat}>
-            <div className="apGroupTitle">{cat}</div>
+            <div className="apGroupTitle">{cat?.includes?.(".") ? t(cat) : cat}</div>
 
             <div className="apGrid">
               {items.map((a) => {
@@ -71,7 +75,7 @@ export default function AmenityPicker({ value = [], onChange }) {
                     <span className="apIcon">
                       <Icon size={18} />
                     </span>
-                    <span className="apLabel">{a.label}</span>
+                    <span className="apLabel">{a.labelKey ? t(a.labelKey) : (a.label || a.key)}</span>
                     {active ? (
                       <span className="apCheck">
                         <Check size={16} />

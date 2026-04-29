@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { Menu, User, LogOut, LayoutDashboard, Shield } from "lucide-react";
+import { Menu, User, LogOut, LayoutDashboard, Shield, Moon, Sun } from "lucide-react";
 import { Heart, ChevronRight, Languages } from "lucide-react";
 import { useAuthStore } from "../../stores/authStore";
 import { useFavoritesPreview } from "../../hooks/useFavoritesPreview";
@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 
 import "./Header.css";
 
-export default function Header() {
+export default function Header({ theme = "light", onToggleTheme }) {
   const { t, i18n } = useTranslation();
 
   const rootRef = useRef(null);
@@ -128,6 +128,16 @@ export default function Header() {
           {/* ACTIONS */}
           <div className="header-actions">
             {/* ✅ Language switch (desktop & mobile) */}
+            <button
+              type="button"
+              className="theme-switch"
+              onClick={onToggleTheme}
+              aria-label={theme === "dark" ? "Comută pe modul luminos" : "Comută pe modul întunecat"}
+              title={theme === "dark" ? "Mod luminos" : "Mod întunecat"}
+            >
+              {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+
             <button
               type="button"
               className="lang-switch"
@@ -271,6 +281,17 @@ export default function Header() {
                   {t("auth.login")}
                 </NavLink>
               )}
+
+              <button
+                type="button"
+                className="mobile-theme-switch"
+                onClick={() => {
+                  onToggleTheme?.();
+                  setMobileOpen(false);
+                }}
+              >
+                {theme === "dark" ? "Mod luminos" : "Mod întunecat"}
+              </button>
 
               {/* ✅ optional: language switch also inside mobile menu (if you want) */}
               <button

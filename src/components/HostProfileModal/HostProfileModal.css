@@ -228,8 +228,29 @@
     margin: 10px 0;
   }
   
-  @media (max-width: 860px){
-    .hpGrid{ grid-template-columns: 1fr; }
-    .hpRow2{ grid-template-columns: 1fr; }
-  }
+@media (max-width: 860px){
+  .hpGrid{ grid-template-columns: 1fr; }
+  .hpRow2{ grid-template-columns: 1fr; }
+}
+
+.hostShell[data-host-theme="dark"] .hpOverlay{
+  background: rgba(2,6,23,0.58);
+}
+
+.hostShell[data-host-theme="dark"] .hpModal{
+  background: rgba(8,11,19,0.96);
+  border-color: rgba(148,163,184,0.16);
+  box-shadow: 0 30px 90px rgba(0,0,0,0.42);
+}
+
+.hostShell[data-host-theme="dark"] .hpStat,
+.hostShell[data-host-theme="dark"] .hpAvatarWrap,
+.hostShell[data-host-theme="dark"] .hpCallout,
+.hostShell[data-host-theme="dark"] .hpInput,
+.hostShell[data-host-theme="dark"] .hpBtn,
+.hostShell[data-host-theme="dark"] .hpSkeleton{
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+}
   

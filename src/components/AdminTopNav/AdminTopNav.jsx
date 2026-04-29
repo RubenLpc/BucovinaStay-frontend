@@ -9,7 +9,8 @@ import {
   X,
   ShieldCheck,
   Globe,
-  Check,
+  Moon,
+  Sun,
 } from "lucide-react";
 
 import "./AdminTopNav.css";
@@ -51,6 +52,8 @@ const LANGS = [
 export default function AdminTopNav({
   brandText = "BucovinaStay",
   roleLabel = "Admin",
+  theme = "light",
+  onToggleTheme,
   onOpenAdminProfile,
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -183,6 +186,16 @@ export default function AdminTopNav({
             </button>
           </div>
 
+          <button
+            className="atnIconBtn"
+            type="button"
+            onClick={onToggleTheme}
+            title={theme === "dark" ? t("adminTopNav.theme.light") : t("adminTopNav.theme.dark")}
+            aria-label={t("adminTopNav.theme.label")}
+          >
+            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+
           {/* Notifications */}
           <button
             className="atnIconBtn"
@@ -246,17 +259,29 @@ export default function AdminTopNav({
 
                 {/* Mobile language picker (ONLY in menu) */}
                 <div className="atnLangMobile" aria-label={t("adminTopNav.language")}>
-            <button
-              className="atnLangBtn"
-              type="button"
-              onClick={() => setLang(lang === "ro" ? "en" : "ro")}
-              title={lang === "ro" ? t("adminTopNav.switchToEN") : t("adminTopNav.switchToRO")}
-              aria-label={t("adminTopNav.language")}
-            >
-              <Globe size={16} />
-              <span className="atnLangCode">{lang === "ro" ? "RO" : "EN"}</span>
-            </button>
-          </div>
+                  <button
+                    className="atnLangBtn"
+                    type="button"
+                    onClick={() => setLang(lang === "ro" ? "en" : "ro")}
+                    title={lang === "ro" ? t("adminTopNav.switchToEN") : t("adminTopNav.switchToRO")}
+                    aria-label={t("adminTopNav.language")}
+                  >
+                    <Globe size={16} />
+                    <span className="atnLangCode">{lang === "ro" ? "RO" : "EN"}</span>
+                  </button>
+                </div>
+
+                <button
+                  className="atnMenuAction"
+                  type="button"
+                  onClick={() => {
+                    onToggleTheme?.();
+                    setMenuOpen(false);
+                  }}
+                >
+                  {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+                  <span>{theme === "dark" ? t("adminTopNav.theme.light") : t("adminTopNav.theme.dark")}</span>
+                </button>
 
                 <div className="atnMenuSep" />
 

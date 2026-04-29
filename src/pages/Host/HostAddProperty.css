@@ -896,3 +896,120 @@
   .haTitle{ font-size: 26px; }
   .haThumb img{ height: 128px; }
 }
+
+.hostShell[data-host-theme="dark"] .haSHELL{
+  background:
+    radial-gradient(1200px 700px at 15% 10%, rgba(255,56,92,0.08), transparent 60%),
+    radial-gradient(900px 650px at 85% 0%, rgba(59,130,246,0.08), transparent 55%),
+    linear-gradient(180deg, #081019 0%, #0b1220 100%);
+}
+
+.hostShell[data-host-theme="dark"] .haQuickChip,
+.hostShell[data-host-theme="dark"] .haMiniBtn,
+.hostShell[data-host-theme="dark"] .haTinyChip,
+.hostShell[data-host-theme="dark"] .haActionBtn,
+.hostShell[data-host-theme="dark"] .haInputWithIcon,
+.hostShell[data-host-theme="dark"] .haInputWithIcon input,
+.hostShell[data-host-theme="dark"] .haSection .input,
+.hostShell[data-host-theme="dark"] .haSection select.input,
+.hostShell[data-host-theme="dark"] .haSection textarea.input,
+.hostShell[data-host-theme="dark"] .haTextarea,
+.hostShell[data-host-theme="dark"] .haSelect{
+  background: rgba(15,23,42,0.82);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+}
+
+.hostShell[data-host-theme="dark"] .haActionBtn:hover{
+  background: rgba(30,41,59,0.88);
+  border-color: rgba(148,163,184,0.22);
+}
+
+.hostShell[data-host-theme="dark"] .haSection .input::placeholder,
+.hostShell[data-host-theme="dark"] .haTextarea::placeholder{
+  color: rgba(148,163,184,0.72);
+}
+
+.hostShell[data-host-theme="dark"] .haSection .input:focus,
+.hostShell[data-host-theme="dark"] .haSection select.input:focus,
+.hostShell[data-host-theme="dark"] .haSection textarea.input:focus{
+  border-color: rgba(34,197,94,0.28);
+  box-shadow: 0 0 0 4px rgba(34,197,94,0.12);
+}
+
+.hostShell[data-host-theme="dark"] .haSection .btn.btn-secondary{
+  background: rgba(15,23,42,0.82);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+}
+
+.hostShell[data-host-theme="dark"] .haSection .btn.btn-secondary:hover{
+  background: rgba(30,41,59,0.86);
+  border-color: rgba(148,163,184,0.22);
+}
+
+.hostShell[data-host-theme="dark"] .haSection,
+.hostShell[data-host-theme="dark"] .haPreviewCard,
+.hostShell[data-host-theme="dark"] .haPreviewMeta,
+.hostShell[data-host-theme="dark"] .haSideWarn,
+.hostShell[data-host-theme="dark"] .haSideNote,
+.hostShell[data-host-theme="dark"] .haEmpty,
+.hostShell[data-host-theme="dark"] .haThumb,
+.hostShell[data-host-theme="dark"] .haCover{
+  background: rgba(15,23,42,0.84);
+  border-color: rgba(148,163,184,0.16);
+  box-shadow: 0 18px 48px rgba(2,6,23,0.36);
+}
+
+.hostShell[data-host-theme="dark"] .haSideOk{
+  background: rgba(16,185,129,0.10);
+}
+
+.hostShell[data-host-theme="dark"] .haLabel,
+.hostShell[data-host-theme="dark"] .haTinyHint,
+.hostShell[data-host-theme="dark"] .haMuted,
+.hostShell[data-host-theme="dark"] .haMeta,
+.hostShell[data-host-theme="dark"] .haPreviewLoc,
+.hostShell[data-host-theme="dark"] .haPreviewSubtitle,
+.hostShell[data-host-theme="dark"] .haGateSub,
+.hostShell[data-host-theme="dark"] .haHelp,
+.hostShell[data-host-theme="dark"] .haCalloutText,
+.hostShell[data-host-theme="dark"] .haWarnList,
+.hostShell[data-host-theme="dark"] .haMiniRow,
+.hostShell[data-host-theme="dark"] .haBlockHead .haMuted,
+.hostShell[data-host-theme="dark"] .haSectionTitleRow .haMuted{
+  color: var(--muted);
+}
+
+.hostShell[data-host-theme="dark"] .haH2,
+.hostShell[data-host-theme="dark"] .haH3,
+.hostShell[data-host-theme="dark"] .haSideNoteTitle,
+.hostShell[data-host-theme="dark"] .haGateTitle,
+.hostShell[data-host-theme="dark"] .haBlockTitle,
+.hostShell[data-host-theme="dark"] .haCalloutTitle,
+.hostShell[data-host-theme="dark"] .haWarnTitle,
+.hostShell[data-host-theme="dark"] .haPriceValue,
+.hostShell[data-host-theme="dark"] .haPreviewPrice,
+.hostShell[data-host-theme="dark"] .haPreviewTitle,
+.hostShell[data-host-theme="dark"] .haMiniRow b{
+  color: var(--ink);
+}
+
+.hostShell[data-host-theme="dark"] .haPricePreview,
+.hostShell[data-host-theme="dark"] .haBlock,
+.hostShell[data-host-theme="dark"] .haStatChip,
+.hostShell[data-host-theme="dark"] .haReviewBadge,
+.hostShell[data-host-theme="dark"] .haPreviewMeta,
+.hostShell[data-host-theme="dark"] .haSideWarn,
+.hostShell[data-host-theme="dark"] .haSideNote,
+.hostShell[data-host-theme="dark"] .haWarnBox,
+.hostShell[data-host-theme="dark"] .haCallout{
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+}
+
+.hostShell[data-host-theme="dark"] .haStatChip.neutral,
+.hostShell[data-host-theme="dark"] .haTinyChip.muted{
+  color: var(--muted);
+}

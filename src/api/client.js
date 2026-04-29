@@ -1,6 +1,6 @@
-//const API_URL = "http://localhost:3000"; // schimbă după nevoie 
+const API_URL = "http://localhost:3000"; // 
 //const API_URL = "https://bucovinastay-backend-2.onrender.com"; 
-const API_URL = "https://bucovinastay-backend-5up2.onrender.com"; // schimbă după nevoie 
+//const API_URL = "https://bucovinastay-backend-5up2.onrender.com";  
 
 
 let maintenanceListeners = new Set();

@@ -566,3 +566,49 @@
     border-color: rgba(17,24,39,0.16);
   }
 }
+
+.siteShell[data-site-theme="dark"] .prWrap,
+.siteShell[data-site-theme="dark"] .prNotice,
+.siteShell[data-site-theme="dark"] .prForm,
+.siteShell[data-site-theme="dark"] .prItem,
+.siteShell[data-site-theme="dark"] .prEmpty,
+.siteShell[data-site-theme="dark"] .prSummary,
+.siteShell[data-site-theme="dark"] .prBreakdown{
+  background: rgba(15,23,42,0.84);
+  border-color: rgba(148,163,184,0.16);
+}
+
+.siteShell[data-site-theme="dark"] .prField,
+.siteShell[data-site-theme="dark"] .prSelect,
+.siteShell[data-site-theme="dark"] .prBtnGhost,
+.siteShell[data-site-theme="dark"] .prBtnTiny{
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+}
+
+.siteShell[data-site-theme="dark"] .prSort,
+.siteShell[data-site-theme="dark"] .prRatingPill,
+.siteShell[data-site-theme="dark"] .prForm textarea,
+.siteShell[data-site-theme="dark"] .prAvatar,
+.siteShell[data-site-theme="dark"] .prStat{
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+}
+
+.siteShell[data-site-theme="dark"] .prSummary,
+.siteShell[data-site-theme="dark"] .prFormSub,
+.siteShell[data-site-theme="dark"] .prTiny,
+.siteShell[data-site-theme="dark"] .prNoticeDesc,
+.siteShell[data-site-theme="dark"] .prMeta,
+.siteShell[data-site-theme="dark"] .prEmptyDesc{
+  color: var(--muted);
+}
+
+.siteShell[data-site-theme="dark"] .prTitle,
+.siteShell[data-site-theme="dark"] .prNoticeTitle,
+.siteShell[data-site-theme="dark"] .prAuthor,
+.siteShell[data-site-theme="dark"] .prText{
+  color: var(--ink);
+}

@@ -750,6 +750,11 @@
                           "switchToEN": "Switch to English",
                           "switchToRO": "Switch to Romanian",
                           "notificationFallbackTitle": "Notification",
+                          "theme": {
+                            "label": "Admin theme",
+                            "light": "Light mode",
+                            "dark": "Dark mode"
+                          },
                           "tabs": {
                             "overview": "Overview",
                             "users": "Users",
@@ -864,13 +869,13 @@
                             },
                         
                             "reviews": {
+                              "pageTitle": "Reviews moderation",
                               "cardTitle": "Reviews moderation",
                               "toastLoadFailTitle": "Could not load reviews",
                               "toastUpdateFailTitle": "Could not update",
                               "toastDeleteFailTitle": "Could not delete",
                               "toastHidden": "Review hidden",
                               "toastVisible": "Review visible",
-                              "confirmDelete": "Delete this review permanently? (irreversible)",
                               "searchPlaceholder": "Search: user / email / property / comment...",
                               "cols": {
                                 "review": "Review",
@@ -888,12 +893,28 @@
                               "actions": {
                                 "hide": "Hide",
                                 "unhide": "Unhide",
-                                "delete": "Delete"
+                                "delete": "Delete",
+                                "processing": "Processing..."
                               },
                               "tips": {
                                 "makeVisible": "Make review visible",
                                 "makeHidden": "Hide review",
                                 "delete": "Delete permanently"
+                              },
+                              "confirm": {
+                                "title": "Delete this review permanently?",
+                                "description": "This action is irreversible. The review will be removed completely from the platform."
+                              },
+                              "meta": {
+                                "reviewedOn": "Reviewed on",
+                                "propertyStatus": {
+                                  "live": "live listing",
+                                  "pending": "pending listing",
+                                  "paused": "paused listing",
+                                  "rejected": "rejected listing",
+                                  "draft": "draft listing",
+                                  "unknown": "unknown listing status"
+                                }
                               }
                             },
                         
@@ -922,7 +943,8 @@
                               "actions": {
                                 "saveRole": "Save role",
                                 "disable": "Disable",
-                                "enable": "Enable"
+                                "enable": "Enable",
+                                "processing": "Processing..."
                               },
                               "badges": {
                                 "unsaved": "unsaved"
@@ -931,6 +953,17 @@
                                 "setRole": "Set role",
                                 "saveRole": "Save role",
                                 "noChanges": "No changes"
+                              },
+                              "meta": {
+                                "memberSince": "Member since",
+                                "listings_one": "{{count}} listing",
+                                "listings_other": "{{count}} listings"
+                              },
+                              "confirm": {
+                                "disableTitle": "Disable {{name}}?",
+                                "disableDescription": "The user will no longer be able to sign in until you enable the account again from admin.",
+                                "enableTitle": "Enable {{name}} again?",
+                                "enableDescription": "The user will regain access to sign in and use the platform normally."
                               },
                               "mobile": {
                                 "setRole": "Set role"
@@ -957,7 +990,40 @@
                                 "branding": {
                                   "title": "Branding & Maintenance",
                                   "hint": "Public messages + support"
+                                },
+                                "audit": {
+                                  "title": "Settings audit",
+                                  "hint": "Recent changes made from the admin panel"
                                 }
+                              },
+                              "actions": {
+                                "reset": "Reset"
+                              },
+                              "ui": {
+                                "title": "Operational control",
+                                "hint": "Critical settings for moderation, limits, and platform availability.",
+                                "saved": "No local changes",
+                                "unsaved": "Unsaved changes",
+                                "critical": "Critical changes",
+                                "maintenanceOn": "Maintenance enabled",
+                                "readiness": "Form status",
+                                "ready": "Ready to save",
+                                "needsFix": "Fix invalid fields",
+                                "invalidRange": "Value is outside the allowed range.",
+                                "invalidEmail": "Enter a valid support email.",
+                                "messageTooLong": "The maintenance message is too long.",
+                                "footerTitle": "Apply changes",
+                                "footerDirty": "You have local changes. Review sensitive settings before saving.",
+                                "footerClean": "Settings are in sync with the saved state."
+                              },
+                              "confirm": {
+                                "title": "Save critical settings?",
+                                "description": "You are changing settings with major platform impact, including maintenance or moderation rules. Do you want to continue?"
+                              },
+                              "audit": {
+                                "lastUpdate": "Last update",
+                                "empty": "No changes recorded yet.",
+                                "system": "System"
                               },
                               "moderation": {
                                 "requireSubmit": {

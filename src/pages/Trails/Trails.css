@@ -580,3 +580,13 @@
   .tr-heroTop{ height: 180px; }
   .tr-title{ font-size: 1.4rem; }
 }
+
+.siteShell[data-site-theme="dark"] .tr-controls,
+.siteShell[data-site-theme="dark"] .tr-search,
+.siteShell[data-site-theme="dark"] .tr-select,
+.siteShell[data-site-theme="dark"] .tr-card,
+.siteShell[data-site-theme="dark"] .tr-count{
+  background: rgba(15,23,42,0.84);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+}

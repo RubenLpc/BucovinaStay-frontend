@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./TopNav.css";
 import { useAuthStore } from "../../stores/authStore";
-import { Menu, X, Bell } from "lucide-react";
+import { Menu, X, Bell, Moon, Sun } from "lucide-react";
 
 import HostNotifications from "../HostNotifications/HostNotifications";
 import HostInboxModal from "../HostInboxModal/HostInboxModal";
@@ -40,6 +40,8 @@ export default function TopNav({
   onOpenSettings,
   onOpenBilling = () => {},
   onUpgrade = () => {},
+  theme = "light",
+  onToggleTheme,
 }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -152,6 +154,20 @@ export default function TopNav({
           <button
             className="tnIconBtn"
             type="button"
+            aria-label={theme === "dark" ? "Comută pe modul luminos" : "Comută pe modul întunecat"}
+            onClick={() => {
+              onToggleTheme?.();
+              setMenuOpen(false);
+              setNotifOpen(false);
+              setMobileOpen(false);
+            }}
+          >
+            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+
+          <button
+            className="tnIconBtn"
+            type="button"
             aria-label="Notificări"
             aria-expanded={notifOpen}
             onClick={() => {
@@ -229,6 +245,17 @@ export default function TopNav({
                   </div>
 
                   <div className="tnMenuSep" />
+
+                  <button
+                    className="tnMenuItem"
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      onToggleTheme?.();
+                    }}
+                  >
+                    {theme === "dark" ? "Mod luminos" : "Mod întunecat"}
+                  </button>
 
                   <button
                     className="tnMenuItem"

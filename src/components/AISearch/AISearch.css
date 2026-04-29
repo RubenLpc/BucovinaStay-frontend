@@ -144,4 +144,18 @@
   @media (max-width: 360px){
     .ai-bar button{ display:none; }
   }
+
+.siteShell[data-site-theme="dark"] .ai-bar{
+  background: rgba(15,23,42,0.84);
+  border-color: rgba(148,163,184,0.16);
+}
+
+.siteShell[data-site-theme="dark"] .ai-icon-wrapper{
+  background: rgba(255,56,92,0.16);
+  border-color: rgba(255,56,92,0.20);
+}
+
+.siteShell[data-site-theme="dark"] .ai-bar input::placeholder{
+  color: rgba(203,213,225,0.42);
+}
   

@@ -540,3 +540,36 @@
     font-size: 11.5px;
   }
 }
+
+.hostShell[data-host-theme="dark"] .haPage{
+  background:
+    radial-gradient(1200px 700px at 15% 10%, rgba(255,56,92,0.08), transparent 60%),
+    radial-gradient(900px 650px at 85% 0%, rgba(59,130,246,0.08), transparent 55%),
+    linear-gradient(180deg, #081019 0%, #0b1220 100%);
+}
+
+.hostShell[data-host-theme="dark"] .haGhostLink,
+.hostShell[data-host-theme="dark"] .haSelect,
+.hostShell[data-host-theme="dark"] .haSearch,
+.hostShell[data-host-theme="dark"] .haBtn{
+  background: rgba(15,23,42,0.82);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+}
+
+.hostShell[data-host-theme="dark"] .haKpi,
+.hostShell[data-host-theme="dark"] .haCard,
+.hostShell[data-host-theme="dark"] .haRow,
+.hostShell[data-host-theme="dark"] .haEmpty,
+.hostShell[data-host-theme="dark"] .haSkel{
+  background: rgba(15,23,42,0.84);
+  border-color: rgba(148,163,184,0.16);
+  box-shadow: 0 18px 48px rgba(2,6,23,0.36);
+}
+
+.hostShell[data-host-theme="dark"] .haKpiIcon,
+.hostShell[data-host-theme="dark"] .haAvatar,
+.hostShell[data-host-theme="dark"] .haBtnIcon{
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(148,163,184,0.16);
+}

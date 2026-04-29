@@ -424,10 +424,35 @@
   }
   
   /* ultra small (<= 340px) */
-  @media (max-width: 340px){
-    .himTitle{ font-size: 17px; }
-    .himBadgeNew, .himBadgeRead{ padding: 5px 9px; }
-    .himChip{ font-size: 12.5px; }
-    .himBtn, .himSend{ font-size: 12.5px; }
-  }
+@media (max-width: 340px){
+  .himTitle{ font-size: 17px; }
+  .himBadgeNew, .himBadgeRead{ padding: 5px 9px; }
+  .himChip{ font-size: 12.5px; }
+  .himBtn, .himSend{ font-size: 12.5px; }
+}
+
+.hostShell[data-host-theme="dark"] .himBackdrop{
+  background: rgba(2,6,23,0.72);
+}
+
+.hostShell[data-host-theme="dark"] .himModal{
+  background: rgba(8,11,19,0.98);
+  border-color: rgba(148,163,184,0.16);
+  box-shadow: 0 30px 100px rgba(0,0,0,0.48);
+}
+
+.hostShell[data-host-theme="dark"] .himBtn,
+.hostShell[data-host-theme="dark"] .himChip,
+.hostShell[data-host-theme="dark"] .himTextarea{
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+}
+
+.hostShell[data-host-theme="dark"] .himMsgBubble,
+.hostShell[data-host-theme="dark"] .himMetaCard,
+.hostShell[data-host-theme="dark"] .himNotice{
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(148,163,184,0.16);
+}
   

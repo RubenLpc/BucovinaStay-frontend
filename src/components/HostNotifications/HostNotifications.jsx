@@ -1,10 +1,12 @@
-// client/src/components/HostNotifications/HostNotifications.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import "./HostNotifications.css";
-import { X, Mail, Home, ShieldCheck, AlertTriangle, RefreshCw, CheckCheck,Bell } from "lucide-react";
+import { X, Mail, Home, ShieldCheck, AlertTriangle, RefreshCw, CheckCheck, Bell } from "lucide-react";
 import { getHostInbox, markHostMessageRead, markHostMessagesReadAll } from "../../api/hostMessagesService";
 import { getMyHostActivity } from "../../api/hostActivityService";
+import { useSettingsStore } from "../../stores/settingsStore";
 import { toast } from "sonner";
+
+const ONE_DAY = 86400000;
 
 function timeAgo(ts) {
   const t = ts ? new Date(ts).getTime() : 0;
@@ -19,20 +21,15 @@ function timeAgo(ts) {
   return `${d} zile`;
 }
 
-export default function HostNotifications({
-  open,
-  onClose,
-  onOpenInbox,
-  onOpenMessage,   // (rawMessage) => void (deschide HostInboxModal)
-  onOpenProperty,  // (propertyId) => void (navigate)
-}) {
+export default function HostNotifications({ open, onClose, onOpenMessage, onOpenProperty }) {
+  const { notifications: notifPrefs } = useSettingsStore();
   const [loading, setLoading] = useState(false);
-  const [busy, setBusy] = useState(false); // pentru butoane (refresh / mark all)
-  const [tab, setTab] = useState("unread"); // unread | all
-  const [items, setItems] = useState([]); // merged list (messages + property events)
+  const [busy, setBusy] = useState(false);
+  const [tab, setTab] = useState("unread");
+  const [items, setItems] = useState([]);
 
-  async function load() {
-    setLoading(true);
+  async function load(silent = false) {
+    if (!silent) setLoading(true);
     try {
       const [inboxRes, activityRes] = await Promise.all([
         getHostInbox({ limit: 12 }),
@@ -55,13 +52,14 @@ export default function HostNotifications({
 
       const propNotifs = activity.map((e) => {
         const type = String(e.type);
-        const isOk = type === "property_published" || type === "property_resumed";
+        const isOk = type === "property_published" || type === "property_resumed" || type === "property_approved";
         const isBad = type === "property_rejected";
+        const isRecent = e.createdAt && Date.now() - new Date(e.createdAt).getTime() < ONE_DAY;
 
         return {
           id: String(e._id || e.id),
           kind: "property",
-          status: "read", // până avem read/unread la activity events
+          status: isRecent ? "new" : "read",
           createdAt: e.createdAt,
           title: e.propertyTitle || "Proprietate",
           body: isBad
@@ -76,45 +74,57 @@ export default function HostNotifications({
       });
 
       const merged = [...msgNotifs, ...propNotifs].sort((a, b) => {
-        const aNew = (a.status || "new") === "new" ? 0 : 1;
-        const bNew = (b.status || "new") === "new" ? 0 : 1;
+        const aNew = a.status === "new" ? 0 : 1;
+        const bNew = b.status === "new" ? 0 : 1;
         if (aNew !== bNew) return aNew - bNew;
         return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
       });
 
       setItems(merged);
-    } catch (e) {
-      toast.error("Nu am putut încărca notificările", {
-        description: e?.message || "Încearcă din nou.",
-      });
+    } catch {
+      if (!silent) toast.error("Nu am putut încărca notificările");
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }
 
+  // încarcă la deschidere
   useEffect(() => {
-    let alive = true;
     if (!open) return;
-
-    (async () => {
-      if (!alive) return;
-      await load();
-    })();
-
-    return () => {
-      alive = false;
-    };
+    load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  const shown = useMemo(() => {
-    if (tab === "unread") return items.filter((x) => (x.status || "new") === "new");
-    return items;
-  }, [items, tab]);
+  // polling la 30s când panoul e deschis
+  useEffect(() => {
+    if (!open) return;
+    const id = setInterval(() => load(true), 30000);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
-  const unreadCount = useMemo(() => {
-    return items.filter((x) => x.kind === "message" && (x.status || "new") === "new").length;
-  }, [items]);
+  // ESC close
+  useEffect(() => {
+    if (!open) return;
+    const onEsc = (e) => e.key === "Escape" && onClose?.();
+    window.addEventListener("keydown", onEsc);
+    return () => window.removeEventListener("keydown", onEsc);
+  }, [open, onClose]);
+
+  const shown = useMemo(() => {
+    let list = items.filter((x) => {
+      if (x.kind === "message"  && !notifPrefs.messages)      return false;
+      if (x.kind === "property" && !notifPrefs.listingStatus) return false;
+      return true;
+    });
+    if (tab === "unread") return list.filter((x) => x.status === "new");
+    return list;
+  }, [items, tab, notifPrefs]);
+
+  const unreadCount = useMemo(
+    () => items.filter((x) => x.status === "new").length,
+    [items]
+  );
 
   async function onRefresh() {
     try {
@@ -131,17 +141,10 @@ export default function HostNotifications({
     try {
       setBusy(true);
       await markHostMessagesReadAll();
-      // local update: marchează doar message notifs ca read
-      setItems((prev) =>
-        (prev || []).map((x) =>
-          x.kind === "message" ? { ...x, status: "read" } : x
-        )
-      );
-      toast.success("Toate mesajele au fost marcate ca citite");
+      setItems((prev) => (prev || []).map((x) => ({ ...x, status: "read" })));
+      toast.success("Toate notificările au fost marcate ca citite");
     } catch (e) {
-      toast.error("Nu am putut marca toate ca citite", {
-        description: e?.message || "Încearcă din nou.",
-      });
+      toast.error("Nu am putut marca toate ca citite", { description: e?.message });
     } finally {
       setBusy(false);
     }
@@ -156,12 +159,7 @@ export default function HostNotifications({
       <aside className="hnPanel">
         <div className="hnTop">
           <div className="hnTitle">Notificări</div>
-          <button
-            className="hnClose"
-            onClick={onClose}
-            aria-label="Închide"
-            type="button"
-          >
+          <button className="hnClose" onClick={onClose} aria-label="Închide" type="button">
             <X size={18} />
           </button>
         </div>
@@ -173,9 +171,10 @@ export default function HostNotifications({
             type="button"
           >
             Necitite
-            {unreadCount > 0 ? <span className="hnTabBadge">{unreadCount > 99 ? "99+" : unreadCount}</span> : null}
+            {unreadCount > 0 && (
+              <span className="hnTabBadge">{unreadCount > 99 ? "99+" : unreadCount}</span>
+            )}
           </button>
-
           <button
             className={`hnTab ${tab === "all" ? "isActive" : ""}`}
             onClick={() => setTab("all")}
@@ -186,97 +185,82 @@ export default function HostNotifications({
 
           <div className="hnSpacer" />
 
-          <button className="hnChipBtn" type="button" disabled={busy} onClick={onRefresh}>
-            <RefreshCw size={16} />
-            
+          <button className="hnChipBtn" type="button" disabled={busy} onClick={onRefresh} title="Actualizează">
+            <RefreshCw size={15} />
           </button>
-
-          <button className="hnChipBtn" type="button" disabled={busy || unreadCount <= 0} onClick={onMarkAllRead}>
-            <CheckCheck size={16} />
-           
+          <button className="hnChipBtn" type="button" disabled={busy || unreadCount <= 0} onClick={onMarkAllRead} title="Marchează toate ca citite">
+            <CheckCheck size={15} />
           </button>
-
-          
         </div>
 
         <div className="hnList">
-          {loading ? <div className="hnEmpty">Se încarcă…</div> : null}
+          {loading && <div className="hnEmpty">Se încarcă…</div>}
 
-          {!loading && shown.length === 0 ? (
+          {!loading && shown.length === 0 && (
             <div className="hnEmpty hnEmptyCentered">
               <div className="hnEmptyIcon"><Bell size={26} /></div>
               <div className="hnEmptyTitle">
-                Nu ai notificări {tab === "unread" ? "necitite" : ""}
+                {tab === "unread" ? "Nicio notificare necitită" : "Nicio notificare"}
               </div>
               <div className="hnEmptySub">Mesaje noi și statusul proprietăților.</div>
             </div>
-          ) : null}
+          )}
 
-          {!loading &&
-            shown.map((n) => {
-              const isNew = (n.status || "new") === "new";
+          {!loading && shown.map((n) => {
+            const isNew = n.status === "new";
+            const Icon =
+              n.kind === "message" ? Mail
+              : n.tone === "good" ? ShieldCheck
+              : n.tone === "bad" ? AlertTriangle
+              : Home;
 
-              const Icon =
-                n.kind === "message"
-                  ? Mail
-                  : n.tone === "good"
-                  ? ShieldCheck
-                  : n.tone === "bad"
-                  ? AlertTriangle
-                  : Home;
+            const iconMod =
+              n.kind === "message" ? "hnIcon--msg"
+              : n.tone === "good" ? "hnIcon--good"
+              : n.tone === "bad" ? "hnIcon--bad"
+              : "";
 
-              return (
-                <button
-                  key={n.id}
-                  type="button"
-                  className={`hnItem ${isNew ? "isNew" : ""}`}
-                  onClick={async () => {
-                    // click message => open modal + auto mark read
-                    if (n.kind === "message") {
-                      const raw = n.raw;
-
-                      if (isNew) {
-                        try {
-                          await markHostMessageRead(n.id);
-                          setItems((prev) =>
-                            (prev || []).map((x) =>
-                              x.kind === "message" && String(x.id) === String(n.id)
-                                ? { ...x, status: "read" }
-                                : x
-                            )
-                          );
-                        } catch {
-                          // silent (nu stric UX)
-                        }
-                      }
-
-                      onOpenMessage?.(raw);
-                      return;
+            return (
+              <button
+                key={n.id}
+                type="button"
+                className={`hnItem${isNew ? " isNew" : ""}`}
+                onClick={async () => {
+                  if (n.kind === "message") {
+                    if (isNew) {
+                      try {
+                        await markHostMessageRead(n.id);
+                        setItems((prev) =>
+                          prev.map((x) =>
+                            x.kind === "message" && x.id === n.id ? { ...x, status: "read" } : x
+                          )
+                        );
+                      } catch { /* silent */ }
                     }
+                    onOpenMessage?.(n.raw);
+                    return;
+                  }
+                  if (n.kind === "property" && n.propertyId) {
+                    setItems((prev) => prev.map((x) => x.id === n.id ? { ...x, status: "read" } : x));
+                    onOpenProperty?.(n.propertyId);
+                  }
+                }}
+              >
+                <div className={`hnIcon ${iconMod}`}>
+                  <Icon size={17} />
+                </div>
 
-                    // click property => go to property
-                    if (n.kind === "property" && n.propertyId) {
-                      onOpenProperty?.(n.propertyId);
-                    }
-                  }}
-                >
-                  <div className="hnIcon">
-                    <Icon size={18} />
+                <div className="hnBody">
+                  <div className="hnRow">
+                    <div className="hnItemTitle">{n.title}</div>
+                    <div className="hnTime">{timeAgo(n.createdAt)}</div>
                   </div>
-
-                  <div className="hnBody">
-                    <div className="hnRow">
-                      <div className="hnItemTitle">{n.title}</div>
-                      <div className="hnTime">{timeAgo(n.createdAt)}</div>
-                    </div>
-
-                    <div className="hnText">{n.body}</div>
-
-                    {isNew ? <div className="hnBadge">NOU</div> : null}
-                  </div>
-                </button>
-              );
-            })}
+                  <div className="hnText">{n.body}</div>
+                  {isNew && <div className="hnBadge">NOU</div>}
+                </div>
+              </button>
+            );
+          })}
         </div>
       </aside>
     </div>

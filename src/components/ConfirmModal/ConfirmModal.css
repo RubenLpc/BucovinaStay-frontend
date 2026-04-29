@@ -83,4 +83,25 @@
     border: 1px solid rgba(255,56,92,0.35);
     background: rgba(255,56,92,0.14);
   }
+
+.siteShell[data-site-theme="dark"] .cmBackdrop{
+  background: rgba(2,6,23,0.62);
+}
+
+.siteShell[data-site-theme="dark"] .cmModal{
+  background: rgba(8,11,19,0.96);
+  border-color: rgba(148,163,184,0.16);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.48);
+}
+
+.siteShell[data-site-theme="dark"] .cmTitle,
+.siteShell[data-site-theme="dark"] .cmDesc,
+.siteShell[data-site-theme="dark"] .cmBtn{
+  color: var(--ink);
+}
+
+.siteShell[data-site-theme="dark"] .cmBtn{
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(148,163,184,0.16);
+}
   

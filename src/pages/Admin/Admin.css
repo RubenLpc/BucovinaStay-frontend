@@ -198,6 +198,33 @@
 
 .adUserCell, .adHostCell{ min-width: 0; }
 
+.adUserTop{
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.adUserAvatar{
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  background: linear-gradient(135deg, rgba(255,56,92,0.12), rgba(17,24,39,0.06));
+  border: 1px solid rgba(17,24,39,0.10);
+  color: var(--ink);
+  font-weight: 950;
+  font-size: 13px;
+  letter-spacing: .04em;
+}
+
+.adUserIdentity{
+  min-width: 0;
+  flex: 1;
+}
+
 .adUserName, .adHostName{
   font-weight: 950;
   color: var(--ink);
@@ -218,6 +245,36 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.adUserMetaRow{
+  margin-top: 4px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.adUserMetaRich{
+  margin-top: 6px;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.adMetaItem{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.adMetaItem svg{
+  flex: 0 0 auto;
+  color: rgba(17,24,39,0.45);
 }
 
 /* action buttons alignment fix (icons centered) */
@@ -245,6 +302,256 @@
   font-size: var(--fs-xs);
 }
 
+.adStatCard{
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  padding: 16px;
+  background: rgba(255,255,255,0.86);
+  border: 1px solid rgba(17,24,39,0.10);
+  box-shadow: 0 18px 60px rgba(17,24,39,0.10);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.adStatTop{
+  margin-bottom: 10px;
+}
+
+.adStatLabel{
+  color: var(--muted);
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: .2px;
+}
+
+.adStatMini{
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: rgba(17,24,39,0.04);
+  border: 1px solid rgba(17,24,39,0.10);
+  color: var(--ink);
+  flex-shrink: 0;
+}
+
+.adStatValue{
+  font-size: 28px;
+  font-weight: 950;
+  letter-spacing: -.3px;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.adStatHint{
+  margin-top: 5px;
+  color: var(--muted-2);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.adStatGlow{
+  margin-top: 14px;
+  height: 10px;
+  width: 96px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(17,24,39,0.06), rgba(17,24,39,0.02));
+  border: 1px solid rgba(17,24,39,0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.adStatGlow::after{
+  content: "";
+  position: absolute;
+  inset: 1px;
+  width: 54%;
+  border-radius: inherit;
+  background: rgba(17,24,39,0.10);
+}
+
+.adStatCardUsers{
+  background:
+    radial-gradient(120px 120px at 100% 100%, rgba(59,130,246,0.12), transparent 60%),
+    rgba(255,255,255,0.88);
+}
+
+.adStatCardUsers .adStatMini{
+  background: rgba(59,130,246,0.10);
+  border-color: rgba(59,130,246,0.20);
+  color: #2563eb;
+}
+
+.adStatCardUsers .adStatGlow::after{
+  background: linear-gradient(90deg, rgba(59,130,246,0.28), rgba(59,130,246,0.10));
+}
+
+.adStatCardRoles{
+  background:
+    radial-gradient(120px 120px at 100% 100%, rgba(168,85,247,0.12), transparent 60%),
+    rgba(255,255,255,0.88);
+}
+
+.adStatCardRoles .adStatMini{
+  background: rgba(168,85,247,0.10);
+  border-color: rgba(168,85,247,0.20);
+  color: #9333ea;
+}
+
+.adStatCardRoles .adStatGlow::after{
+  background: linear-gradient(90deg, rgba(168,85,247,0.28), rgba(168,85,247,0.10));
+}
+
+.adStatCardListings{
+  background:
+    radial-gradient(120px 120px at 100% 100%, rgba(34,197,94,0.12), transparent 60%),
+    rgba(255,255,255,0.88);
+}
+
+.adStatCardListings .adStatMini{
+  background: rgba(34,197,94,0.10);
+  border-color: rgba(34,197,94,0.20);
+  color: #16a34a;
+}
+
+.adStatCardListings .adStatGlow::after{
+  background: linear-gradient(90deg, rgba(34,197,94,0.28), rgba(34,197,94,0.10));
+}
+
+.adStatCardAnalytics{
+  background:
+    radial-gradient(120px 120px at 100% 100%, rgba(255,56,92,0.12), transparent 60%),
+    rgba(255,255,255,0.88);
+}
+
+.adStatCardAnalytics .adStatMini{
+  background: rgba(255,56,92,0.10);
+  border-color: rgba(255,56,92,0.20);
+  color: #e11d48;
+}
+
+.adStatCardAnalytics .adStatGlow::after{
+  background: linear-gradient(90deg, rgba(255,56,92,0.28), rgba(255,56,92,0.10));
+}
+
+
+.hdChart{
+  padding: 16px;
+}
+
+.hdLegend{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 12px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.hdLegendDot{
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(17,24,39,0.55);
+}
+
+.hdLegendDot.alt{
+  background: rgba(255,56,92,0.70);
+}
+
+.hdChartArea{
+  margin-top: 10px;
+  height: 210px;
+  border-radius: 14px;
+  background: rgba(17,24,39,0.025);
+  border: 1px solid rgba(17,24,39,0.08);
+  padding: 0;
+  overflow: hidden;
+}
+
+.hdChartWrap{
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.hdLineChart{
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.hdChartEmpty{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.hdChartTooltip{
+  position: absolute;
+  top: 10px;
+  transform: translateX(-50%);
+  background: rgba(17,24,39,0.90);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
+  border-radius: 10px;
+  padding: 8px 12px;
+  pointer-events: none;
+  font-size: 12px;
+  font-weight: 800;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.30);
+  min-width: 130px;
+  z-index: 10;
+  white-space: nowrap;
+}
+
+.hdTtDate{
+  font-size: 11px;
+  font-weight: 900;
+  opacity: .70;
+  margin-bottom: 4px;
+  letter-spacing: .1em;
+}
+
+.hdTtRow{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+}
+
+.hdTtRow.muted{
+  opacity: .65;
+}
+
+.hdTtRow strong{
+  color: inherit;
+  font-weight: 900;
+}
+
+.hdTtDot{
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.70);
+  flex: 0 0 auto;
+}
+
+.hdTtDot.accent{
+  background: rgba(255,56,92,0.90);
+}
+
 /* chart card */
 .adChartGrid{
   display:grid;
@@ -260,6 +567,137 @@
 /* Settings layout */
 .adSettingsGrid{
   gap: 14px;
+}
+
+.adSettingsHero{
+  margin-bottom: 14px;
+  padding: 16px;
+  border-radius: 20px;
+  background:
+    radial-gradient(1200px 300px at 0% 0%, rgba(17,24,39,0.05), transparent 45%),
+    radial-gradient(700px 260px at 100% 0%, rgba(255,56,92,0.08), transparent 50%),
+    rgba(255,255,255,0.88);
+}
+
+.adSettingsHeroTop{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.adSettingsHeroTitle{
+  font-size: 1.05rem;
+  font-weight: 950;
+  color: var(--ink);
+}
+
+.adSettingsHeroHint{
+  margin-top: 4px;
+  color: var(--muted);
+  font-weight: 800;
+  font-size: var(--fs-sm);
+}
+
+.adSettingsHeroBadges{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.adSettingsPill{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(17,24,39,0.12);
+  background: rgba(255,255,255,0.78);
+  color: var(--ink);
+  font-weight: 900;
+  font-size: 12px;
+}
+
+.adSettingsPill.good{
+  border-color: rgba(34,197,94,0.24);
+  background: rgba(34,197,94,0.10);
+  color: #166534;
+}
+
+.adSettingsPill.warn{
+  border-color: rgba(245,158,11,0.24);
+  background: rgba(245,158,11,0.12);
+  color: #92400e;
+}
+
+.adSettingsPill.danger{
+  border-color: rgba(239,68,68,0.20);
+  background: rgba(239,68,68,0.10);
+  color: #991b1b;
+}
+
+.adSettingsMetaRow{
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.adSettingsMetaBox{
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.76);
+  border: 1px solid rgba(17,24,39,0.08);
+}
+
+.adSettingsMetaLabel{
+  color: var(--muted);
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.adSettingsMetaValue{
+  margin-top: 4px;
+  color: var(--ink);
+  font-weight: 850;
+  font-size: var(--fs-sm);
+}
+
+.adSettingsCard{
+  padding: 16px;
+}
+
+.adSettingsCardDanger{
+  border-color: rgba(239,68,68,0.16);
+  box-shadow: 0 18px 44px rgba(239,68,68,0.08);
+}
+
+.adSectionLead{
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.adSectionIcon{
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: rgba(17,24,39,0.04);
+  border: 1px solid rgba(17,24,39,0.10);
+  color: var(--ink);
+  flex: 0 0 auto;
+}
+
+.adSectionIcon.isDanger{
+  background: rgba(255,56,92,0.10);
+  border-color: rgba(255,56,92,0.18);
+  color: #e11d48;
 }
 
 .adForm{
@@ -279,6 +717,13 @@
 
   background: var(--btn-bg);
   border: 1px solid var(--border);
+}
+
+.adDangerZone{
+  padding: 10px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255,56,92,0.08), rgba(255,255,255,0.72));
+  border: 1px solid rgba(255,56,92,0.14);
 }
 
 .adRowTitle{
@@ -303,6 +748,12 @@
 .adField{
   display:grid;
   gap: 6px;
+}
+
+.adField.isInvalid .adInput,
+.adField.isInvalid .adTextarea{
+  border-color: rgba(239,68,68,0.35);
+  box-shadow: 0 0 0 4px rgba(239,68,68,0.08);
 }
 
 .adFieldLabel{
@@ -335,6 +786,12 @@
   box-shadow: var(--focus-ring);
 }
 
+.adFieldError{
+  color: #b91c1c;
+  font-weight: 850;
+  font-size: 12px;
+}
+
 .adTextarea{
   width: 100%;
   border-radius: var(--r-md);
@@ -355,10 +812,159 @@
   box-shadow: var(--focus-ring);
 }
 
+.adFieldCounter{
+  justify-self: end;
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 12px;
+}
+
 .adActions{
   display:flex;
   justify-content:flex-end;
+  gap: 10px;
   margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.adSettingsFooter{
+  margin-top: 14px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.adSettingsFooterText{
+  min-width: 0;
+}
+
+.adSettingsFooterTitle{
+  font-weight: 950;
+  color: var(--ink);
+  font-size: var(--fs-base);
+}
+
+.adSettingsFooterHint{
+  margin-top: 4px;
+  color: var(--muted);
+  font-weight: 800;
+  font-size: var(--fs-sm);
+}
+
+.adToggle{
+  border: 0;
+  background: transparent;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: var(--ink);
+  font-weight: 900;
+}
+
+.adToggleTrack{
+  width: 52px;
+  height: 30px;
+  border-radius: 999px;
+  background: rgba(17,24,39,0.12);
+  border: 1px solid rgba(17,24,39,0.12);
+  position: relative;
+  transition: background .18s ease, border-color .18s ease;
+}
+
+.adToggleKnob{
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(17,24,39,0.14);
+  transition: transform .18s ease;
+}
+
+.adToggle.isOn .adToggleTrack{
+  background: rgba(17,24,39,0.88);
+  border-color: rgba(17,24,39,0.88);
+}
+
+.adToggle.tone-danger.isOn .adToggleTrack{
+  background: rgba(255,56,92,0.90);
+  border-color: rgba(255,56,92,0.90);
+}
+
+.adToggle.isOn .adToggleKnob{
+  transform: translateX(22px);
+}
+
+.adToggleLabel{
+  font-size: 12px;
+  letter-spacing: .08em;
+}
+
+.adAuditMeta{
+  padding: 12px;
+  border-radius: var(--r-md);
+  background: var(--btn-bg);
+  border: 1px solid var(--border);
+}
+
+.adAuditMetaTitle{
+  font-weight: 950;
+  color: var(--ink);
+  font-size: var(--fs-sm);
+}
+
+.adAuditMetaText{
+  margin-top: 4px;
+  color: var(--muted);
+  font-weight: 800;
+  font-size: var(--fs-xs);
+}
+
+.adAuditList{
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.adAuditItem{
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.78);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.adAuditItemTop{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.adAuditWho{
+  font-weight: 950;
+  color: var(--ink);
+  font-size: var(--fs-sm);
+}
+
+.adAuditWhen{
+  color: var(--muted);
+  font-weight: 800;
+  font-size: var(--fs-xs);
+}
+
+.adAuditChanges{
+  margin-top: 6px;
+  color: var(--ink-2);
+  font-weight: 750;
+  font-size: var(--fs-sm);
+  line-height: 1.3;
 }
 
 /* =========================================================
@@ -386,9 +992,29 @@
 
 .adReviewTop{
   display:flex;
-  align-items:center;
-  gap: 8px;
+  align-items:flex-start;
+  gap: 10px;
   min-width: 0;
+}
+
+.adReviewAvatar{
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  background: linear-gradient(135deg, rgba(255,56,92,0.12), rgba(17,24,39,0.06));
+  border: 1px solid rgba(17,24,39,0.10);
+  color: var(--ink);
+  font-weight: 950;
+  font-size: 12px;
+  letter-spacing: .04em;
+}
+
+.adReviewIdentity{
+  min-width: 0;
+  flex: 1;
 }
 
 .adReviewTitle{
@@ -431,6 +1057,16 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.adReviewMetaRich{
+  margin-top: 6px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
 }
 
 .adReviewComment{
@@ -499,6 +1135,8 @@
   .adSearchWrap{ width: 100%; }
 
   .adChartGrid{ grid-template-columns: 1fr; }
+  .adSettingsMetaRow{ grid-template-columns: 1fr; }
+  .adSettingsFooter{ flex-direction: column; align-items: stretch; }
 
   /* keep 3 cols on tablet, hide last */
   .adTableHead{ grid-template-columns: 2fr 1fr 1fr; }
@@ -536,6 +1174,24 @@
   .adHint{
     font-size: 12px;
     font-weight: 750;
+  }
+
+  .adSettingsHero{
+    margin: 0 12px 12px;
+    padding: 14px;
+  }
+
+  .adSettingsHeroTop{
+    flex-direction: column;
+  }
+
+  .adSettingsHeroBadges{
+    justify-content: flex-start;
+  }
+
+  .adSettingsCard,
+  .adSettingsFooter{
+    margin: 0 12px;
   }
 
   /* tabs: scroll */
@@ -614,6 +1270,13 @@
 
   .adTop{
     padding: 0 10px;
+  }
+
+  .adSettingsHero,
+  .adSettingsCard,
+  .adSettingsFooter{
+    margin-left: 10px;
+    margin-right: 10px;
   }
 
   .adCrumb{
@@ -728,6 +1391,24 @@
   /* user text */
   .adUsers .adUserName{ font-size: 15px; line-height: 1.15; }
   .adUsers .adUserMeta{ font-size: 12px; line-height: 1.1rem; }
+  .adUsers .adUserTop{ gap: 10px; }
+  .adUsers .adUserAvatar{
+    width: 40px;
+    height: 40px;
+    border-radius: 13px;
+    font-size: 12px;
+  }
+  .adUsers .adUserMetaRow{
+    gap: 8px;
+    flex-direction: column;
+  }
+  .adUsers .adUserMetaRich{
+    margin-top: 8px;
+  }
+  .adUsers .adMetaItem{
+    font-size: 11.5px;
+    line-height: 1.15rem;
+  }
 
   /* kebab */
   .adUsers .adKebab{ position: relative; }
@@ -803,6 +1484,14 @@
 @media (max-width: 430px){
   .adUsers .hdCardTop{ padding: 10px 8px 12px; }
   .adUsers .adRows{ padding: 0 0 0; }
+  .adUsers .adUserAvatar{
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+  }
+  .adUsers .adUserMetaRow{
+    gap: 6px;
+  }
 }
 
 @media (max-width: 760px){
@@ -1154,6 +1843,16 @@
   .adReviews .adReviewTitle { font-size: 15px; line-height: 1.15; max-width: 100%; }
   .adReviews .adReviewMeta { font-size: 12px; }
   .adReviews .adReviewComment { font-size: 12.8px; line-height: 1.15rem; -webkit-line-clamp: 3; }
+  .adReviews .adReviewAvatar{
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    font-size: 11.5px;
+  }
+  .adReviews .adReviewMetaRich{
+    gap: 8px;
+    flex-direction: column;
+  }
 
   /* kebab/menu (scoped) */
   .adReviews .adKebab { position: relative; }
@@ -1330,6 +2029,16 @@
       margin-top: 4px;
       font-size: 12px;
     }
+
+    .adReviews .adReviewMetaRich{
+      margin-top: 8px;
+      gap: 6px;
+    }
+
+    .adReviews .adMetaItem{
+      font-size: 11.5px;
+      line-height: 1.12rem;
+    }
   
     .adReviews .adReviewComment{
       margin-top: 10px;
@@ -1442,4 +2151,221 @@
 /* icon perfect centrat */
 .tnTabsBtn svg{
   display:block;
+}
+
+.adShell[data-admin-theme="dark"] .adStatCard{
+  background: linear-gradient(180deg, rgba(15,23,42,0.88), rgba(8,11,19,0.86));
+  border-color: rgba(148,163,184,0.16);
+  box-shadow: 0 20px 60px rgba(2,6,23,0.30);
+}
+
+.adShell[data-admin-theme="dark"] .hdCard{
+  background: rgba(15,23,42,0.86);
+  border-color: rgba(148,163,184,0.16);
+  box-shadow: 0 18px 48px rgba(2,6,23,0.36);
+}
+
+.adShell[data-admin-theme="dark"] .hdCardMini{
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(148,163,184,0.16);
+}
+
+.adShell[data-admin-theme="dark"] .hdChip{
+  background: rgba(15,23,42,0.82);
+  border-color: rgba(148,163,184,0.16);
+}
+
+.adShell[data-admin-theme="dark"] .hdChip:hover{
+  background: rgba(15,23,42,0.94);
+  border-color: rgba(148,163,184,0.24);
+}
+
+.adShell[data-admin-theme="dark"] .hdSelect{
+  border-color: rgba(148,163,184,0.16);
+  background-color: rgba(15,23,42,0.82);
+  color: var(--ink);
+}
+
+.adShell[data-admin-theme="dark"] .hdSelect:hover{
+  border-color: rgba(148,163,184,0.24);
+  background-color: rgba(15,23,42,0.94);
+}
+
+.adShell[data-admin-theme="dark"] .hdSelect:focus{
+  border-color: var(--accent-border);
+  box-shadow: var(--focus-ring);
+  background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e2e8f0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>\
+<polyline points='6 9 12 15 18 9'/>\
+</svg>");
+}
+
+.adShell[data-admin-theme="dark"] .hdSearchInput{
+  border-color: rgba(148,163,184,0.16);
+  background: rgba(15,23,42,0.86);
+  color: var(--ink);
+}
+
+.adShell[data-admin-theme="dark"] .hdEmpty{
+  background: rgba(15,23,42,0.72);
+  border-color: rgba(148,163,184,0.22);
+  color: var(--muted);
+}
+
+.adShell[data-admin-theme="dark"] .adStatCardUsers{
+  background:
+    radial-gradient(120px 120px at 100% 100%, rgba(59,130,246,0.16), transparent 60%),
+    linear-gradient(180deg, rgba(15,23,42,0.90), rgba(8,11,19,0.88));
+}
+
+.adShell[data-admin-theme="dark"] .adStatCardRoles{
+  background:
+    radial-gradient(120px 120px at 100% 100%, rgba(168,85,247,0.16), transparent 60%),
+    linear-gradient(180deg, rgba(15,23,42,0.90), rgba(8,11,19,0.88));
+}
+
+.adShell[data-admin-theme="dark"] .adStatCardListings{
+  background:
+    radial-gradient(120px 120px at 100% 100%, rgba(34,197,94,0.16), transparent 60%),
+    linear-gradient(180deg, rgba(15,23,42,0.90), rgba(8,11,19,0.88));
+}
+
+.adShell[data-admin-theme="dark"] .adStatCardAnalytics{
+  background:
+    radial-gradient(120px 120px at 100% 100%, rgba(255,56,92,0.16), transparent 60%),
+    linear-gradient(180deg, rgba(15,23,42,0.90), rgba(8,11,19,0.88));
+}
+
+.adShell[data-admin-theme="dark"] .adStatMini{
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(148,163,184,0.16);
+}
+
+.adShell[data-admin-theme="dark"] .adStatGlow{
+  background: linear-gradient(90deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+  border-color: rgba(148,163,184,0.12);
+}
+
+.adShell[data-admin-theme="dark"] .adStatGlow::after{
+  background: rgba(255,255,255,0.10);
+}
+
+.adShell[data-admin-theme="dark"] .adSettingsHero{
+  background:
+    radial-gradient(1200px 300px at 0% 0%, rgba(59,130,246,0.10), transparent 45%),
+    radial-gradient(700px 260px at 100% 0%, rgba(255,56,92,0.10), transparent 50%),
+    rgba(8,11,19,0.82);
+  border: 1px solid rgba(148,163,184,0.14);
+  box-shadow: var(--shadow-md);
+}
+
+.adShell[data-admin-theme="dark"] .adSettingsPill{
+  border-color: rgba(148,163,184,0.16);
+  background: rgba(255,255,255,0.04);
+}
+
+.adShell[data-admin-theme="dark"] .adSettingsPill.good{
+  color: #86efac;
+}
+
+.adShell[data-admin-theme="dark"] .adSettingsPill.warn{
+  color: #fcd34d;
+}
+
+.adShell[data-admin-theme="dark"] .adSettingsPill.danger{
+  color: #fda4af;
+}
+
+.adShell[data-admin-theme="dark"] .adSettingsMetaBox,
+.adShell[data-admin-theme="dark"] .adAuditItem{
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(148,163,184,0.14);
+}
+
+.adShell[data-admin-theme="dark"] .adSectionIcon{
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(148,163,184,0.16);
+}
+
+.adShell[data-admin-theme="dark"] .adSectionIcon.isDanger{
+  background: rgba(255,56,92,0.12);
+  border-color: rgba(255,56,92,0.20);
+  color: #fb7185;
+}
+
+.adShell[data-admin-theme="dark"] .adDangerZone{
+  background: linear-gradient(180deg, rgba(255,56,92,0.10), rgba(15,23,42,0.84));
+  border-color: rgba(255,56,92,0.18);
+}
+
+.adShell[data-admin-theme="dark"] .adFieldError{
+  color: #fca5a5;
+}
+
+.adShell[data-admin-theme="dark"] .adToggleTrack{
+  background: rgba(148,163,184,0.16);
+  border-color: rgba(148,163,184,0.20);
+}
+
+.adShell[data-admin-theme="dark"] .adToggleKnob{
+  background: rgba(248,250,252,0.96);
+  box-shadow: 0 4px 12px rgba(2,6,23,0.34);
+}
+
+.adShell[data-admin-theme="dark"] .adToggle.isOn .adToggleTrack{
+  background: rgba(255,56,92,0.18);
+  border-color: rgba(255,56,92,0.28);
+}
+
+.adShell[data-admin-theme="dark"] .adToggle.isOn .adToggleLabel{
+  color: var(--ink);
+}
+
+.adShell[data-admin-theme="dark"] .adToggle.tone-danger.isOn .adToggleTrack{
+  background: rgba(255,56,92,0.90);
+  border-color: rgba(255,56,92,0.90);
+}
+
+.adShell[data-admin-theme="dark"] .adUserAvatar,
+.adShell[data-admin-theme="dark"] .adReviewAvatar{
+  background: linear-gradient(135deg, rgba(255,56,92,0.18), rgba(59,130,246,0.16));
+  border-color: rgba(148,163,184,0.18);
+}
+
+.adShell[data-admin-theme="dark"] .hdLegendDot{
+  background: rgba(248,250,252,0.68);
+}
+
+.adShell[data-admin-theme="dark"] .hdLegendDot.alt{
+  background: rgba(255,107,132,0.90);
+}
+
+.adShell[data-admin-theme="dark"] .hdChartArea{
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(148,163,184,0.14);
+}
+
+.adShell[data-admin-theme="dark"] .hdChartTooltip{
+  background: rgba(8,11,19,0.94);
+  border-color: rgba(148,163,184,0.16);
+  box-shadow: 0 12px 30px rgba(2,6,23,0.44);
+}
+
+.adShell[data-admin-theme="dark"] .hdChartEmpty{
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(148,163,184,0.14);
+}
+
+.adShell[data-admin-theme="dark"] .hdChartWrap{
+  background: rgba(255,255,255,0.02);
+}
+
+.adShell[data-admin-theme="dark"] .adUsers .adMenu,
+.adShell[data-admin-theme="dark"] .adReviews .adMenu,
+.adShell[data-admin-theme="dark"] .adListings .adMenu{
+  background: rgba(8,11,19,0.96);
+  border-color: rgba(148,163,184,0.16);
+  box-shadow:
+    0 16px 34px rgba(2,6,23,.38),
+    0 2px 6px rgba(2,6,23,.22);
 }

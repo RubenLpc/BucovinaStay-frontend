@@ -349,3 +349,27 @@
   .stayCardFav:hover{ transform: none; }
   .stayCardCta:hover{ transform: none; }
 }
+
+.siteShell[data-site-theme="dark"] .stayCardPro,
+.siteShell[data-site-theme="dark"] .stayCardFact,
+.siteShell[data-site-theme="dark"] .stayCardFact.isMuted{
+  background: rgba(15,23,42,0.84);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+}
+
+.siteShell[data-site-theme="dark"] .stayCardMedia{
+  background: rgba(255,255,255,0.04);
+}
+
+.siteShell[data-site-theme="dark"] .stayCardTitle,
+.siteShell[data-site-theme="dark"] .stayCardPriceVal{
+  color: var(--ink);
+}
+
+.siteShell[data-site-theme="dark"] .stayCardSub,
+.siteShell[data-site-theme="dark"] .stayCardGuests,
+.siteShell[data-site-theme="dark"] .stayCardPriceUnit,
+.siteShell[data-site-theme="dark"] .stayCardPriceHint{
+  color: var(--muted);
+}

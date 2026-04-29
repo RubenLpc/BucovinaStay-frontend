@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { X, Phone, Mail, MessageSquare, CheckCircle2, Circle, ExternalLink, Send } from "lucide-react";
 import "./HostInboxModal.css";
+import { useSettingsStore } from "../../stores/settingsStore";
+import { formatDateTz } from "../../utils/format";
 
 function cleanPhone(s) {
   return String(s || "").replace(/[^\d+]/g, "");
@@ -19,6 +21,7 @@ export default function HostInboxModal({
   onMarkRead,
   onMarkUnread,
 }) {
+  const { timezone, locale } = useSettingsStore();
   const [draft, setDraft] = useState("");
   const [copied, setCopied] = useState(false);
   const taRef = useRef(null);
@@ -47,9 +50,7 @@ export default function HostInboxModal({
   const propertyCity = [m.propertyId?.locality, m.propertyId?.city].filter(Boolean).join(", ");
   const propertyCover = m.propertyId?.coverImage?.url || "";
 
-  const when = m.createdAt
-    ? new Date(m.createdAt).toLocaleString("ro-RO", { dateStyle: "full", timeStyle: "short" })
-    : "";
+  const when = m.createdAt ? formatDateTz(m.createdAt, timezone, locale) : "";
 
   const telHref = guestPhone ? `tel:${cleanPhone(guestPhone)}` : "";
   const smsHref = guestPhone ? `sms:${cleanPhone(guestPhone)}?body=${encode(draft || "")}` : "";

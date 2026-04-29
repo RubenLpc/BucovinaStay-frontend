@@ -1,805 +1,488 @@
-/* client/src/pages/Host/HostReports.css
-   Match HostDashboard theme: LIGHT page + DARK top nav
-   Accent: pink rgba(255,56,92,*)
-*/
-
-:root{
-    --ink: rgba(17, 24, 39, 0.92);
-    --ink-2: rgba(17, 24, 39, 0.78);
-    --muted: rgba(17, 24, 39, 0.60);
-    --muted-2: rgba(17, 24, 39, 0.46);
-  
-    --bg: rgba(255,255,255,0.92);
-    --surface: rgba(255,255,255,0.84);
-    --card: rgba(255,255,255,0.88);
-  
-    --border: rgba(17, 24, 39, 0.10);
-    --border-2: rgba(17, 24, 39, 0.14);
-  
-    --shadow: 0 18px 60px rgba(17,24,39,0.10);
-    --shadow-2: 0 10px 30px rgba(17,24,39,0.10);
-  
-    --accent-b: 1px solid rgba(255, 56, 92, 0.28);
-    --accent-bg: rgba(255, 56, 92, 0.10);
-    --accent-ink: rgba(17, 24, 39, 0.92);
-    --accent-soft: rgba(255, 56, 92, 0.18);
-  
-    --nav-bg: rgba(17, 24, 39, 0.92);
-    --nav-border: rgba(255,255,255,0.12);
-    --nav-ink: rgba(255,255,255,0.92);
-    --nav-muted: rgba(255,255,255,0.70);
-  }
-  
-  .hrPage{
-    min-height: 100vh;
-    color: var(--ink);
-    background:
-      radial-gradient(1200px 700px at 15% 10%, rgba(17,24,39,0.06), rgba(17,24,39,0.00) 60%),
-      radial-gradient(900px 650px at 85% 0%, rgba(255,56,92,0.06), rgba(255,56,92,0.00) 55%),
-      radial-gradient(1000px 700px at 70% 85%, rgba(17,24,39,0.05), rgba(17,24,39,0.00) 60%),
-      linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.92) 45%, rgba(255,255,255,0.98) 100%);
-    background-attachment: fixed;
-  }
-  
-  .hrPage::before{
-    content:"";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.04;
-    mix-blend-mode: multiply;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
-  }
-  
-  .hrMain{
-    padding: 18px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  .hrHeader{
-    gap: 16px;
-    margin: 18px 6px 14px;
-  }
-  
-  .hrCrumb{
-    color: var(--muted-2);
-    font-weight: 900;
-    font-size: 12px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-  }
-  
-  .hrTitleRow{
-    display:flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12px;
-  }
-  
-  .hrTitle{
-    font-size: 34px;
-    font-weight: 950;
-    letter-spacing: -0.4px;
-    color: var(--ink);
-    margin: 0;
-  }
-  
-  .hrSub{
-    margin-top: 6px;
-    color: var(--muted);
-    font-weight: 650;
-  }
-  
-  /* Toolbar */
-  .hrToolbar{
-    margin-top: 14px;
-    display:flex;
-    align-items:center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  
-  .hrFilters{
-    display:flex;
-    gap: 10px;
-    align-items:center;
-    flex-wrap: wrap;
-    flex: 1;
-    min-width: 0;
-  }
-  
-  .hrActions{
-    display:flex;
-    gap: 10px;
-    align-items:center;
-  }
-  
-  .hrGhostLink{
-    height: 36px;
-    padding: 0 12px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: rgba(255,255,255,0.80);
-    color: var(--ink);
-    cursor: pointer;
-    font-weight: 900;
-    font-size: 12px;
-    display:flex;
-    align-items:center;
-    gap: 8px;
-    box-shadow: 0 6px 18px rgba(17,24,39,0.06);
-  }
-  .hrGhostLink:hover{
-    border-color: var(--border-2);
-    box-shadow: 0 10px 25px rgba(17,24,39,0.08);
-  }
-  
-  .hrChip{
-    height: 36px;
-    padding: 0 12px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: rgba(255,255,255,0.80);
-    color: var(--ink);
-    cursor: pointer;
-    font-weight: 900;
-    font-size: 12px;
-    display:flex;
-    align-items:center;
-    gap: 8px;
-    box-shadow: 0 6px 18px rgba(17,24,39,0.06);
-  }
-  .hrChip:hover{
-    border-color: var(--border-2);
-    box-shadow: 0 10px 25px rgba(17,24,39,0.08);
-  }
-  .hrChipAccent{
-    border: 1px solid rgba(255, 56, 92, 0.28);
-    background: rgba(255, 56, 92, 0.10);
-  }
-  
-  .hrSelect{
-    height: 36px;
-    padding: 0 12px;
-    border-radius: 999px;
-    border: 1px solid rgba(17,24,39,0.12);
-    background: rgba(255,255,255,0.80);
-    color: rgba(17,24,39,0.92);
-    font-weight: 900;
-    font-size: 12px;
-    cursor: pointer;
-    display:flex;
-    align-items:center;
-    gap: 8px;
-  }
-  .hrSelect:hover{ border-color: rgba(17,24,39,0.18); }
-  .hrSelect select{
-    border: none;
-    outline: none;
-    background: transparent;
-    font-weight: 950;
-    color: var(--ink);
-    cursor: pointer;
-  }
-  .hrSelect.isActive{
-    border: 1px solid rgba(255, 56, 92, 0.28);
-    background: rgba(255, 56, 92, 0.10);
-  }
-  
-  /* Search */
-  .hrSearch{
-    flex: 1;
-    min-width: 260px;
-    height: 36px;
-    padding: 0 12px;
-    border-radius: 999px;
-    border: 1px solid rgba(17,24,39,0.12);
-    background: rgba(255,255,255,0.80);
-    color: rgba(17,24,39,0.92);
-    font-weight: 750;
-    display:flex;
-    align-items:center;
-    gap: 8px;
-  }
-  .hrSearchIcon{ color: rgba(17,24,39,0.55); }
-  .hrSearch input{
-    width: 100%;
-    border: none;
-    outline: none;
-    background: transparent;
-    color: var(--ink);
-    font-weight: 850;
-  }
-  .hrSearch:focus-within{
-    border: 1px solid rgba(255, 56, 92, 0.28);
-    box-shadow: 0 0 0 4px rgba(255, 56, 92, 0.10);
-  }
-  
-  /* KPI grid */
-  .hrKpis{
-    margin-top: 14px;
-    display:grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 14px;
-  }
-  
-  .hrCard{
-    border-radius: 18px;
-    padding: 14px;
-    background: rgba(255,255,255,0.86);
-    border: 1px solid rgba(17,24,39,0.10);
-    box-shadow: var(--shadow);
-    backdrop-filter: blur(10px);
-  }
-  
-  .hrCardTop{
-    display:flex;
-    align-items:center;
-    justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-  
-  .hrCardLabel{
-    color: var(--muted);
-    font-weight: 900;
-    font-size: 13px;
-    letter-spacing: 0.2px;
-  }
-  
-  .hrCardMini{
-    width: 30px;
-    height: 30px;
-    border-radius: 10px;
-    display:grid;
-    place-items:center;
-    background: rgba(17,24,39,0.04);
-    border: 1px solid rgba(17,24,39,0.10);
-    color: var(--ink);
-  }
-  
-  .hrCardValue{
-    font-size: 26px;
-    font-weight: 950;
-    letter-spacing: -0.2px;
-    color: var(--ink);
-  }
-  
-  .hrCardHint{
-    margin-top: 6px;
-    color: var(--muted-2);
-    font-weight: 700;
-    font-size: 12px;
-  }
-  
-  .hrSpark{
-    margin-top: 12px;
-    height: 34px;
-    border-radius: 12px;
-    background: linear-gradient(90deg, rgba(17,24,39,0.08), rgba(17,24,39,0.03));
-    border: 1px solid rgba(17,24,39,0.10);
-  }
-  
-  /* Chart */
-  .hrChart{ padding: 16px; margin-top: 14px; }
-  .hrTiny{
-    margin-top: 4px;
-    color: var(--muted-2);
-    font-weight: 750;
-    font-size: 12px;
-  }
-  
-  .hrLegend{
-    display:flex;
-    align-items:center;
-    gap: 10px;
-    color: var(--muted);
-    font-weight: 800;
-    font-size: 12px;
-    margin-top: 6px;
-  }
-  
-  .hrLegendDot{
-    width: 8px;
-    height: 8px;
-    border-radius: 999px;
-    background: rgba(17,24,39,0.60);
-  }
-  .hrLegendDot.alt{ background: rgba(255,56,92,0.55); }
-  
-  .hrChartArea{
-    margin-top: 12px;
-    height: 260px;
-    border-radius: 16px;
-    background: rgba(17,24,39,0.03);
-    border: 1px solid rgba(17,24,39,0.10);
-    padding: 14px;
-    overflow: hidden;
-    display:flex;
-    align-items:flex-end;
-  }
-  
-  .hrBars{
-    height: 100%;
-    width: 100%;
-    display:flex;
-    align-items:flex-end;
-    gap: 10px;
-  }
-  
-  .hrBarCol{
-    height: 100%;
-    flex: 1;
-    display:flex;
-    align-items:flex-end;
-    justify-content: center;
-    gap: 6px;
-    position: relative;
-  }
-  
-  .hrBar{
-    width: 10px;
-    border-radius: 999px;
-    background: rgba(17,24,39,0.18);
-    border: 1px solid rgba(17,24,39,0.12);
-  }
-  .hrBar.alt{
-    width: 10px;
-    border-radius: 999px;
-    background: rgba(255,56,92,0.22);
-    border: 1px solid rgba(255,56,92,0.28);
-    opacity: 0.6;
-  }
-  
-  .hrBarLabel{
-    position: absolute;
-    bottom: -18px;
-    font-size: 10px;
-    font-weight: 850;
-    color: rgba(17,24,39,0.55);
-  }
-  
-  /* Table */
-  .hrTable{ margin-top: 14px; padding: 16px; }
-  
-  .hrTableHead{
-    margin-top: 8px;
-    display:grid;
-    grid-template-columns: 2.2fr 1fr .9fr .9fr .9fr 1fr;
-    gap: 12px;
-    padding: 10px 6px;
-    color: var(--muted-2);
-    font-weight: 900;
-    font-size: 12px;
-    letter-spacing: 0.2px;
-  }
-  
-  .hrRows{
-    margin-top: 6px;
-    display:flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .hrRow{
-    display:grid;
-    grid-template-columns: 2.2fr 1fr .9fr .9fr .9fr 1fr;
-    gap: 12px;
-    padding: 12px 6px;
-    border-radius: 14px;
-    background: rgba(255,255,255,0.78);
-    border: 1px solid rgba(17,24,39,0.10);
-    box-shadow: 0 10px 26px rgba(17,24,39,0.07);
-    align-items:center;
-  }
-  
-  .hrRow:hover{
-    border-color: rgba(255,56,92,0.28);
-    box-shadow: 0 14px 34px rgba(17,24,39,0.10);
-  }
-  
-  .hrProp{
-    display:flex;
-    align-items:center;
-    gap: 10px;
-    min-width: 0;
-  }
-  .hrThumb{
-    width: 42px;
-    height: 36px;
-    border-radius: 12px;
-    background: rgba(17,24,39,0.06);
-    border: 1px solid rgba(17,24,39,0.12);
-    flex: 0 0 auto;
-    object-fit: cover;
-  }
-  .hrPropText{ min-width: 0; }
-  .hrPropName{
-    font-weight: 950;
-    color: var(--ink);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .hrPropMeta{
-    margin-top: 2px;
-    font-size: 12px;
-    color: var(--muted);
-    font-weight: 700;
-  }
-  
-  .hrCell{
-    color: var(--ink-2);
-    font-weight: 750;
-    font-size: 13px;
-  }
-  
-  .hrLinkBtn{
-    justify-self: end;
-    height: 34px;
-    padding: 0 12px;
-    border-radius: 999px;
-    border: 1px solid rgba(17,24,39,0.12);
-    background: rgba(17,24,39,0.04);
-    color: var(--ink);
-    cursor: pointer;
-    font-weight: 900;
-    font-size: 12px;
-  }
-  .hrLinkBtn:hover{
-    border: 1px solid rgba(255, 56, 92, 0.28);
-    background: rgba(255, 56, 92, 0.10);
-    color: rgba(17, 24, 39, 0.92);
-  }
-  
-  /* Badges */
-  .hrBadge{
-    display:inline-flex;
-    align-items:center;
-    height: 28px;
-    padding: 0 10px;
-    border-radius: 999px;
-    font-weight: 950;
-    font-size: 12px;
-    letter-spacing: 0.2px;
-    border: 1px solid rgba(17,24,39,0.12);
-    background: rgba(17,24,39,0.04);
-    color: rgba(17,24,39,0.92);
-  }
-  .hrBadge.tone-good{ border: 1px solid rgba(34,197,94,0.28); background: rgba(34,197,94,0.10); }
-  .hrBadge.tone-warn{ border: 1px solid rgba(245,158,11,0.28); background: rgba(245,158,11,0.10); }
-  .hrBadge.tone-bad{ border: 1px solid rgba(239,68,68,0.28); background: rgba(239,68,68,0.10); }
-  .hrBadge.tone-muted{ opacity: 0.9; }
-  
-  /* Empty + skeleton */
-  .hrEmpty{
-    padding: 14px;
-    border-radius: 14px;
-    background: rgba(255,255,255,0.70);
-    border: 1px dashed rgba(17,24,39,0.18);
-    color: var(--muted);
-    font-weight: 800;
-    margin-top: 10px;
-  }
-  .hrEmptyTitle{
-    font-weight: 950;
-    font-size: 16px;
-    color: var(--ink);
-    margin-bottom: 6px;
-  }
-  .hrMuted{ color: var(--muted-2); }
-  
-  .hrSkeleton{
-    padding: 12px;
-    border-radius: 14px;
-    border: 1px dashed rgba(17,24,39,0.18);
-    background: rgba(255,255,255,0.60);
-    margin-top: 10px;
-  }
-  .skLine{
-    height: 14px;
-    border-radius: 999px;
-    background: rgba(17,24,39,0.08);
-    margin: 10px 0;
-  }
-  
-  /* Pager */
-  .hrPager{
-    margin-top: 12px;
-    display:flex;
-    align-items:center;
-    justify-content: space-between;
-    gap: 10px;
-    padding-top: 10px;
-    border-top: 1px solid rgba(17,24,39,0.10);
-  }
-  .hrPagerText{
-    color: rgba(17,24,39,0.62);
-    font-weight: 850;
-    font-size: 12px;
-  }
-  
-  .hrBtn{
-    height: 36px;
-    padding: 0 12px;
-    border-radius: 999px;
-    border: 1px solid rgba(17,24,39,0.12);
-    background: rgba(17,24,39,0.04);
-    color: rgba(17,24,39,0.92);
-    font-weight: 950;
-    font-size: 12px;
-    cursor: pointer;
-    display:flex;
-    align-items:center;
-    gap: 8px;
-  }
-  .hrBtn:hover{
-    border: 1px solid rgba(255, 56, 92, 0.28);
-    background: rgba(255, 56, 92, 0.10);
-  }
-  .hrBtn:disabled{ opacity: 0.55; cursor: not-allowed; }
-  .hrBtn.ghost{ background: rgba(255,255,255,0.80); }
-  
-  .hrHint{
-    margin-top: 12px;
-    padding: 12px;
-    border-radius: 14px;
-    background: rgba(255,255,255,0.70);
-    border: 1px dashed rgba(17,24,39,0.18);
-    color: rgba(17,24,39,0.70);
-    font-weight: 850;
-    display:flex;
-    gap: 10px;
-    align-items:center;
-  }
-  
-  /* Responsive */
-  @media (max-width: 980px){
-    .hrKpis{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .hrTableHead, .hrRow{ grid-template-columns: 2fr 1fr 1fr .9fr; }
-    .hrTableHead div:nth-child(4),
-    .hrTableHead div:nth-child(5),
-    .hrTableHead div:nth-child(6),
-    .hrRow > :nth-child(4),
-    .hrRow > :nth-child(5),
-    .hrRow > :nth-child(6){
-      display:none;
-    }
-    .hrChartArea{ height: 220px; }
-  }
-  
-  @media (max-width: 620px){
-    .hrTitleRow{ flex-direction: column; align-items:flex-start; }
-    .hrGhostLink{ align-self:flex-start; }
-    .hrSearch{ min-width: 200px; }
-  }
-  
-  /* TopNav overrides (same as dashboard) */
-  .tnInner{
-    background: var(--nav-bg) !important;
-    border: 1px solid var(--nav-border) !important;
-    box-shadow: 0 18px 50px rgba(0,0,0,0.35) !important;
-  }
-  .tnBrandText{ color: var(--nav-ink) !important; }
-  .tnLogo{
-    border: 1px solid rgba(255,255,255,0.12) !important;
-    background: rgba(255,255,255,0.08) !important;
-    color: var(--nav-ink) !important;
-  }
-  .tnPill{
-    background: rgba(255,255,255,0.06) !important;
-    border: 1px solid rgba(255,255,255,0.10) !important;
-  }
-  .tnTab{ color: var(--nav-muted) !important; }
-  .tnTab:hover{ color: var(--nav-ink) !important; }
-  .tnTab.isActive{
-    background: rgba(255,255,255,0.10) !important;
-    color: var(--nav-ink) !important;
-  }
-  .tnSubPill{
-    border: 1px solid rgba(255,255,255,0.12) !important;
-    background: rgba(255,255,255,0.08) !important;
-    color: var(--nav-ink) !important;
-  }
-  .tnPrimaryBtn{
-    border: 1px solid rgba(255, 56, 92, 0.28) !important;
-    background: rgba(255, 56, 92, 0.10) !important;
-    color: rgba(255,255,255,0.95) !important;
-  }
-  .tnIconBtn{
-    border: 1px solid rgba(255,255,255,0.12) !important;
-    background: rgba(255,255,255,0.06) !important;
-    color: rgba(255,255,255,0.92) !important;
-  }
-  .tnNotifDot{
-    background: rgba(255,56,92,0.95) !important;
-    box-shadow: 0 0 0 2px rgba(17,24,39,0.92) !important;
-  }
-  
-  /* =========================================================
-   HostReports — MOBILE CLEANUP (drop at end of file)
+/* =========================================================
+   HOST REPORTS — design system match
+   Light page · dark nav · accent #ff385c
    ========================================================= */
 
-/* 1) Header title row: să nu fie "baseline space-between" pe mobil */
-@media (max-width: 620px){
-  .hrTitleRow{
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-  .hrGhostLink{
-    align-self: flex-start;
-  }
+:root {
+  --ink:    rgba(17,24,39,0.92);
+  --ink-2:  rgba(17,24,39,0.78);
+  --muted:  rgba(17,24,39,0.60);
+  --muted-2:rgba(17,24,39,0.46);
+  --surface:rgba(255,255,255,0.84);
+  --card:   rgba(255,255,255,0.88);
+  --border: rgba(17,24,39,0.10);
+  --border-2:rgba(17,24,39,0.14);
+  --shadow: 0 18px 60px rgba(17,24,39,0.10);
+  --shadow-sm:0 10px 26px rgba(17,24,39,0.07);
 }
 
-/* 2) Toolbar: ordine clară + full width inputs */
-@media (max-width: 820px){
-  .hrToolbar{
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
-
-  .hrFilters{
-    width: 100%;
-    flex: 0 0 auto;
-    order: 1;
-  }
-
-  .hrActions{
-    width: 100%;
-    order: 2;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-  }
-
-  /* Search să fie mereu full width */
-  .hrSearch{
-    width: 100%;
-    min-width: 0;
-    flex: 1 1 auto;
-  }
-
-  /* Range + Live chips: să arate ca un rând curat */
-  .hrSelect{
-    flex: 0 0 auto;
-    white-space: nowrap;
-  }
+/* ── Page ── */
+.hrPage {
+  min-height: 100vh;
+  color: var(--ink);
+  background:
+    radial-gradient(1200px 700px at 15% 10%, rgba(17,24,39,0.06), transparent 60%),
+    radial-gradient(900px  650px at 85%  0%, rgba(255,56,92,0.06), transparent 55%),
+    radial-gradient(1000px 700px at 70% 85%, rgba(17,24,39,0.05), transparent 60%),
+    linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.92) 45%, rgba(255,255,255,0.98) 100%);
+  background-attachment: fixed;
+}
+.hrPage::before {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none; opacity: .04; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
 }
 
-/* 3) Super mobile: facem Filters stack (range/live pe un rând, search sub) */
-@media (max-width: 560px){
-  .hrFilters{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
+.hrMain { padding: 18px; max-width: 1200px; margin: 0 auto; }
 
-  /* Search full width sub ele */
-  .hrSearch{
-    grid-column: 1 / -1;
-    height: 40px;
-    padding: 0 12px;
-  }
+/* ── Header ── */
+.hrHeader { margin: 18px 6px 14px; }
+.hrCrumb  { color: var(--muted-2); font-weight: 900; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
 
-  /* Actions: 2 butoane egale */
-  .hrActions{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-  .hrChip{
-    width: 100%;
-    justify-content: center;
-  }
+.hrTitleRow {
+  display: flex; align-items: baseline;
+  justify-content: space-between; gap: 12px;
+}
+.hrTitle { font-size: 34px; font-weight: 950; letter-spacing: -.4px; color: var(--ink); margin: 0; }
+
+.hrSub    { margin-top: 6px; color: var(--muted); font-weight: 650; }
+.hrTiny   { margin-top: 4px; color: var(--muted-2); font-weight: 750; font-size: 12px; }
+
+.hrGhostLink {
+  height: 36px; padding: 0 12px; border-radius: 999px;
+  border: 1px solid var(--border); background: rgba(255,255,255,0.80);
+  color: var(--ink); cursor: pointer; font-weight: 900; font-size: 12px;
+  display: inline-flex; align-items: center; gap: 8px;
+  box-shadow: 0 6px 18px rgba(17,24,39,0.06);
+}
+.hrGhostLink:hover { border-color: var(--border-2); box-shadow: 0 10px 25px rgba(17,24,39,0.08); }
+
+/* ── Toolbar ── */
+.hrToolbar {
+  margin-top: 14px; display: flex;
+  align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+}
+.hrFilters { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; flex: 1; min-width: 0; }
+.hrActions { display: flex; gap: 10px; align-items: center; }
+
+.hrSelect {
+  height: 36px; padding: 0 12px; border-radius: 999px;
+  border: 1px solid rgba(17,24,39,0.12); background: rgba(255,255,255,0.80);
+  color: var(--ink); font-weight: 900; font-size: 12px;
+  cursor: pointer; display: flex; align-items: center; gap: 8px;
+}
+.hrSelect:hover { border-color: rgba(17,24,39,0.18); }
+.hrSelect select { border: none; outline: none; background: transparent; font-weight: 950; color: var(--ink); cursor: pointer; }
+.hrSelect.isActive { border: 1px solid rgba(255,56,92,0.28); background: rgba(255,56,92,0.10); }
+
+.hrSearch {
+  flex: 1; min-width: 220px; height: 36px; padding: 0 12px;
+  border-radius: 999px; border: 1px solid rgba(17,24,39,0.12);
+  background: rgba(255,255,255,0.80); display: flex; align-items: center; gap: 8px;
+}
+.hrSearchIcon { color: rgba(17,24,39,0.50); flex-shrink: 0; }
+.hrSearch input { width: 100%; border: none; outline: none; background: transparent; color: var(--ink); font-weight: 850; font-size: 13px; }
+.hrSearch:focus-within { border: 1px solid rgba(255,56,92,0.28); box-shadow: 0 0 0 4px rgba(255,56,92,0.10); }
+
+.hrChip {
+  height: 36px; padding: 0 12px; border-radius: 999px;
+  border: 1px solid var(--border); background: rgba(255,255,255,0.80);
+  color: var(--ink); cursor: pointer; font-weight: 900; font-size: 12px;
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 6px 18px rgba(17,24,39,0.06);
+}
+.hrChip:hover { border-color: var(--border-2); box-shadow: 0 10px 25px rgba(17,24,39,0.08); }
+.hrChipAccent { border: 1px solid rgba(255,56,92,0.28); background: rgba(255,56,92,0.10); }
+
+/* ── Card base ── */
+.hrCard {
+  border-radius: 18px; padding: 16px;
+  background: rgba(255,255,255,0.86);
+  border: 1px solid rgba(17,24,39,0.10);
+  box-shadow: var(--shadow); backdrop-filter: blur(10px);
+}
+.hrCardTop {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 10px; margin-bottom: 10px;
+}
+.hrCardLabel { color: var(--muted); font-weight: 900; font-size: 13px; letter-spacing: .2px; }
+.hrCardMini  {
+  width: 30px; height: 30px; border-radius: 10px;
+  display: grid; place-items: center;
+  background: rgba(17,24,39,0.04); border: 1px solid rgba(17,24,39,0.10); color: var(--ink);
+  flex-shrink: 0;
+}
+.hrCardValue {
+  font-size: 28px; font-weight: 950; letter-spacing: -.3px; color: var(--ink); line-height: 1;
+}
+.hrCardValue.tone-good { color: #059669; }
+.hrCardValue.tone-warn { color: #d97706; }
+.hrCardValue.tone-bad  { color: #dc2626; }
+.hrCardValue.tone-muted{ color: var(--muted); }
+
+.hrCardHint { margin-top: 5px; color: var(--muted-2); font-weight: 700; font-size: 12px; }
+
+/* ── KPI grid ── */
+.hrKpis {
+  margin-top: 14px;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px;
 }
 
-/* 4) KPI grid: deja ai 4->2, dar pe foarte mic fă 1 col */
-@media (max-width: 420px){
-  .hrKpis{
+/* ── Sparkline ── */
+.hrSparkSvg  { display: block; margin-top: 12px; width: 100%; height: 30px; }
+.hrSparkEmpty{ margin-top: 12px; height: 30px; border-radius: 8px; background: rgba(17,24,39,0.05); }
+
+/* ── Chart ── */
+.hrChartCard { margin-top: 14px; }
+
+.hrLegend {
+  display: flex; align-items: center; gap: 14px;
+  color: var(--muted); font-weight: 800; font-size: 12px;
+  flex-shrink: 0;
+}
+.hrLegDot { width: 8px; height: 8px; border-radius: 999px; background: rgba(17,24,39,0.55); display: inline-block; }
+.hrLegDot.accent { background: rgba(255,56,92,0.70); }
+
+.hrChartWrap {
+  margin-top: 10px; height: 210px;
+  border-radius: 14px; overflow: hidden;
+  background: rgba(17,24,39,0.025);
+  border: 1px solid rgba(17,24,39,0.08);
+  position: relative;
+}
+
+.hrLineChart { position: relative; width: 100%; height: 100%; }
+
+.hrChartEmpty {
+  height: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 8px; color: var(--muted); font-weight: 800; font-size: 13px;
+}
+
+/* Tooltip */
+.hrChartTooltip {
+  position: absolute; top: 10px;
+  transform: translateX(-50%);
+  background: rgba(17,24,39,0.90);
+  backdrop-filter: blur(8px);
+  color: #fff; border-radius: 10px;
+  padding: 8px 12px; pointer-events: none;
+  font-size: 12px; font-weight: 800;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.30);
+  min-width: 130px; z-index: 10;
+  white-space: nowrap;
+}
+.hrTtDate { font-size: 11px; font-weight: 900; opacity: .70; margin-bottom: 4px; letter-spacing: .1em; }
+.hrTtRow  { display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+.hrTtRow.muted { opacity: .65; }
+.hrTtDot  { width: 7px; height: 7px; border-radius: 999px; background: rgba(255,255,255,0.70); flex-shrink: 0; }
+.hrTtDot.accent { background: rgba(255,56,92,0.90); }
+
+/* ── Top performer ── */
+.hrTopPerformer {
+  margin-top: 14px;
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255,56,92,0.08), rgba(255,56,92,0.04));
+  border: 1px solid rgba(255,56,92,0.22);
+}
+.hrTopIcon {
+  width: 34px; height: 34px; border-radius: 10px;
+  background: rgba(255,56,92,0.14); border: 1px solid rgba(255,56,92,0.28);
+  color: #e11d48; display: grid; place-items: center; flex-shrink: 0;
+}
+.hrTopBody    { flex: 1; min-width: 0; }
+.hrTopLabel   { font-size: 11px; font-weight: 900; color: var(--muted-2); letter-spacing: .1em; text-transform: uppercase; }
+.hrTopName    { font-size: 14px; font-weight: 950; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+.hrTopStats   { display: flex; gap: 16px; flex-shrink: 0; font-size: 12.5px; font-weight: 750; color: var(--muted); }
+.hrTopCtr b   { color: #059669; }
+
+/* ── Table ── */
+.hrTableCard { margin-top: 14px; }
+
+.hrTableHead {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 2.2fr 1fr .9fr .9fr .9fr 1fr;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(17,24,39,0.03);
+  border: 1px solid rgba(17,24,39,0.07);
+}
+.hrThBtn {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: none; border: none; padding: 0; cursor: pointer;
+  color: var(--muted-2); font-weight: 900; font-size: 12px; letter-spacing: .2px;
+  text-align: left;
+}
+.hrThBtn.sortable:hover { color: var(--ink); }
+.hrThBtn:disabled { cursor: default; }
+.hrSortNone   { display: inline-flex; flex-direction: column; opacity: .35; }
+.hrSortActive { color: rgba(255,56,92,0.80); }
+
+.hrRows { margin-top: 6px; display: flex; flex-direction: column; gap: 8px; }
+
+.hrRow {
+  display: grid;
+  grid-template-columns: 2.2fr 1fr .9fr .9fr .9fr 1fr;
+  gap: 12px; padding: 12px 10px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.78);
+  border: 1px solid rgba(17,24,39,0.09);
+  box-shadow: var(--shadow-sm);
+  align-items: center;
+  transition: border-color .14s, box-shadow .14s;
+}
+.hrRow:hover { border-color: rgba(255,56,92,0.22); box-shadow: 0 14px 34px rgba(17,24,39,0.10); }
+
+.hrProp { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.hrThumb {
+  width: 44px; height: 36px; border-radius: 10px;
+  object-fit: cover; background: rgba(17,24,39,0.06);
+  border: 1px solid rgba(17,24,39,0.10); flex-shrink: 0;
+}
+.hrPropText { min-width: 0; }
+.hrPropName { font-weight: 950; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; }
+.hrPropMeta { margin-top: 2px; font-size: 12px; color: var(--muted); font-weight: 700; }
+
+.hrCell { color: var(--ink-2); font-weight: 750; font-size: 13px; }
+
+.hrCtrValue { font-weight: 950; font-size: 13px; }
+.hrCtrValue.tone-good  { color: #059669; }
+.hrCtrValue.tone-warn  { color: #d97706; }
+.hrCtrValue.tone-bad   { color: #dc2626; }
+.hrCtrValue.tone-muted { color: var(--muted); }
+
+.hrLinkBtn {
+  justify-self: end;
+  height: 32px; padding: 0 12px; border-radius: 999px;
+  border: 1px solid rgba(17,24,39,0.12); background: rgba(17,24,39,0.04);
+  color: var(--ink); cursor: pointer; font-weight: 900; font-size: 12px;
+  transition: background .12s, border-color .12s;
+}
+.hrLinkBtn:hover { border: 1px solid rgba(255,56,92,0.28); background: rgba(255,56,92,0.10); }
+
+/* Badges */
+.hrBadge {
+  display: inline-flex; align-items: center; height: 26px; padding: 0 10px;
+  border-radius: 999px; font-weight: 950; font-size: 11.5px; letter-spacing: .2px;
+  border: 1px solid rgba(17,24,39,0.12); background: rgba(17,24,39,0.04); color: var(--ink);
+}
+.hrBadge.tone-good { border-color: rgba(34,197,94,0.28); background: rgba(34,197,94,0.10); }
+.hrBadge.tone-warn { border-color: rgba(245,158,11,0.28); background: rgba(245,158,11,0.10); }
+.hrBadge.tone-bad  { border-color: rgba(239,68,68,0.28);  background: rgba(239,68,68,0.10); }
+.hrBadge.tone-muted{ opacity: .7; }
+
+/* ── Pager ── */
+.hrPager {
+  margin-top: 12px; display: flex; align-items: center;
+  justify-content: space-between; gap: 10px;
+  padding-top: 12px; border-top: 1px solid rgba(17,24,39,0.09);
+}
+.hrPagerText { color: var(--muted); font-weight: 850; font-size: 12px; }
+.hrBtn {
+  height: 36px; padding: 0 14px; border-radius: 999px;
+  border: 1px solid rgba(17,24,39,0.12); background: rgba(17,24,39,0.04);
+  color: var(--ink); font-weight: 950; font-size: 12px;
+  cursor: pointer; display: flex; align-items: center; gap: 6px;
+}
+.hrBtn:hover { border: 1px solid rgba(255,56,92,0.28); background: rgba(255,56,92,0.10); }
+.hrBtn:disabled { opacity: .50; cursor: not-allowed; }
+.hrBtn.ghost { background: rgba(255,255,255,0.80); }
+
+/* ── Empty + skeleton ── */
+.hrEmpty {
+  padding: 16px; border-radius: 14px; margin-top: 8px;
+  background: rgba(255,255,255,0.70);
+  border: 1px dashed rgba(17,24,39,0.16); color: var(--muted); font-weight: 800;
+}
+.hrEmptyTitle { font-weight: 950; font-size: 15px; color: var(--ink); margin-bottom: 4px; }
+.hrMuted { color: var(--muted-2); font-size: 12.5px; }
+
+.hrSkeleton {
+  padding: 12px; border-radius: 14px; margin-top: 8px;
+  border: 1px dashed rgba(17,24,39,0.16); background: rgba(255,255,255,0.60);
+}
+.skLine {
+  height: 13px; border-radius: 999px;
+  background: rgba(17,24,39,0.07); margin: 10px 0;
+  animation: skPulse 1.4s ease-in-out infinite;
+}
+.skLine:nth-child(2) { width: 75%; animation-delay: .15s; }
+.skLine:nth-child(3) { width: 55%; animation-delay: .30s; }
+@keyframes skPulse { 0%,100% { opacity:.6; } 50% { opacity:1; } }
+
+/* ── Insights panel ── */
+.hrInsightsRoot  { position: fixed; inset: 0; z-index: 2600; }
+.hrInsightsBdrop {
+  position: absolute; inset: 0; width: 100%; border: 0;
+  background: rgba(0,0,0,.36); backdrop-filter: blur(3px); cursor: pointer;
+}
+.hrInsightsPanel {
+  position: absolute; top: 0; right: 0;
+  width: min(420px, 100vw); height: 100dvh;
+  display: flex; flex-direction: column;
+  background: rgba(255,255,255,0.97);
+  border-left: 1px solid rgba(17,24,39,0.12);
+  box-shadow: -18px 0 60px rgba(17,24,39,0.14);
+  backdrop-filter: blur(14px);
+}
+.hrInsightsHead {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 12px;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid rgba(17,24,39,0.10);
+  flex-shrink: 0;
+}
+.hrInsightsTitle { font-size: 17px; font-weight: 950; color: var(--ink); }
+.hrInsightsSub   { margin-top: 3px; font-size: 12px; font-weight: 750; color: var(--muted); }
+.hrInsightsClose {
+  width: 36px; height: 36px; border-radius: 10px;
+  border: 1px solid rgba(17,24,39,0.12); background: rgba(17,24,39,0.04);
+  color: var(--ink); display: grid; place-items: center; cursor: pointer; flex-shrink: 0;
+}
+.hrInsightsClose:hover { background: rgba(255,56,92,0.08); border-color: rgba(255,56,92,0.28); }
+
+.hrInsightsList { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+
+.hrInsightItem {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 14px; border-radius: 14px;
+  border: 1px solid rgba(17,24,39,0.10);
+  background: rgba(255,255,255,0.80);
+}
+.hrInsightItem.tone-good { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.22); }
+.hrInsightItem.tone-warn { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.22); }
+.hrInsightItem.tone-info { background: rgba(17,24,39,0.04);   border-color: rgba(17,24,39,0.12); }
+
+.hrInsightIcon {
+  width: 28px; height: 28px; border-radius: 8px;
+  display: grid; place-items: center; flex-shrink: 0;
+  background: rgba(17,24,39,0.06); color: var(--muted);
+}
+.tone-good .hrInsightIcon { background: rgba(16,185,129,0.14); color: #059669; }
+.tone-warn .hrInsightIcon { background: rgba(245,158,11,0.14); color: #d97706; }
+
+.hrInsightText { font-size: 13px; font-weight: 750; color: var(--ink-2); line-height: 1.5; }
+
+.hrInsightsEmpty {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 10px; color: var(--muted); font-weight: 800; font-size: 13px; text-align: center;
+  padding: 40px 20px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 980px) {
+  .hrKpis { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .hrTableHead { display: none; }
+  .hrRow {
     grid-template-columns: 1fr;
+    gap: 0; padding: 12px;
   }
+  .hrProp { margin-bottom: 10px; }
+  .hrCell {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 7px 0; border-top: 1px solid rgba(17,24,39,0.08); font-weight: 850;
+  }
+  .hrRow > :nth-child(2)::before { content: "Status";      color: var(--muted-2); font-weight: 900; font-size: 12px; }
+  .hrRow > :nth-child(3)::before { content: "Vizualizări"; color: var(--muted-2); font-weight: 900; font-size: 12px; }
+  .hrRow > :nth-child(4)::before { content: "Click-uri";   color: var(--muted-2); font-weight: 900; font-size: 12px; }
+  .hrRow > :nth-child(5)::before { content: "CTR";         color: var(--muted-2); font-weight: 900; font-size: 12px; }
+  .hrLinkBtn { width: 100%; justify-content: center; height: 38px; margin-top: 8px; border-radius: 12px; }
+  .hrTopStats { display: none; }
 }
 
-/* 5) Chart: dacă ai multe zile, se înghesuie. Facem scroll X. */
-.hrChartArea{
-  /* păstrăm ce ai, dar permitem scroll pe X când e nevoie */
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+@media (max-width: 820px) {
+  .hrToolbar  { flex-direction: column; align-items: stretch; }
+  .hrFilters  { width: 100%; }
+  .hrActions  { width: 100%; justify-content: flex-start; }
+  .hrSearch   { width: 100%; min-width: 0; }
 }
 
-.hrBars{
-  /* dacă ai 30-90 zile, barurile vor avea loc */
-  min-width: 720px; /* ajustează: 540 / 720 / 900 după cum vrei */
+@media (max-width: 620px) {
+  .hrTitleRow { flex-direction: column; align-items: flex-start; gap: 10px; }
 }
 
-/* 6) TABLE: în loc să ascundem coloane, pe mobil o transformăm în “cards” */
-@media (max-width: 980px){
-
-  /* ascunde head pe mobil */
-  .hrTableHead{
-    display: none;
-  }
-
-  .hrRows{
-    gap: 12px;
-  }
-
-  .hrRow{
-    grid-template-columns: 1fr;   /* card */
-    gap: 10px;
-    padding: 12px;
-    border-radius: 16px;
-  }
-
-  .hrProp{
-    align-items: center;
-  }
-
-  /* fiecare celulă devine row cu label */
-  .hrCell{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding-top: 8px;
-    border-top: 1px solid rgba(17,24,39,0.10);
-    font-weight: 850;
-  }
-
-  /* labels pentru valorile din card */
-  .hrRow > :nth-child(2)::before{ content: "Status"; color: var(--muted-2); font-weight: 900; font-size: 12px; }
-  .hrRow > :nth-child(3)::before{ content: "Vizualizări"; color: var(--muted-2); font-weight: 900; font-size: 12px; }
-  .hrRow > :nth-child(4)::before{ content: "Click-uri"; color: var(--muted-2); font-weight: 900; font-size: 12px; }
-  .hrRow > :nth-child(5)::before{ content: "CTR"; color: var(--muted-2); font-weight: 900; font-size: 12px; }
-
-  /* action button full width jos */
-  .hrLinkBtn{
-    justify-self: stretch;
-    width: 100%;
-    height: 38px;
-    margin-top: 2px;
-    border-radius: 12px; /* arată ca un CTA curat */
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-  }
+@media (max-width: 560px) {
+  .hrFilters { display: grid; grid-template-columns: 1fr 1fr; }
+  .hrSearch  { grid-column: 1 / -1; }
+  .hrActions { display: grid; grid-template-columns: 1fr 1fr; }
+  .hrChip    { justify-content: center; }
+  .hrInsightsPanel { width: 100vw; border-left: none; }
 }
 
-/* 7) Pager: pe mobil îl facem stack, ca să nu se înghesuie */
-@media (max-width: 520px){
-  .hrPager{
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
-  .hrBtn{
-    justify-content: center;
-  }
-  .hrPagerText{
-    text-align: center;
-  }
+@media (max-width: 420px) {
+  .hrKpis { grid-template-columns: 1fr; }
 }
 
-/* Pager pe un rând (mobile) */
-@media (max-width: 520px){
-  .hrPager{
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .hrPagerText{
-    text-align: center;
-    white-space: nowrap;
-  }
-
-  .hrPager .hrBtn{
-    width: 100%;
-    justify-content: center;
-  }
+@media (max-width: 520px) {
+  .hrPager { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+  .hrPagerText { text-align: center; white-space: nowrap; }
+  .hrPager .hrBtn { justify-content: center; }
 }
 
+.hostShell[data-host-theme="dark"] .hrPage{
+  background:
+    radial-gradient(1200px 700px at 15% 10%, rgba(255,56,92,0.08), transparent 60%),
+    radial-gradient(900px 650px at 85% 0%, rgba(59,130,246,0.08), transparent 55%),
+    linear-gradient(180deg, #081019 0%, #0b1220 100%);
+}
+
+.hostShell[data-host-theme="dark"] .hrPage::before{
+  opacity: .03;
+}
+
+.hostShell[data-host-theme="dark"] .hrGhostLink,
+.hostShell[data-host-theme="dark"] .hrSelect,
+.hostShell[data-host-theme="dark"] .hrSearch,
+.hostShell[data-host-theme="dark"] .hrChip,
+.hostShell[data-host-theme="dark"] .hrBtn.ghost{
+  background: rgba(15,23,42,0.82);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+  box-shadow: 0 8px 24px rgba(2,6,23,0.22);
+}
+
+.hostShell[data-host-theme="dark"] .hrCard,
+.hostShell[data-host-theme="dark"] .hrRow,
+.hostShell[data-host-theme="dark"] .hrInsightsPanel,
+.hostShell[data-host-theme="dark"] .hrInsightItem{
+  background: rgba(15,23,42,0.84);
+  border-color: rgba(148,163,184,0.16);
+  box-shadow: 0 18px 48px rgba(2,6,23,0.36);
+}
+
+.hostShell[data-host-theme="dark"] .hrCardMini,
+.hostShell[data-host-theme="dark"] .hrThumb,
+.hostShell[data-host-theme="dark"] .hrInsightIcon,
+.hostShell[data-host-theme="dark"] .hrSparkEmpty,
+.hostShell[data-host-theme="dark"] .hrChartWrap,
+.hostShell[data-host-theme="dark"] .hrTableHead{
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(148,163,184,0.16);
+}
+
+.hostShell[data-host-theme="dark"] .hrLegDot{
+  background: rgba(248,250,252,0.68);
+}
+
+.hostShell[data-host-theme="dark"] .hrLegDot.accent{
+  background: rgba(255,107,132,0.90);
+}
+
+.hostShell[data-host-theme="dark"] .hrChartTooltip{
+  background: rgba(8,11,19,0.94);
+  border: 1px solid rgba(148,163,184,0.16);
+  box-shadow: 0 12px 30px rgba(2,6,23,0.44);
+}
+
+.hostShell[data-host-theme="dark"] .hrEmpty,
+.hostShell[data-host-theme="dark"] .hrInsightsEmpty{
+  background: rgba(15,23,42,0.72);
+  border-color: rgba(148,163,184,0.22);
+}

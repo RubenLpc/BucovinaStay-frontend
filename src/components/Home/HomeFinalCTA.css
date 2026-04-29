@@ -155,3 +155,10 @@
   .hctaActions{ flex-direction: column; }
   .hctaPrimary, .hctaSecondary{ width: 100%; }
 }
+
+.siteShell[data-site-theme="dark"] .hctaSurface,
+.siteShell[data-site-theme="dark"] .hctaSecondary{
+  background: rgba(15,23,42,0.84);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+}

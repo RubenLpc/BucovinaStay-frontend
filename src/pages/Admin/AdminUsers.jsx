@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Search, Save, UserX, UserCheck } from "lucide-react";
+import { Search, Save, UserX, UserCheck, CalendarDays, Home, Mail, Phone } from "lucide-react";
 import { adminListUsers, adminPatchUser } from "../../api/adminService";
 import AdminPage from "./AdminPage";
 import "./Admin.css";
 import { useTranslation } from "react-i18next";
+import ConfirmModal from "../../components/ConfirmModal/ConfirmModal";
 
 function roleTone(role) {
   if (role === "admin") return "good";
@@ -16,6 +17,7 @@ export default function AdminUsers() {
   const { t } = useTranslation();
 
   const [q, setQ] = useState("");
+  const [debouncedQ, setDebouncedQ] = useState("");
   const [role, setRole] = useState("all");
   const [page, setPage] = useState(1);
   const limit = 20;
@@ -26,18 +28,29 @@ export default function AdminUsers() {
 
   // local edits (per row)
   const [draftRole, setDraftRole] = useState({}); // {userId: "host"}
+  const [busyById, setBusyById] = useState({});
+  const [confirmState, setConfirmState] = useState(null);
+  const requestSeqRef = useRef(0);
 
   const totalPages = useMemo(() => Math.max(1, Math.ceil(total / limit)), [total, limit]);
 
-  useEffect(() => setPage(1), [q, role]);
+  useEffect(() => {
+    const tm = window.setTimeout(() => setDebouncedQ(q), 280);
+    return () => window.clearTimeout(tm);
+  }, [q]);
+
+  useEffect(() => setPage(1), [debouncedQ, role]);
 
   const load = async () => {
-    const res = await adminListUsers({ page, limit, q, role });
+    const reqId = ++requestSeqRef.current;
+    const res = await adminListUsers({ page, limit, q: debouncedQ, role });
+    if (reqId !== requestSeqRef.current) return null;
     setRows(res?.items || []);
     setTotal(res?.total || 0);
     const map = {};
     (res?.items || []).forEach((u) => (map[u._id] = u.role));
     setDraftRole(map);
+    return res;
   };
 
   useEffect(() => {
@@ -57,16 +70,36 @@ export default function AdminUsers() {
     })();
     return () => (alive = false);
     // eslint-disable-next-line
-  }, [page, limit, q, role, t]);
+  }, [page, limit, debouncedQ, role, t]);
 
   const patch = async (id, payload) => {
     try {
+      setBusyById((prev) => ({ ...prev, [id]: true }));
       await adminPatchUser(id, payload);
       toast.success(t("admin.users.toastUpdatedTitle"));
       await load();
     } catch (e) {
       toast.error(t("admin.users.toastUpdateFailTitle"), { description: e?.message || t("admin.common.error") });
+    } finally {
+      setBusyById((prev) => ({ ...prev, [id]: false }));
     }
+  };
+
+  const formatMemberSince = (value) => {
+    if (!value) return "—";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "—";
+    return date.toLocaleDateString("ro-RO", { day: "2-digit", month: "short", year: "numeric" });
+  };
+
+  const initialsOf = (name) => {
+    const parts = String(name || "")
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2);
+    if (!parts.length) return "?";
+    return parts.map((p) => p[0]?.toUpperCase() || "").join("");
   };
 
   return (
@@ -124,18 +157,44 @@ export default function AdminUsers() {
               const curr = u.role;
               const next = draftRole[u._id] ?? curr;
               const changed = next !== curr;
+              const busy = !!busyById[u._id];
 
               const statusKey = u.disabled ? "disabled" : "active";
 
               return (
                 <div className="adRow adUserRow" key={u._id}>
                   <div className="adUserCell">
-                    <div className="adUserName" title={u.name}>
-                      {u.name}
-                    </div>
-                    <div className="adUserMeta">
-                      {u.email}
-                      {u.phone ? ` • ${u.phone}` : ""}
+                    <div className="adUserTop">
+                      <div className="adUserAvatar" aria-hidden="true">
+                        {initialsOf(u.name)}
+                      </div>
+                      <div className="adUserIdentity">
+                        <div className="adUserName" title={u.name}>
+                          {u.name}
+                        </div>
+                        <div className="adUserMetaRow">
+                          <span className="adMetaItem">
+                            <Mail size={13} />
+                            {u.email}
+                          </span>
+                          {u.phone ? (
+                            <span className="adMetaItem">
+                              <Phone size={13} />
+                              {u.phone}
+                            </span>
+                          ) : null}
+                        </div>
+                        <div className="adUserMeta adUserMetaRich">
+                          <span className="adMetaItem">
+                            <CalendarDays size={13} />
+                            {t("admin.users.meta.memberSince")} {formatMemberSince(u.createdAt)}
+                          </span>
+                          <span className="adMetaItem">
+                            <Home size={13} />
+                            {t("admin.users.meta.listings", { count: u.listingsCount ?? 0 })}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -152,6 +211,7 @@ export default function AdminUsers() {
                         <button
                           className={`adMenuItem ${next === "guest" ? "isActive" : ""}`}
                           type="button"
+                          disabled={busy}
                           onClick={(e) => {
                             e.currentTarget.closest("details")?.removeAttribute("open");
                             setDraftRole((m) => ({ ...m, [u._id]: "guest" }));
@@ -163,6 +223,7 @@ export default function AdminUsers() {
                         <button
                           className={`adMenuItem ${next === "host" ? "isActive" : ""}`}
                           type="button"
+                          disabled={busy}
                           onClick={(e) => {
                             e.currentTarget.closest("details")?.removeAttribute("open");
                             setDraftRole((m) => ({ ...m, [u._id]: "host" }));
@@ -174,6 +235,7 @@ export default function AdminUsers() {
                         <button
                           className={`adMenuItem ${next === "admin" ? "isActive" : ""}`}
                           type="button"
+                          disabled={busy}
                           onClick={(e) => {
                             e.currentTarget.closest("details")?.removeAttribute("open");
                             setDraftRole((m) => ({ ...m, [u._id]: "admin" }));
@@ -187,7 +249,7 @@ export default function AdminUsers() {
                         <button
                           className="adMenuItem"
                           type="button"
-                          disabled={!changed}
+                          disabled={!changed || busy}
                           onClick={(e) => {
                             e.currentTarget.closest("details")?.removeAttribute("open");
                             patch(u._id, { role: next });
@@ -199,12 +261,30 @@ export default function AdminUsers() {
                         <button
                           className="adMenuItem"
                           type="button"
+                          disabled={busy}
                           onClick={(e) => {
                             e.currentTarget.closest("details")?.removeAttribute("open");
-                            patch(u._id, { disabled: !u.disabled });
+                            setConfirmState({
+                              id: u._id,
+                              title: u.disabled
+                                ? t("admin.users.confirm.enableTitle", { name: u.name })
+                                : t("admin.users.confirm.disableTitle", { name: u.name }),
+                              description: u.disabled
+                                ? t("admin.users.confirm.enableDescription")
+                                : t("admin.users.confirm.disableDescription"),
+                              confirmText: u.disabled
+                                ? t("admin.users.actions.enable")
+                                : t("admin.users.actions.disable"),
+                              tone: u.disabled ? "accent" : "danger",
+                              action: () => patch(u._id, { disabled: !u.disabled }),
+                            });
                           }}
                         >
-                          {u.disabled ? t("admin.users.actions.enable") : t("admin.users.actions.disable")}
+                          {busy
+                            ? t("admin.users.actions.processing")
+                            : u.disabled
+                              ? t("admin.users.actions.enable")
+                              : t("admin.users.actions.disable")}
                         </button>
                       </div>
                     </details>
@@ -223,6 +303,7 @@ export default function AdminUsers() {
                     <select
                       className="hdSelect"
                       value={next}
+                      disabled={busy}
                       onChange={(e) => setDraftRole((m) => ({ ...m, [u._id]: e.target.value }))}
                       title={t("admin.users.tips.setRole")}
                     >
@@ -253,21 +334,47 @@ export default function AdminUsers() {
                     <button
                       className={`hdBtn ${changed ? "hdBtnAccent" : ""}`}
                       type="button"
-                      disabled={!changed}
+                      disabled={!changed || busy}
                       onClick={() => patch(u._id, { role: next })}
-                      title={changed ? t("admin.users.tips.saveRole") : t("admin.users.tips.noChanges")}
+                      title={
+                        busy
+                          ? t("admin.users.actions.processing")
+                          : changed
+                            ? t("admin.users.tips.saveRole")
+                            : t("admin.users.tips.noChanges")
+                      }
                     >
-                      <Save size={16} /> {t("admin.users.actions.saveRole")}
+                      <Save size={16} /> {busy ? t("admin.users.actions.processing") : t("admin.users.actions.saveRole")}
                     </button>
 
                     <button
                       className={`hdBtn ${u.disabled ? "" : "hdBtnAccent"}`}
                       type="button"
-                      onClick={() => patch(u._id, { disabled: !u.disabled })}
+                      disabled={busy}
+                      onClick={() =>
+                        setConfirmState({
+                          id: u._id,
+                          title: u.disabled
+                            ? t("admin.users.confirm.enableTitle", { name: u.name })
+                            : t("admin.users.confirm.disableTitle", { name: u.name }),
+                          description: u.disabled
+                            ? t("admin.users.confirm.enableDescription")
+                            : t("admin.users.confirm.disableDescription"),
+                          confirmText: u.disabled
+                            ? t("admin.users.actions.enable")
+                            : t("admin.users.actions.disable"),
+                          tone: u.disabled ? "accent" : "danger",
+                          action: () => patch(u._id, { disabled: !u.disabled }),
+                        })
+                      }
                       title={u.disabled ? t("admin.users.actions.enable") : t("admin.users.actions.disable")}
                     >
                       {u.disabled ? <UserCheck size={16} /> : <UserX size={16} />}
-                      {u.disabled ? t("admin.users.actions.enable") : t("admin.users.actions.disable")}
+                      {busy
+                        ? t("admin.users.actions.processing")
+                        : u.disabled
+                          ? t("admin.users.actions.enable")
+                          : t("admin.users.actions.disable")}
                     </button>
                   </div>
                 </div>
@@ -288,6 +395,25 @@ export default function AdminUsers() {
           </div>
         ) : null}
       </div>
+
+      <ConfirmModal
+        open={!!confirmState}
+        title={confirmState?.title}
+        description={confirmState?.description}
+        confirmText={confirmState?.confirmText}
+        cancelText={t("admin.common.cancel")}
+        tone={confirmState?.tone}
+        loading={!!(confirmState?.id && busyById[confirmState.id])}
+        onClose={() => {
+          if (confirmState?.id && busyById[confirmState.id]) return;
+          setConfirmState(null);
+        }}
+        onConfirm={async () => {
+          if (!confirmState?.action) return;
+          await confirmState.action();
+          setConfirmState(null);
+        }}
+      />
     </AdminPage>
   );
 }

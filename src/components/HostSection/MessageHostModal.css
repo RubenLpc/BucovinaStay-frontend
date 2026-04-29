@@ -104,3 +104,23 @@
   font-weight: 900;
   margin-left: 2px;
 }
+
+.siteShell[data-site-theme="dark"] .mhBackdrop{
+  background: rgba(2,6,23,0.62);
+}
+
+.siteShell[data-site-theme="dark"] .mhModal,
+.siteShell[data-site-theme="dark"] .mhHostRow,
+.siteShell[data-site-theme="dark"] .mhClose,
+.siteShell[data-site-theme="dark"] .mhTextarea,
+.siteShell[data-site-theme="dark"] .mhInput{
+  background: rgba(8,11,19,0.94);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+}
+
+.siteShell[data-site-theme="dark"] .mhSub,
+.siteShell[data-site-theme="dark"] .mhHint,
+.siteShell[data-site-theme="dark"] .mhLabel{
+  color: var(--muted);
+}

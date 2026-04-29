@@ -1,16 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./AdminNotifications.css";
-import {
-  X,
-  Bell,
-  ShieldCheck,
-  AlertTriangle,
-  Home,
-  Users,
-  Star,
-  RefreshCw,
-  CheckCheck,
-} from "lucide-react";
+import { X, Bell, ShieldCheck, AlertTriangle, Home, Users, Star, RefreshCw, CheckCheck } from "lucide-react";
 import {
   getAdminNotifications,
   markAdminNotificationRead,
@@ -33,39 +23,38 @@ function timeAgo(ts) {
 
 function pickIcon(n) {
   if (n.severity === "bad") return AlertTriangle;
-  if (n.type?.includes("published")) return ShieldCheck;
+  if (n.type?.includes("published") || n.severity === "info") return ShieldCheck;
   if (n.entityType === "property") return Home;
   if (n.entityType === "user") return Users;
   if (n.entityType === "review") return Star;
   return Bell;
 }
 
-export default function AdminNotifications({
-  open,
-  onClose,
-  onNavigateEntity, // (n) => navigate(...)
-  onUnreadChange,   // (count) => set badge
-}) {
+function pickIconMod(n) {
+  if (n.severity === "bad") return "anIcon--bad";
+  if (n.severity === "warn") return "anIcon--warn";
+  if (n.severity === "info" || n.type?.includes("published")) return "anIcon--good";
+  return "";
+}
+
+export default function AdminNotifications({ open, onClose, onNavigateEntity, onUnreadChange }) {
   const [loading, setLoading] = useState(false);
-  const [tab, setTab] = useState("new"); // new | all
+  const [busy, setBusy] = useState(false);
+  const [tab, setTab] = useState("new");
   const [items, setItems] = useState([]);
 
-  async function load() {
+  async function load(silent = false) {
+    if (!silent) setLoading(true);
     try {
-      setLoading(true);
-      const res = await getAdminNotifications({
-        status: tab === "new" ? "new" : "all",
-        limit: 20,
-        page: 1,
-      });
-      setItems(res?.items || []);
-      onUnreadChange?.(
-        tab === "new" ? (res?.items?.length || 0) : undefined
-      );
-    } catch (e) {
-      toast.error("Nu am putut încărca notificările");
+      const res = await getAdminNotifications({ status: "all", limit: 40, page: 1 });
+      const all = res?.items || [];
+      setItems(all);
+      const unread = all.filter((x) => (x.status || "new") === "new").length;
+      onUnreadChange?.(unread);
+    } catch {
+      if (!silent) toast.error("Nu am putut încărca notificările");
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }
 
@@ -73,9 +62,16 @@ export default function AdminNotifications({
     if (!open) return;
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, tab]);
+  }, [open]);
 
-  // ESC close
+  // polling la 30s
+  useEffect(() => {
+    if (!open) return;
+    const id = setInterval(() => load(true), 30000);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
   useEffect(() => {
     if (!open) return;
     const onEsc = (e) => e.key === "Escape" && onClose?.();
@@ -83,7 +79,40 @@ export default function AdminNotifications({
     return () => window.removeEventListener("keydown", onEsc);
   }, [open, onClose]);
 
-  const hasItems = items && items.length > 0;
+  const shown = useMemo(() => {
+    if (tab === "new") return items.filter((x) => (x.status || "new") === "new");
+    return items;
+  }, [items, tab]);
+
+  const unreadCount = useMemo(
+    () => items.filter((x) => (x.status || "new") === "new").length,
+    [items]
+  );
+
+  async function onRefresh() {
+    try {
+      setBusy(true);
+      await load();
+      toast.success("Notificări actualizate");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onMarkAll() {
+    if (unreadCount <= 0) return;
+    try {
+      setBusy(true);
+      await markAdminNotificationsReadAll();
+      setItems((prev) => (prev || []).map((x) => ({ ...x, status: "read" })));
+      onUnreadChange?.(0);
+      toast.success("Toate notificările au fost marcate ca citite");
+    } catch {
+      toast.error("Nu am putut marca toate ca citite");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   if (!open) return null;
 
@@ -100,123 +129,79 @@ export default function AdminNotifications({
         </div>
 
         <div className="anTabs">
-          <button
-            className={`anTab ${tab === "new" ? "isActive" : ""}`}
-            type="button"
-            onClick={() => setTab("new")}
-          >
+          <button className={`anTab ${tab === "new" ? "isActive" : ""}`} type="button" onClick={() => setTab("new")}>
             Necitite
+            {unreadCount > 0 && (
+              <span className="anTabBadge">{unreadCount > 99 ? "99+" : unreadCount}</span>
+            )}
           </button>
-          <button
-            className={`anTab ${tab === "all" ? "isActive" : ""}`}
-            type="button"
-            onClick={() => setTab("all")}
-          >
+          <button className={`anTab ${tab === "all" ? "isActive" : ""}`} type="button" onClick={() => setTab("all")}>
             Toate
           </button>
 
           <div className="anSpacer" />
 
-          <button
-            className="anIconAction"
-            type="button"
-            onClick={load}
-            disabled={loading}
-            title="Refresh"
-          >
-            <RefreshCw size={16} />
+          <button className="anIconAction" type="button" onClick={onRefresh} disabled={busy} title="Actualizează">
+            <RefreshCw size={15} />
           </button>
-
-          <button
-            className="anIconAction"
-            type="button"
-            disabled={loading}
-            onClick={async () => {
-              try {
-                setLoading(true);
-                await markAdminNotificationsReadAll();
-                toast.success("Gata", { description: "Toate notificările au fost marcate ca citite." });
-                setItems((prev) => (prev || []).map((x) => ({ ...x, status: "read" })));
-                // dacă ești pe necitite -> golește
-                if (tab === "new") setItems([]);
-                onUnreadChange?.(0);
-              } catch {
-                toast.error("Nu am putut marca toate ca citite");
-              } finally {
-                setLoading(false);
-              }
-            }}
-            title="Mark all read"
-          >
-            <CheckCheck size={16} />
+          <button className="anIconAction" type="button" disabled={busy || unreadCount <= 0} onClick={onMarkAll} title="Marchează toate ca citite">
+            <CheckCheck size={15} />
           </button>
         </div>
 
         <div className="anList">
-          {loading && !hasItems ? <div className="anEmpty">Se încarcă…</div> : null}
+          {loading && !items.length && <div className="anEmpty">Se încarcă…</div>}
 
-          {!loading && !hasItems ? (
+          {!loading && shown.length === 0 && (
             <div className="anEmpty anEmptyCenter">
               <div className="anEmptyIcon"><Bell size={26} /></div>
               <div className="anEmptyTitle">
                 {tab === "new" ? "Nicio notificare necitită" : "Nicio notificare"}
               </div>
-              <div className="anEmptySub">
-                Aici apar listing-uri noi la review, respingeri, raportări etc.
-              </div>
+              <div className="anEmptySub">Listing-uri noi, respingeri, raportări etc.</div>
             </div>
-          ) : null}
+          )}
 
-          {hasItems &&
-            items.map((n) => {
-              const isNew = (n.status || "new") === "new";
-              const Icon = pickIcon(n);
-              const when = timeAgo(n.createdAt);
+          {shown.map((n) => {
+            const isNew = (n.status || "new") === "new";
+            const Icon = pickIcon(n);
+            const iconMod = pickIconMod(n);
 
-              return (
-                <button
-                  key={String(n._id || n.id)}
-                  type="button"
-                  className={`anItem ${isNew ? "isNew" : ""}`}
-                  onClick={async () => {
+            return (
+              <button
+                key={String(n._id || n.id)}
+                type="button"
+                className={`anItem${isNew ? " isNew" : ""}`}
+                onClick={async () => {
+                  if (isNew) {
                     const id = n._id || n.id;
+                    setItems((prev) =>
+                      prev.map((x) =>
+                        String(x._id || x.id) === String(id) ? { ...x, status: "read" } : x
+                      )
+                    );
+                    onUnreadChange?.(Math.max(0, unreadCount - 1));
+                    try { await markAdminNotificationRead(id); } catch { /* silent */ }
+                  }
+                  onNavigateEntity?.(n);
+                  onClose?.();
+                }}
+              >
+                <div className={`anIcon ${iconMod}`}>
+                  <Icon size={17} />
+                </div>
 
-                    // mark read (optimistic)
-                    if (isNew) {
-                      setItems((prev) =>
-                        (prev || []).map((x) =>
-                          String(x._id || x.id) === String(id)
-                            ? { ...x, status: "read" }
-                            : x
-                        )
-                      );
-                      try {
-                        await markAdminNotificationRead(id);
-                      } catch {
-                        // revert dacă vrei; eu las așa (UX > perfecțiune)
-                      }
-                    }
-
-                    // navigate to entity
-                    onNavigateEntity?.(n);
-                    onClose?.();
-                  }}
-                >
-                  <div className="anIcon">
-                    <Icon size={18} />
+                <div className="anBody">
+                  <div className="anRow">
+                    <div className="anItemTitle">{n.title}</div>
+                    <div className="anTime">{timeAgo(n.createdAt)}</div>
                   </div>
-
-                  <div className="anBody">
-                    <div className="anRow">
-                      <div className="anItemTitle">{n.title}</div>
-                      <div className="anTime">{when}</div>
-                    </div>
-                    {n.body ? <div className="anText">{n.body}</div> : null}
-                    {isNew ? <div className="anBadge">NOU</div> : null}
-                  </div>
-                </button>
-              );
-            })}
+                  {n.body && <div className="anText">{n.body}</div>}
+                  {isNew && <div className="anBadge">NOU</div>}
+                </div>
+              </button>
+            );
+          })}
         </div>
       </aside>
     </div>

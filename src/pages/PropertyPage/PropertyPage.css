@@ -1012,4 +1012,44 @@
     .ppGalleryMain{ min-height: 210px; }
     .ppMetaRow{ font-size: 0.88rem; }
   }
+
+.siteShell[data-site-theme="dark"] .ppSection,
+.siteShell[data-site-theme="dark"] .ppBookingCard,
+.siteShell[data-site-theme="dark"] .ppMapWrap,
+.siteShell[data-site-theme="dark"] .ppGalleryEmpty{
+  background: rgba(15,23,42,0.84);
+  border-color: rgba(148,163,184,0.16);
+}
+
+.siteShell[data-site-theme="dark"] .ppGallery{
+  background: rgba(15,23,42,0.88);
+  border-color: rgba(148,163,184,0.14);
+}
+
+.siteShell[data-site-theme="dark"] .ppGallerySide{
+  background: rgba(255,255,255,0.03);
+}
+
+.siteShell[data-site-theme="dark"] .ppGalleryThumb,
+.siteShell[data-site-theme="dark"] .ppAllPhotosBtn,
+.siteShell[data-site-theme="dark"] .ppActionBtn,
+.siteShell[data-site-theme="dark"] .ppOutlineBtn,
+.siteShell[data-site-theme="dark"] .ppGhostBtn{
+  background: rgba(15,23,42,0.84);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+}
+
+.siteShell[data-site-theme="dark"] .ppTitle,
+.siteShell[data-site-theme="dark"] .ppSectionTitle,
+.siteShell[data-site-theme="dark"] .ppPriceMain{
+  color: var(--ink);
+}
+
+.siteShell[data-site-theme="dark"] .ppMetaRow,
+.siteShell[data-site-theme="dark"] .ppMuted,
+.siteShell[data-site-theme="dark"] .ppBookingSub,
+.siteShell[data-site-theme="dark"] .ppInfoText{
+  color: var(--muted);
+}
   

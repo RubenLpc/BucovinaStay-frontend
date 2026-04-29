@@ -769,6 +769,11 @@
           "switchToEN": "Schimbă în English",
           "switchToRO": "Schimbă în Română",
           "notificationFallbackTitle": "Notificare",
+          "theme": {
+            "label": "Temă admin",
+            "light": "Mod luminos",
+            "dark": "Mod întunecat"
+          },
           "tabs": {
             "overview": "Prezentare",
             "users": "Utilizatori",
@@ -881,13 +886,13 @@
   },
 
   "reviews": {
+    "pageTitle": "Moderare recenzii",
     "cardTitle": "Moderare recenzii",
     "toastLoadFailTitle": "Nu am putut încărca recenziile",
     "toastUpdateFailTitle": "Nu am putut actualiza",
     "toastDeleteFailTitle": "Nu am putut șterge",
     "toastHidden": "Recenzie ascunsă",
     "toastVisible": "Recenzie vizibilă",
-    "confirmDelete": "Ștergi definitiv această recenzie? (ireversibil)",
     "searchPlaceholder": "Caută: utilizator / email / proprietate / comentariu...",
     "cols": {
       "review": "Recenzie",
@@ -905,12 +910,28 @@
     "actions": {
       "hide": "Ascunde",
       "unhide": "Afișează",
-      "delete": "Șterge"
+      "delete": "Șterge",
+      "processing": "Se procesează..."
     },
     "tips": {
       "makeVisible": "Fă recenzia vizibilă",
       "makeHidden": "Ascunde recenzia",
       "delete": "Șterge definitiv"
+    },
+    "confirm": {
+      "title": "Ștergi definitiv această recenzie?",
+      "description": "Acțiunea este ireversibilă. Recenzia va fi eliminată complet din platformă."
+    },
+    "meta": {
+      "reviewedOn": "Recenzie din",
+      "propertyStatus": {
+        "live": "anunț publicat",
+        "pending": "anunț în așteptare",
+        "paused": "anunț în pauză",
+        "rejected": "anunț respins",
+        "draft": "anunț draft",
+        "unknown": "status anunț necunoscut"
+      }
     }
   },
 
@@ -939,7 +960,8 @@
     "actions": {
       "saveRole": "Salvează rol",
       "disable": "Dezactivează",
-      "enable": "Activează"
+      "enable": "Activează",
+      "processing": "Se procesează..."
     },
     "badges": {
       "unsaved": "nesalvat"
@@ -948,6 +970,18 @@
       "setRole": "Setează rol",
       "saveRole": "Salvează rol",
       "noChanges": "Nicio schimbare"
+    },
+    "meta": {
+      "memberSince": "Membru din",
+      "listings_one": "{{count}} anunț",
+      "listings_few": "{{count}} anunțuri",
+      "listings_other": "{{count}} de anunțuri"
+    },
+    "confirm": {
+      "disableTitle": "Dezactivezi contul lui {{name}}?",
+      "disableDescription": "Utilizatorul nu se va mai putea autentifica până când îl reactivezi din panoul de admin.",
+      "enableTitle": "Reactivezi contul lui {{name}}?",
+      "enableDescription": "Utilizatorul va putea intra din nou în cont și folosi platforma normal."
     },
     "mobile": {
       "setRole": "Setează rol"
@@ -974,7 +1008,40 @@
       "branding": {
         "title": "Branding & mentenanță",
         "hint": "Mesaje publice + suport"
+      },
+      "audit": {
+        "title": "Audit setări",
+        "hint": "Ultimele modificări făcute în panoul admin"
       }
+    },
+    "actions": {
+      "reset": "Resetează"
+    },
+    "ui": {
+      "title": "Control operațional",
+      "hint": "Setări critice pentru moderare, limite și disponibilitatea platformei.",
+      "saved": "Fără modificări",
+      "unsaved": "Modificări nesalvate",
+      "critical": "Schimbări critice",
+      "maintenanceOn": "Mentenanță activă",
+      "readiness": "Stare formular",
+      "ready": "Pregătit de salvare",
+      "needsFix": "Corectează câmpurile invalide",
+      "invalidRange": "Valoare în afara limitelor permise.",
+      "invalidEmail": "Introdu un email de suport valid.",
+      "messageTooLong": "Mesajul de mentenanță este prea lung.",
+      "footerTitle": "Aplică schimbările",
+      "footerDirty": "Ai modificări locale. Verifică zonele sensibile înainte de salvare.",
+      "footerClean": "Setările sunt sincronizate cu starea salvată."
+    },
+    "confirm": {
+      "title": "Salvezi setări critice?",
+      "description": "Schimbi setări cu impact major asupra platformei, inclusiv mentenanță sau reguli de moderare. Vrei să continui?"
+    },
+    "audit": {
+      "lastUpdate": "Ultima actualizare",
+      "empty": "Nu există încă modificări înregistrate.",
+      "system": "Sistem"
     },
     "moderation": {
       "requireSubmit": {

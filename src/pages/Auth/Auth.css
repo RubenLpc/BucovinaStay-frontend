@@ -386,4 +386,18 @@
     .authInput{ height: 50px; }
     .authSubmit{ height: 52px; }
   }
+
+.siteShell[data-site-theme="dark"] .authVisualCard,
+.siteShell[data-site-theme="dark"] .authCard{
+  background: rgba(15,23,42,0.84);
+  border-color: rgba(148,163,184,0.16);
+  box-shadow: 0 18px 48px rgba(2,6,23,0.36);
+}
+
+.siteShell[data-site-theme="dark"] .authInput,
+.siteShell[data-site-theme="dark"] .authCheckBox{
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+}
   

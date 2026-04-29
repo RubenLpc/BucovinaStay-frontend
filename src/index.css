@@ -132,6 +132,194 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.adShell{
+  min-height: 100dvh;
+  --ad-nav-bg: rgba(16, 18, 28, 0.86);
+  --ad-nav-border: rgba(255,255,255,0.10);
+  --ad-nav-soft: rgba(255,255,255,0.06);
+  --ad-nav-soft-2: rgba(255,255,255,0.09);
+  --ad-nav-text: rgba(255,255,255,0.94);
+  --ad-nav-muted: rgba(255,255,255,0.72);
+  --ad-nav-shadow: 0 18px 50px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.04);
+  --ad-chart-grid: rgba(17,24,39,0.07);
+  --ad-chart-axis: rgba(17,24,39,0.42);
+  --ad-chart-axis-2: rgba(17,24,39,0.46);
+  --ad-chart-line: rgba(17,24,39,0.52);
+  --ad-chart-line-2: rgba(255,56,92,0.72);
+  --ad-chart-hover: rgba(17,24,39,0.18);
+  --ad-chart-dot: rgba(17,24,39,0.75);
+  --ad-chart-area-top: rgba(17,24,39,0.08);
+  --ad-chart-area-bottom: rgba(17,24,39,0);
+  --ad-chart-dot-stroke: #fff;
+  background:
+    radial-gradient(1200px 700px at 15% 0%, rgba(17,24,39,0.05), transparent 60%),
+    radial-gradient(900px 650px at 85% 0%, rgba(255,56,92,0.05), transparent 50%),
+    linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.94));
+}
+
+.adShell[data-admin-theme="dark"]{
+  --ink: rgba(243,244,246,0.94);
+  --ink-2: rgba(226,232,240,0.82);
+  --muted: rgba(203,213,225,0.66);
+  --muted-2: rgba(203,213,225,0.54);
+  --bg: #0d1117;
+  --bg-soft: rgba(17,24,39,0.92);
+  --surface: rgba(15,23,42,0.82);
+  --card: rgba(15,23,42,0.86);
+  --border: rgba(148,163,184,0.16);
+  --border-2: rgba(148,163,184,0.22);
+  --btn-bg: rgba(255,255,255,0.04);
+  --btn-bg-hover: rgba(255,255,255,0.08);
+  --btn-border: rgba(148,163,184,0.16);
+  --btn-border-hover: rgba(148,163,184,0.24);
+  --shadow-sm: 0 8px 24px rgba(2,6,23,0.28);
+  --shadow-md: 0 18px 48px rgba(2,6,23,0.36);
+  --shadow-lg: 0 24px 70px rgba(2,6,23,0.42);
+  --ad-nav-bg: rgba(8, 11, 19, 0.88);
+  --ad-nav-border: rgba(148,163,184,0.16);
+  --ad-nav-soft: rgba(255,255,255,0.04);
+  --ad-nav-soft-2: rgba(255,255,255,0.08);
+  --ad-nav-text: rgba(248,250,252,0.96);
+  --ad-nav-muted: rgba(203,213,225,0.76);
+  --ad-nav-shadow: 0 24px 70px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.03);
+  --ad-chart-grid: rgba(148,163,184,0.16);
+  --ad-chart-axis: rgba(203,213,225,0.54);
+  --ad-chart-axis-2: rgba(203,213,225,0.60);
+  --ad-chart-line: rgba(226,232,240,0.72);
+  --ad-chart-line-2: rgba(255,107,132,0.86);
+  --ad-chart-hover: rgba(148,163,184,0.28);
+  --ad-chart-dot: rgba(248,250,252,0.88);
+  --ad-chart-area-top: rgba(148,163,184,0.16);
+  --ad-chart-area-bottom: rgba(148,163,184,0);
+  --ad-chart-dot-stroke: rgba(8,17,29,0.92);
+  background:
+    radial-gradient(1200px 700px at 15% 0%, rgba(255,56,92,0.08), transparent 60%),
+    radial-gradient(1100px 800px at 85% 10%, rgba(59,130,246,0.08), transparent 60%),
+    linear-gradient(180deg, #081019 0%, #0b1220 100%);
+}
+
+.hostShell{
+  min-height: 100dvh;
+  --tn-bg: rgba(16, 18, 28, 0.86);
+  --tn-menu-bg: rgba(16,18,28,0.94);
+  --tn-border: rgba(255,255,255,0.10);
+  --tn-border-strong: rgba(255,255,255,0.12);
+  --tn-border-hover: rgba(255,255,255,0.18);
+  --tn-soft: rgba(255,255,255,0.06);
+  --tn-soft-2: rgba(255,255,255,0.10);
+  --tn-soft-hover: rgba(255,255,255,0.12);
+  --tn-text: rgba(255,255,255,0.94);
+  --tn-text-strong: rgba(255,255,255,0.98);
+  --tn-muted: rgba(255,255,255,0.72);
+  --tn-dot: rgba(255,255,255,0.28);
+  --tn-sep: rgba(255,255,255,0.10);
+  --tn-shadow: 0 18px 50px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.04);
+  --tn-menu-shadow: 0 24px 70px rgba(0,0,0,0.55);
+  --host-chart-grid: rgba(17,24,39,0.07);
+  --host-chart-axis: rgba(17,24,39,0.42);
+  --host-chart-axis-2: rgba(17,24,39,0.46);
+  --host-chart-line: rgba(17,24,39,0.52);
+  --host-chart-line-2: rgba(255,56,92,0.72);
+  --host-chart-hover: rgba(17,24,39,0.18);
+  --host-chart-dot: rgba(17,24,39,0.75);
+  --host-chart-area-top: rgba(17,24,39,0.08);
+  --host-chart-area-bottom: rgba(17,24,39,0);
+  --host-chart-dot-stroke: #fff;
+  background:
+    radial-gradient(1200px 700px at 15% 10%, rgba(17,24,39,0.05), transparent 60%),
+    radial-gradient(900px 650px at 85% 0%, rgba(255,56,92,0.05), transparent 50%),
+    linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.94));
+}
+
+.hostShell[data-host-theme="dark"]{
+  --ink: rgba(243,244,246,0.94);
+  --ink-2: rgba(226,232,240,0.82);
+  --muted: rgba(203,213,225,0.66);
+  --muted-2: rgba(203,213,225,0.54);
+  --bg: #0d1117;
+  --bg-soft: rgba(17,24,39,0.92);
+  --surface: rgba(15,23,42,0.82);
+  --card: rgba(15,23,42,0.86);
+  --border: rgba(148,163,184,0.16);
+  --border-2: rgba(148,163,184,0.22);
+  --btn-bg: rgba(255,255,255,0.04);
+  --btn-bg-hover: rgba(255,255,255,0.08);
+  --btn-border: rgba(148,163,184,0.16);
+  --btn-border-hover: rgba(148,163,184,0.24);
+  --shadow-sm: 0 8px 24px rgba(2,6,23,0.28);
+  --shadow-md: 0 18px 48px rgba(2,6,23,0.36);
+  --shadow-lg: 0 24px 70px rgba(2,6,23,0.42);
+  --tn-bg: rgba(8, 11, 19, 0.88);
+  --tn-menu-bg: rgba(8,11,19,0.96);
+  --tn-border: rgba(148,163,184,0.16);
+  --tn-border-strong: rgba(148,163,184,0.18);
+  --tn-border-hover: rgba(148,163,184,0.26);
+  --tn-soft: rgba(255,255,255,0.04);
+  --tn-soft-2: rgba(255,255,255,0.08);
+  --tn-soft-hover: rgba(255,255,255,0.10);
+  --tn-text: rgba(248,250,252,0.96);
+  --tn-text-strong: rgba(255,255,255,0.99);
+  --tn-muted: rgba(203,213,225,0.76);
+  --tn-dot: rgba(203,213,225,0.32);
+  --tn-sep: rgba(148,163,184,0.16);
+  --tn-shadow: 0 24px 70px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.03);
+  --tn-menu-shadow: 0 24px 70px rgba(0,0,0,0.55);
+  --host-chart-grid: rgba(148,163,184,0.16);
+  --host-chart-axis: rgba(203,213,225,0.54);
+  --host-chart-axis-2: rgba(203,213,225,0.60);
+  --host-chart-line: rgba(226,232,240,0.72);
+  --host-chart-line-2: rgba(255,107,132,0.86);
+  --host-chart-hover: rgba(148,163,184,0.28);
+  --host-chart-dot: rgba(248,250,252,0.88);
+  --host-chart-area-top: rgba(148,163,184,0.16);
+  --host-chart-area-bottom: rgba(148,163,184,0);
+  --host-chart-dot-stroke: rgba(8,17,29,0.92);
+  background:
+    radial-gradient(1200px 700px at 15% 10%, rgba(255,56,92,0.08), transparent 60%),
+    radial-gradient(900px 650px at 85% 0%, rgba(59,130,246,0.08), transparent 55%),
+    linear-gradient(180deg, #081019 0%, #0b1220 100%);
+}
+
+.siteShell{
+  min-height: 100dvh;
+  --sh-bg: rgba(255,255,255,0.78);
+  --sh-bg-soft: rgba(255,255,255,0.92);
+  --sh-border: rgba(17,24,39,0.08);
+  --sh-shadow: 0 18px 40px rgba(0,0,0,0.12);
+  background:
+    radial-gradient(1200px 700px at 15% 10%, rgba(17,24,39,0.05), transparent 60%),
+    radial-gradient(900px 650px at 85% 0%, rgba(255,56,92,0.05), transparent 50%),
+    linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.94));
+}
+
+.siteShell[data-site-theme="dark"]{
+  --ink: rgba(243,244,246,0.94);
+  --ink-2: rgba(226,232,240,0.82);
+  --muted: rgba(203,213,225,0.66);
+  --muted-2: rgba(203,213,225,0.54);
+  --bg: #0d1117;
+  --bg-soft: rgba(17,24,39,0.92);
+  --surface: rgba(15,23,42,0.82);
+  --card: rgba(15,23,42,0.86);
+  --border: rgba(148,163,184,0.16);
+  --border-2: rgba(148,163,184,0.22);
+  --btn-bg: rgba(255,255,255,0.04);
+  --btn-bg-hover: rgba(255,255,255,0.08);
+  --btn-border: rgba(148,163,184,0.16);
+  --btn-border-hover: rgba(148,163,184,0.24);
+  --shadow-sm: 0 8px 24px rgba(2,6,23,0.28);
+  --shadow-md: 0 18px 48px rgba(2,6,23,0.36);
+  --shadow-lg: 0 24px 70px rgba(2,6,23,0.42);
+  --sh-bg: rgba(8,11,19,0.82);
+  --sh-bg-soft: rgba(8,11,19,0.94);
+  --sh-border: rgba(148,163,184,0.16);
+  --sh-shadow: 0 24px 70px rgba(0,0,0,0.28);
+  background:
+    radial-gradient(1200px 700px at 15% 10%, rgba(255,56,92,0.08), transparent 60%),
+    radial-gradient(900px 650px at 85% 0%, rgba(59,130,246,0.08), transparent 55%),
+    linear-gradient(180deg, #081019 0%, #0b1220 100%);
+}
+
 img {
   max-width: 100%;
   display: block;
@@ -335,4 +523,17 @@ a {
   .profile-page {
     min-height: 100dvh;
   }
+}
+
+/* ---------------------------------------------------------
+   REDUCE MOTION — aplicat prin data-reduce-motion pe <html>
+--------------------------------------------------------- */
+[data-reduce-motion] *,
+[data-reduce-motion] *::before,
+[data-reduce-motion] *::after {
+  animation-duration: 0.01ms !important;
+  transition-duration: 0.01ms !important;
+}
+[data-reduce-motion] html {
+  scroll-behavior: auto !important;
 }

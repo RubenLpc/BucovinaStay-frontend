@@ -111,7 +111,48 @@
     background: rgba(16,185,129,0.14);
   }
   
-  .apCheck.ghost{
-    background: rgba(17,24,39,0.06);
-  }
+.apCheck.ghost{
+  background: rgba(17,24,39,0.06);
+}
+
+.hostShell[data-host-theme="dark"] .apSearch,
+.hostShell[data-host-theme="dark"] .apCount,
+.hostShell[data-host-theme="dark"] .apItem{
+  background: rgba(15,23,42,0.84);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+}
+
+.hostShell[data-host-theme="dark"] .apSearch input{
+  color: var(--ink);
+}
+
+.hostShell[data-host-theme="dark"] .apSearch input::placeholder{
+  color: rgba(148,163,184,0.72);
+}
+
+.hostShell[data-host-theme="dark"] .apGroupTitle,
+.hostShell[data-host-theme="dark"] .apLabel{
+  color: var(--ink);
+}
+
+.hostShell[data-host-theme="dark"] .apCount{
+  color: var(--muted);
+  box-shadow: none;
+}
+
+.hostShell[data-host-theme="dark"] .apIcon,
+.hostShell[data-host-theme="dark"] .apCheck.ghost{
+  background: rgba(255,255,255,0.08);
+}
+
+.hostShell[data-host-theme="dark"] .apItem:hover{
+  border-color: rgba(148,163,184,0.24);
+}
+
+.hostShell[data-host-theme="dark"] .apItem.active{
+  background: rgba(255,56,92,0.10);
+  border-color: rgba(255,56,92,0.22);
+  box-shadow: 0 10px 26px rgba(255,56,92,0.10);
+}
   

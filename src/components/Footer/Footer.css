@@ -75,3 +75,8 @@
     font-size: 12.5px;
   }
 }
+
+.siteShell[data-site-theme="dark"] .site-footer{
+  background: rgba(8,11,19,0.88);
+  border-top-color: rgba(148,163,184,0.16);
+}
