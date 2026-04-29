@@ -790,6 +790,11 @@
     border: 1px solid var(--border);
     background: rgba(17, 24, 39, 0.03);
   }
+
+  .ppAmenityRow span{
+    color: var(--ink);
+    font-weight: 800;
+  }
   
   /* Full description modal */
   .ppFullDesc p{
@@ -812,6 +817,42 @@
     align-items: center;
     gap: 10px;
   }
+
+.siteShell[data-site-theme="dark"] .ppModal{
+  background: rgba(8,11,19,0.96);
+  border-color: rgba(148,163,184,0.16);
+  box-shadow: 0 28px 70px rgba(2,6,23,0.42);
+  color: var(--ink);
+}
+
+.siteShell[data-site-theme="dark"] .ppModalTitle,
+.siteShell[data-site-theme="dark"] .ppPhotoModalTitle,
+.siteShell[data-site-theme="dark"] .ppAmenityRow span,
+.siteShell[data-site-theme="dark"] .ppFullDesc p{
+  color: var(--ink);
+}
+
+.siteShell[data-site-theme="dark"] .ppModalClose,
+.siteShell[data-site-theme="dark"] .ppPhotoCell,
+.siteShell[data-site-theme="dark"] .ppAmenityRow{
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--ink);
+}
+
+.siteShell[data-site-theme="dark"] .ppModalClose:hover{
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(148,163,184,0.22);
+}
+
+.siteShell[data-site-theme="dark"] .ppPhotoCell{
+  background: rgba(15,23,42,0.72);
+}
+
+.siteShell[data-site-theme="dark"] .ppPhotoModalHeader .ppMuted,
+.siteShell[data-site-theme="dark"] .ppFullDescMeta{
+  color: var(--muted);
+}
   
   /* ---------- Skeletons / Errors ---------- */
   .ppSkeletonTitle,
@@ -1053,3 +1094,376 @@
   color: var(--muted);
 }
   
+
+/* =========================================================
+   PropertyPage — visual improvements
+   ========================================================= */
+
+/* ── Section h2 cu accent ── */
+.ppSection .ppH2 {
+  position: relative;
+  padding-left: 14px;
+}
+
+.ppSection .ppH2::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10%;
+  bottom: 10%;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--accent);
+  opacity: 0.75;
+}
+
+/* ── Booking card — accent top border ── */
+.ppBookingCard {
+  border-top: 3px solid var(--accent);
+}
+
+.ppPrice {
+  font-size: 1.85rem;
+  letter-spacing: -0.03em;
+}
+
+.ppPrimaryBtnSolid {
+  height: 50px;
+  font-size: 0.96rem;
+  box-shadow: 0 14px 28px rgba(255,56,92,0.24);
+}
+
+/* ── Star rating ── */
+.ppStars {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: rgba(17,24,39,0.14);
+}
+
+/* ── Review score display ── */
+.ppScoreDisplay {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 6px 0;
+}
+
+.ppScoreNum {
+  font-size: 2.8rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.ppScoreRight {
+  display: grid;
+  gap: 5px;
+}
+
+.ppScoreCount {
+  font-size: 0.84rem;
+}
+
+/* ── Highlight items — colorizate ── */
+.ppHighlightItem {
+  grid-template-columns: 40px 1fr;
+  align-items: center;
+}
+
+.ppHighlightIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.ppHighlightItem--amber {
+  border-color: rgba(245,158,11,0.22);
+  background: rgba(245,158,11,0.05);
+}
+.ppHighlightIcon--amber {
+  background: rgba(245,158,11,0.14);
+  color: #d97706;
+}
+
+.ppHighlightItem--teal {
+  border-color: rgba(20,184,166,0.22);
+  background: rgba(20,184,166,0.05);
+}
+.ppHighlightIcon--teal {
+  background: rgba(20,184,166,0.14);
+  color: #0f766e;
+}
+
+.ppHighlightItem--blue {
+  border-color: rgba(59,130,246,0.22);
+  background: rgba(59,130,246,0.05);
+}
+.ppHighlightIcon--blue {
+  background: rgba(59,130,246,0.14);
+  color: #2563eb;
+}
+
+/* ── Quick fact icon ── */
+.ppFact {
+  gap: 10px;
+  padding: 8px 14px 8px 8px;
+}
+
+.ppFactIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: rgba(255,56,92,0.08);
+  color: var(--accent);
+  border: 1px solid rgba(255,56,92,0.14);
+}
+
+/* ── Amenity icon ── */
+.ppAmenity {
+  gap: 10px;
+  padding: 10px;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.ppAmenity:hover {
+  background: rgba(17,24,39,0.055);
+  border-color: rgba(17,24,39,0.12);
+}
+
+.ppAmenityIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: rgba(17,24,39,0.06);
+  color: var(--ink);
+}
+
+/* ── Dark mode additions ── */
+.siteShell[data-site-theme="dark"] .ppSection .ppH2::before {
+  opacity: 0.55;
+}
+
+.siteShell[data-site-theme="dark"] .ppBookingCard {
+  border-top-color: var(--accent);
+}
+
+.siteShell[data-site-theme="dark"] .ppFactIcon {
+  background: rgba(255,56,92,0.12);
+  border-color: rgba(255,56,92,0.22);
+}
+
+.siteShell[data-site-theme="dark"] .ppAmenityIcon {
+  background: rgba(255,255,255,0.07);
+}
+
+.siteShell[data-site-theme="dark"] .ppHighlightItem--amber {
+  background: rgba(245,158,11,0.08);
+  border-color: rgba(245,158,11,0.20);
+}
+
+.siteShell[data-site-theme="dark"] .ppHighlightItem--teal {
+  background: rgba(20,184,166,0.08);
+  border-color: rgba(20,184,166,0.20);
+}
+
+.siteShell[data-site-theme="dark"] .ppHighlightItem--blue {
+  background: rgba(59,130,246,0.08);
+  border-color: rgba(59,130,246,0.20);
+}
+
+.siteShell[data-site-theme="dark"] .ppScoreNum {
+  color: var(--ink);
+}
+
+.siteShell[data-site-theme="dark"] .ppStars {
+  color: rgba(255,255,255,0.12);
+}
+
+/* =========================================================
+   Lightbox
+   ========================================================= */
+
+.ppLightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(4, 6, 14, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+/* ── Shared button base ── */
+.ppLbBtn {
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.10);
+  color: rgba(255,255,255,0.92);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.14s ease, border-color 0.14s ease, transform 0.12s ease;
+}
+
+.ppLbBtn:hover {
+  background: rgba(255,255,255,0.20);
+  border-color: rgba(255,255,255,0.30);
+}
+
+.ppLbBtn:active { transform: scale(0.95); }
+
+/* ── Close ── */
+.ppLbClose {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  z-index: 2;
+}
+
+/* ── Prev / Next arrows ── */
+.ppLbNav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  z-index: 2;
+}
+
+.ppLbPrev { left: 16px; }
+.ppLbNext { right: 16px; }
+
+/* ── Image wrapper ── */
+.ppLbImgWrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  cursor: zoom-in;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ppLbImgWrap.is-zoomed {
+  overflow: auto;
+  cursor: zoom-out;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.ppLbImg {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.ppLbImgWrap.is-zoomed .ppLbImg {
+  max-width: none;
+  max-height: none;
+  width: 170%;
+  height: auto;
+  cursor: zoom-out;
+}
+
+/* ── Bottom bar ── */
+.ppLbBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 0 20px;
+  background: linear-gradient(to top, rgba(4,6,14,0.72), transparent);
+}
+
+.ppLbCounter {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: rgba(255,255,255,0.80);
+  letter-spacing: 0.04em;
+  min-width: 52px;
+  text-align: center;
+}
+
+.ppLbZoomBtn {
+  gap: 6px;
+  padding: 0 12px;
+  height: 32px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.ppLbHint {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.38);
+  letter-spacing: 0.02em;
+}
+
+/* ── Photo grid cells — clickable ── */
+.ppPhotoCell {
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(17,24,39,0.08);
+  background: rgba(255,255,255,0.96);
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+.ppPhotoCell:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(17,24,39,0.14);
+}
+
+.ppPhotoCell:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255,56,92,0.35);
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .ppLbNav {
+    width: 40px;
+    height: 40px;
+  }
+
+  .ppLbPrev { left: 8px; }
+  .ppLbNext { right: 8px; }
+
+  .ppLbHint { display: none; }
+}
+
+@media (max-width: 430px) {
+  .ppLbNav { width: 36px; height: 36px; }
+  .ppLbClose { width: 36px; height: 36px; }
+}

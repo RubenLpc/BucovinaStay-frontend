@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ExternalLink,
   Filter,
@@ -14,8 +14,9 @@ import trailsdata from "./trailsData";
 import headerArt from "../../assets/header-path-compass.png";
 import heroArt from "../../assets/heroart.png";
 import { useTranslation } from "react-i18next";
+import { listPublishedTrails } from "../../api/trailsService";
 
-const TRAILS = trailsdata;
+const FALLBACK_TRAILS = trailsdata;
 
 const DIFF_ORDER = { "Ușor": 1, "Mediu": 2, "Greu": 3 };
 
@@ -106,6 +107,48 @@ export default function Trails() {
   const [diff, setDiff] = useState(isEn ? "All" : "Toate");
   const [sort, setSort] = useState("recomandate");
   const [chip, setChip] = useState("all");
+  const [trails, setTrails] = useState(FALLBACK_TRAILS);
+
+  useEffect(() => {
+    let alive = true;
+
+    (async () => {
+      try {
+        const res = await listPublishedTrails({ limit: 300 });
+        if (!alive) return;
+
+        const items = Array.isArray(res?.items) ? res.items : [];
+        if (!items.length) {
+          setTrails(FALLBACK_TRAILS);
+          return;
+        }
+
+        const mapped = items.map((trail) => ({
+          id: trail._id || trail.slug || trail.name,
+          name: trail.name,
+          area: trail.area,
+          difficulty: trail.difficulty,
+          durationHrs: trail.durationHrs ?? null,
+          distanceKm: trail.distanceKm ?? null,
+          season: trail.season || "",
+          tags: Array.isArray(trail.tags) ? trail.tags : [],
+          image: trail.image?.url || trail.imageFallbackUrl || "",
+          url: trail.sourceUrl,
+          officialLinks: Array.isArray(trail.officialLinks) ? trail.officialLinks : [],
+        }));
+
+        setTrails(mapped);
+      } catch (err) {
+        if (!alive) return;
+        console.warn("Falling back to static trails seed:", err?.message || err);
+        setTrails(FALLBACK_TRAILS);
+      }
+    })();
+
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase();
@@ -113,7 +156,7 @@ export default function Trails() {
     // IMPORTANT: data e în RO (Ușor/Mediu/Greu). Convertim selecția UI -> RO.
     const diffRo = DIFF_TO_RO[diff] || "Toate";
 
-    let list = TRAILS.filter((tr) => {
+    let list = trails.filter((tr) => {
       const name = String(tr.name || "").toLowerCase();
       const area = String(tr.area || "").toLowerCase();
 
@@ -133,7 +176,7 @@ export default function Trails() {
     }
 
     return list;
-  }, [q, diff, sort, chip]);
+  }, [q, diff, sort, chip, trails]);
 
   const diffOptions = isEn ? DIFF_UI.en : DIFF_UI.ro;
 
@@ -214,11 +257,12 @@ export default function Trails() {
           </div>
         </header>
 
-        <section className="tr-grid" aria-label={t("trails.listAria")}>
-          {filtered.map((tr) => (
-            <article
-              key={tr.id}
-              className="tr-card"
+        {filtered.length ? (
+          <section className="tr-grid" aria-label={t("trails.listAria")}>
+            {filtered.map((tr) => (
+              <article
+                key={tr.id}
+                className="tr-card"
               onClick={() => window.open(tr.url, "_blank", "noopener,noreferrer")}
               role="button"
               tabIndex={0}
@@ -292,9 +336,10 @@ export default function Trails() {
                   </span>
                 </div>
               </div>
-            </article>
-          ))}
-        </section>
+              </article>
+            ))}
+          </section>
+        ) : null}
 
         {filtered.length === 0 ? (
           <div className="ui-empty tr-empty">{t("trails.empty")}</div>

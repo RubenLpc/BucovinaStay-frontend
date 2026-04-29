@@ -10,6 +10,31 @@
     "seeAll": "See all favorites",
     "empty": "No favorites yet. Tap ❤️ on a stay to save it."
   },
+  "favPage": {
+    "explore": "Explore stays",
+    "subtitle": {
+      "notAuth": "Sign in to see your saved stays.",
+      "loading": "Loading…",
+      "empty": "No favorites yet. Explore stays and tap ❤️.",
+      "count_one": "You have {{count}} favorite.",
+      "count_other": "You have {{count}} favorites."
+    },
+    "gate": {
+      "title": "Sign in required",
+      "text": "Log in to keep your list of favorites.",
+      "cta": "Sign in"
+    },
+    "empty": {
+      "title": "No favorites yet",
+      "text": "When you find a stay you like, tap ❤️ and it will appear here.",
+      "cta": "See stays"
+    },
+    "pager": {
+      "page": "Page {{page}} of {{total}}",
+      "prev": "Back",
+      "next": "Next"
+    }
+  },
   "brand": {
     "main": "Bucovina",
     "accent": "Stay"
@@ -107,7 +132,8 @@
     "save": "Save",
     "saving": "Saving...",
     "backToStays": "Back to stays",
-    "discard": "Discard"
+    "discard": "Discard",
+    "notSet": "Not set"
   },
   "roles": {
     "guest": "Guest",
@@ -287,6 +313,7 @@
           "stays": {
             "title": "Stays in Bucovina",
             "results": "{{count}} results",
+            "mapZoneResults": "{{count}} results in the map area",
             "list": "List",
             "map": "Map",
         
@@ -297,6 +324,8 @@
             "filters": "Filters",
             "filtersTitle": "Filters",
             "filtersHint": "Refine results to find the right stay.",
+            "selectedFilters": "Selected",
+            "recommendedForYou": "Popular amenities",
             "reset": "Reset",
         
             "propertyType": "Property type",
@@ -304,10 +333,18 @@
             "allTypesDesc": "Includes all types",
         
             "pricePerNight": "Price per night",
+            "priceHintModal": "Trip price, including all taxes",
             "currency": "Currency",
             "min": "Min",
             "max": "Max",
             "resetPrice": "Reset price",
+            "guests": "Guests",
+            "guestsMin": "Minimum guests",
+            "guestsMinHint": "Show only stays that can host at least this many guests.",
+            "guestAny": "Any capacity",
+            "any": "Any",
+            "increaseGuests": "Increase guests",
+            "decreaseGuests": "Decrease guests",
         
             "minScore": "Minimum score",
             "minScoreHint": "Show only stays with rating equal or above.",
@@ -322,8 +359,7 @@
         
             "activeFiltersAria": "Active filters",
             "remove": "Remove",
-            "tipArea": "Tip: move the map and click “Search this area”.",
-        
+
             "mapTokenMissingTitle": "Missing Mapbox token",
             "mapTokenMissingText": "The map is not configured. Check VITE_MAPBOX_TOKEN.",
             "noPins": "No map locations for the current results.",
@@ -349,10 +385,21 @@
         
             "drawerClose": "Close",
             "seeResults": "See results",
+            "showResultsCount": "Show {{count}} stays",
+            "showMoreAmenities": "Show {{count}} more",
+            "showLessAmenities": "Show less",
+            "mobileViewSwitch": "Switch between list and map",
+            "sort": {
+              "recommended": "Recommended",
+              "ratingDesc": "Rating (desc)",
+              "priceAsc": "Price (low)",
+              "priceDesc": "Price (high)"
+            },
         
             "chips": {
               "minPrice": "min {{value}}",
               "maxPrice": "max {{value}}",
+              "capacity": "{{count}}+ guests",
               "more": "+{{count}}"
             }
           },
@@ -759,6 +806,7 @@
                             "overview": "Overview",
                             "users": "Users",
                             "listings": "Listings",
+                            "trails": "Trails",
                             "reviews": "Reviews",
                             "settings": "Settings"
                           },
@@ -967,6 +1015,95 @@
                               },
                               "mobile": {
                                 "setRole": "Set role"
+                              }
+                            },
+
+                            "trails": {
+                              "pageTitle": "Trails management",
+                              "cardTitle": "Trails catalog",
+                              "toastLoadFailTitle": "Could not load trails",
+                              "toastCreatedTitle": "Trail created",
+                              "toastUpdatedTitle": "Trail updated",
+                              "toastDeletedTitle": "Trail deleted",
+                              "toastImportedTitle": "Import completed",
+                              "toastImportedDesc": "{{count}} trails were processed.",
+                              "toastImportFailTitle": "Could not import trails",
+                              "toastSaveFailTitle": "Could not save trail",
+                              "toastDeleteFailTitle": "Could not delete trail",
+                              "toastUploadedTitle": "Image uploaded",
+                              "toastUploadFailTitle": "Could not upload image",
+                              "searchPlaceholder": "Search: name / area / season / tag...",
+                              "sourceFallback": "Official source",
+                              "imageEmpty": "Upload a Cloudinary image for the trail card",
+                              "stats": {
+                                "total": "Total trails",
+                                "published": "Published",
+                                "draft": "Drafts",
+                                "archived": "Archived",
+                                "seedHint": "you can import the current seed",
+                                "visible": "visible on site once connected to the API",
+                                "needsReview": "still need editorial cleanup",
+                                "keptForLater": "kept but hidden for now"
+                              },
+                              "difficulty": {
+                                "all": "all difficulties"
+                              },
+                              "status": {
+                                "all": "all statuses",
+                                "draft": "draft",
+                                "published": "published",
+                                "archived": "archived"
+                              },
+                              "badges": {
+                                "verified": "verified"
+                              },
+                              "actions": {
+                                "edit": "Edit",
+                                "publish": "Publish",
+                                "unpublish": "Unpublish",
+                                "delete": "Delete",
+                                "importSeed": "Import seed",
+                                "importing": "Importing...",
+                                "uploadImage": "Upload image",
+                                "uploadingImage": "Uploading...",
+                                "removeImage": "Remove image"
+                              },
+                              "fields": {
+                                "name": "Trail name",
+                                "area": "Area",
+                                "difficulty": "Difficulty",
+                                "duration": "Duration (hours)",
+                                "distance": "Distance (km)",
+                                "season": "Season",
+                                "tags": "Tags",
+                                "image": "Image",
+                                "imageFallbackUrl": "Fallback image URL",
+                                "sourceUrl": "Official link",
+                                "sourceLabel": "Source label",
+                                "summary": "Summary",
+                                "status": "Status",
+                                "verified": "Mark as verified"
+                              },
+                              "placeholders": {
+                                "name": "e.g. Cabana Rarău – Pietrele Doamnei",
+                                "area": "e.g. Rarău / Câmpulung Moldovenesc",
+                                "duration": "e.g. 3.5",
+                                "distance": "e.g. 8.2",
+                                "season": "e.g. May–Oct",
+                                "tags": "view, family, forest",
+                                "imageFallbackUrl": "Only for seed/import or external fallback",
+                                "sourceLabel": "e.g. Suceava County – Mountain trails",
+                                "summary": "Short editorial context for the public card."
+                              },
+                              "form": {
+                                "createTitle": "Add trail",
+                                "editTitle": "Edit trail",
+                                "hint": "Keep only the essentials for the card and send users to the official source.",
+                                "new": "New trail"
+                              },
+                              "confirm": {
+                                "title": "Delete “{{name}}”?",
+                                "description": "This action is irreversible. The trail will disappear from the managed catalog."
                               }
                             },
                         

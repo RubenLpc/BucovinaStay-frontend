@@ -9,6 +9,31 @@
     "seeAll": "Vezi toate favoritele",
     "empty": "N-ai favorite încă. Apasă ❤️ la o cazare ca să o salvezi."
   },
+  "favPage": {
+    "explore": "Explorează cazări",
+    "subtitle": {
+      "notAuth": "Autentifică-te ca să vezi cazările salvate.",
+      "loading": "Se încarcă…",
+      "empty": "Nu ai favorite încă. Explorează cazările și apasă ❤️.",
+      "count_one": "Ai {{count}} favorit.",
+      "count_other": "Ai {{count}} favorite."
+    },
+    "gate": {
+      "title": "Trebuie să fii autentificat",
+      "text": "Intră în cont ca să îți păstrezi lista de favorite.",
+      "cta": "Autentificare"
+    },
+    "empty": {
+      "title": "Încă nu ai favorite",
+      "text": "Când găsești o cazare care îți place, apasă ❤️ și o vei vedea aici.",
+      "cta": "Vezi cazări"
+    },
+    "pager": {
+      "page": "Pagina {{page}} din {{total}}",
+      "prev": "Înapoi",
+      "next": "Înainte"
+    }
+  },
   "brand": {
     "main": "Bucovina",
     "accent": "Stay"
@@ -114,7 +139,8 @@
     "save": "Salvează",
     "saving": "Se salvează...",
     "backToStays": "Înapoi la cazări",
-    "discard": "Renunță"
+    "discard": "Renunță",
+    "notSet": "Necompletat"
   },
   "roles": {
     "guest": "Turist",
@@ -292,6 +318,7 @@
   "stays": {
     "title": "Cazări în Bucovina",
     "results": "{{count}} rezultate",
+    "mapZoneResults": "{{count}} rezultate în zona de pe hartă",
     "list": "Listă",
     "map": "Hartă",
 
@@ -302,6 +329,8 @@
     "filters": "Filtre",
     "filtersTitle": "Filtre",
     "filtersHint": "Ajustează rezultatele ca să găsești cazarea potrivită.",
+    "selectedFilters": "Selectate",
+    "recommendedForYou": "Facilități populare",
     "reset": "Resetează",
 
     "propertyType": "Tip proprietate",
@@ -309,10 +338,18 @@
     "allTypesDesc": "Include toate tipurile",
 
     "pricePerNight": "Preț pe noapte",
+    "priceHintModal": "Prețul călătoriei, cu toate taxele incluse",
     "currency": "Monedă",
     "min": "Minim",
     "max": "Maxim",
     "resetPrice": "Resetează prețul",
+    "guests": "Oaspeți",
+    "guestsMin": "Număr minim de oaspeți",
+    "guestsMinHint": "Arată doar cazări care pot primi cel puțin acest număr de oaspeți.",
+    "guestAny": "Orice capacitate",
+    "any": "Oricare",
+    "increaseGuests": "Mărește numărul de oaspeți",
+    "decreaseGuests": "Micșorează numărul de oaspeți",
 
     "minScore": "Scor minim",
     "minScoreHint": "Arată doar cazări cu rating egal sau mai mare.",
@@ -327,7 +364,6 @@
 
     "activeFiltersAria": "Filtre active",
     "remove": "Elimină",
-    "tipArea": "Tip: mută harta și apasă „Caută în această zonă”.",
 
     "mapTokenMissingTitle": "Mapbox token lipsă",
     "mapTokenMissingText": "Harta nu este configurată corect. Verifică setarea VITE_MAPBOX_TOKEN.",
@@ -354,10 +390,21 @@
 
     "drawerClose": "Închide",
     "seeResults": "Vezi rezultate",
+    "showResultsCount": "Afișează {{count}} cazări",
+    "showMoreAmenities": "Arată încă {{count}}",
+    "showLessAmenities": "Arată mai puține",
+    "mobileViewSwitch": "Schimbă între listă și hartă",
+    "sort": {
+      "recommended": "Recomandate",
+      "ratingDesc": "Rating (desc)",
+      "priceAsc": "Preț (mic)",
+      "priceDesc": "Preț (mare)"
+    },
 
     "chips": {
       "minPrice": "min {{value}}",
       "maxPrice": "max {{value}}",
+      "capacity": "{{count}}+ oaspeți",
       "more": "+{{count}}"
     }
   },
@@ -778,6 +825,7 @@
             "overview": "Prezentare",
             "users": "Utilizatori",
             "listings": "Anunțuri",
+            "trails": "Trasee",
             "reviews": "Recenzii",
             "settings": "Setări"
           },
@@ -985,6 +1033,95 @@
     },
     "mobile": {
       "setRole": "Setează rol"
+    }
+  },
+
+  "trails": {
+    "pageTitle": "Gestionare trasee",
+    "cardTitle": "Catalog trasee",
+    "toastLoadFailTitle": "Nu am putut încărca traseele",
+    "toastCreatedTitle": "Traseu adăugat",
+    "toastUpdatedTitle": "Traseu actualizat",
+    "toastDeletedTitle": "Traseu șters",
+    "toastImportedTitle": "Import finalizat",
+    "toastImportedDesc": "{{count}} trasee au fost procesate.",
+    "toastImportFailTitle": "Nu am putut importa traseele",
+    "toastSaveFailTitle": "Nu am putut salva traseul",
+    "toastDeleteFailTitle": "Nu am putut șterge traseul",
+    "toastUploadedTitle": "Imagine încărcată",
+    "toastUploadFailTitle": "Nu am putut încărca imaginea",
+    "searchPlaceholder": "Caută: nume / zonă / sezon / tag...",
+    "sourceFallback": "Sursă oficială",
+    "imageEmpty": "Încarcă o imagine Cloudinary pentru cardul traseului",
+    "stats": {
+      "total": "Total trasee",
+      "published": "Publicate",
+      "draft": "În lucru",
+      "archived": "Arhivate",
+      "seedHint": "poți importa seed-ul existent",
+      "visible": "vizibile pe site când le conectăm la API",
+      "needsReview": "mai au nevoie de curățare editorială",
+      "keptForLater": "păstrate dar neafișate"
+    },
+    "difficulty": {
+      "all": "toate dificultățile"
+    },
+    "status": {
+      "all": "toate statusurile",
+      "draft": "ciornă",
+      "published": "publicat",
+      "archived": "arhivat"
+    },
+    "badges": {
+      "verified": "verificat"
+    },
+    "actions": {
+      "edit": "Editează",
+      "publish": "Publică",
+      "unpublish": "Retrage",
+      "delete": "Șterge",
+      "importSeed": "Importă seed",
+      "importing": "Se importă...",
+      "uploadImage": "Încarcă imagine",
+      "uploadingImage": "Se încarcă...",
+      "removeImage": "Scoate imaginea"
+    },
+    "fields": {
+      "name": "Nume traseu",
+      "area": "Zonă",
+      "difficulty": "Dificultate",
+      "duration": "Durată (ore)",
+      "distance": "Distanță (km)",
+      "season": "Sezon",
+      "tags": "Tag-uri",
+      "image": "Imagine",
+      "imageFallbackUrl": "URL imagine fallback",
+      "sourceUrl": "Link oficial",
+      "sourceLabel": "Etichetă sursă",
+      "summary": "Rezumat",
+      "status": "Status",
+      "verified": "Marchează drept verificat"
+    },
+    "placeholders": {
+      "name": "Ex: Cabana Rarău – Pietrele Doamnei",
+      "area": "Ex: Rarău / Câmpulung Moldovenesc",
+      "duration": "ex: 3.5",
+      "distance": "ex: 8.2",
+      "season": "Ex: Mai–Oct",
+      "tags": "view, family, forest",
+      "imageFallbackUrl": "Doar pentru seed/import sau fallback extern",
+      "sourceLabel": "Ex: Județul Suceava – Trasee montane",
+      "summary": "Scurt context editorial pentru cardul din listă."
+    },
+    "form": {
+      "createTitle": "Adaugă traseu",
+      "editTitle": "Editează traseu",
+      "hint": "Păstrează minimul necesar pentru card și trimite utilizatorul spre sursa oficială.",
+      "new": "Traseu nou"
+    },
+    "confirm": {
+      "title": "Ștergi traseul „{{name}}”?",
+      "description": "Acțiunea este ireversibilă. Traseul va dispărea din catalogul administrat."
     }
   },
 

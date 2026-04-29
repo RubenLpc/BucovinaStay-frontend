@@ -57,3 +57,44 @@ export function adminPatchReview(id, payload) {
 export function adminDeleteReview(id) {
   return apiFetch(`/admin/reviews/${id}`, { method: "DELETE" });
 }
+
+export function adminListTrails({ page = 1, limit = 12, q = "", status = "all", difficulty = "all" } = {}) {
+  const params = new URLSearchParams();
+  params.set("page", String(page));
+  params.set("limit", String(limit));
+  if (q?.trim()) params.set("q", q.trim());
+  if (status && status !== "all") params.set("status", status);
+  if (difficulty && difficulty !== "all") params.set("difficulty", difficulty);
+  return apiFetch(`/admin/trails?${params.toString()}`, { method: "GET" });
+}
+
+export function adminImportTrails(items) {
+  return apiFetch("/admin/trails/import", {
+    method: "POST",
+    body: JSON.stringify({ items }),
+  });
+}
+
+export function adminCreateTrail(payload) {
+  return apiFetch("/admin/trails", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function adminUpdateTrail(id, payload) {
+  return apiFetch(`/admin/trails/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function adminDeleteTrail(id) {
+  return apiFetch(`/admin/trails/${id}`, { method: "DELETE" });
+}
+
+export function adminGetCloudinarySignature({ folder = "trail_images" } = {}) {
+  return apiFetch(`/properties/cloudinary-signature?folder=${encodeURIComponent(folder)}`, {
+    method: "GET",
+  });
+}

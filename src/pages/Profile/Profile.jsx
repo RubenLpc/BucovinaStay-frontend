@@ -7,6 +7,40 @@ import { authService } from "../../api/authService";
 import { useTranslation } from "react-i18next";
 import "./Profile.css";
 
+function ProfileSkeleton() {
+  return (
+    <div className="profile-page">
+      <div className="container profile-wrap">
+        <div className="profile-card">
+          <div className="profile-top">
+            <div className="profile-skel-avatar" />
+            <div className="profile-skel-lines">
+              <div className="profile-skel-line w55" />
+              <div className="profile-skel-line w35" />
+            </div>
+          </div>
+          <div className="profile-grid" style={{ marginTop: 16 }}>
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="profile-item">
+                <div className="profile-skel-line w30" />
+                <div className="profile-skel-line w55" style={{ marginTop: 10 }} />
+              </div>
+            ))}
+            <div className="profile-item wide">
+              <div className="profile-skel-line w25" />
+              <div className="profile-skel-line w70" style={{ marginTop: 10 }} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EmptyValue({ label }) {
+  return <span className="profile-empty">{label}</span>;
+}
+
 export default function Profile() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
@@ -46,19 +80,13 @@ export default function Profile() {
   };
 
   const startEdit = () => {
-    setForm({
-      name: user?.name || "",
-      phone: user?.phone || "",
-    });
+    setForm({ name: user?.name || "", phone: user?.phone || "" });
     setIsEditing(true);
   };
 
   const cancelEdit = () => {
     setIsEditing(false);
-    setForm({
-      name: user?.name || "",
-      phone: user?.phone || "",
-    });
+    setForm({ name: user?.name || "", phone: user?.phone || "" });
   };
 
   const saveEdit = async () => {
@@ -66,21 +94,16 @@ export default function Profile() {
       toast.error(t("toasts.nameRequired"));
       return;
     }
-
     try {
       setSaving(true);
-
       const updatedUser = await authService.updateMe({
         name: form.name.trim(),
         phone: form.phone.trim(),
       });
-
       setUser(updatedUser);
-
       toast.success(t("toasts.profileUpdated"), {
         description: t("toasts.profileUpdatedDesc"),
       });
-
       setIsEditing(false);
     } catch (err) {
       toast.error(t("toasts.saveError"), {
@@ -91,12 +114,12 @@ export default function Profile() {
     }
   };
 
-  if (!user) return null;
+  if (!user) return <ProfileSkeleton />;
 
   return (
     <div className="profile-page">
       <div className="container profile-wrap">
-        <div className="profile-card">
+        <div className={`profile-card${isEditing ? " profile-card--editing" : ""}`}>
           <div className="profile-top">
             <div className="profile-avatar" aria-hidden="true">
               {initials}
@@ -127,14 +150,13 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* INFO GRID */}
           <div className="profile-grid">
             <div className="profile-item">
               <div className="profile-label">
                 <Mail size={16} />
                 {t("profile.email")}
               </div>
-              <div className="profile-value">{user.email || "-"}</div>
+              <div className="profile-value">{user.email || <EmptyValue label={t("profile.notSet")} />}</div>
             </div>
 
             <div className="profile-item">
@@ -150,15 +172,17 @@ export default function Profile() {
                 <Phone size={16} />
                 {t("profile.phone")}
               </div>
-
               {!isEditing ? (
-                <div className="profile-value">{user.phone || "-"}</div>
+                <div className="profile-value">
+                  {user.phone || <EmptyValue label={t("profile.notSet")} />}
+                </div>
               ) : (
                 <input
                   className="profile-input"
                   value={form.phone}
                   onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
                   placeholder={t("profile.phonePlaceholder")}
+                  autoComplete="tel"
                 />
               )}
             </div>
@@ -169,31 +193,32 @@ export default function Profile() {
                 {t("profile.memberSince")}
               </div>
               <div className="profile-value">
-                {user.createdAt ? new Date(user.createdAt).toLocaleDateString(locale) : "-"}
+                {user.createdAt
+                  ? new Date(user.createdAt).toLocaleDateString(locale, { year: "numeric", month: "long", day: "numeric" })
+                  : <EmptyValue label={t("profile.notSet")} />}
               </div>
             </div>
 
-            {/* EDIT NAME FULL WIDTH */}
             <div className="profile-item wide">
               <div className="profile-label">
                 <User2 size={16} />
                 {t("profile.name")}
               </div>
-
               {!isEditing ? (
-                <div className="profile-value">{user.name || "-"}</div>
+                <div className="profile-value">{user.name || <EmptyValue label={t("profile.notSet")} />}</div>
               ) : (
                 <input
                   className="profile-input"
                   value={form.name}
                   onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
                   placeholder={t("profile.namePlaceholder")}
+                  autoComplete="name"
+                  autoFocus
                 />
               )}
             </div>
           </div>
 
-          {/* ACTIONS */}
           <div className="profile-actions">
             {isEditing ? (
               <button className="btn btn-primary" type="button" onClick={saveEdit} disabled={saving}>
@@ -201,7 +226,7 @@ export default function Profile() {
                 {saving ? t("profile.saving") : t("profile.save")}
               </button>
             ) : (
-              <button className="btn btn-primary" type="button" onClick={() => navigate("/")}>
+              <button className="btn btn-primary" type="button" onClick={() => navigate("/cazari")}>
                 {t("profile.backToStays")}
               </button>
             )}

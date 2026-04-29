@@ -411,7 +411,9 @@
   .lang-switch{
     display: none;
   }
-  .theme-switch{ display:none; }
+  .theme-switch{
+    display: inline-flex;
+  }
   
 }
 

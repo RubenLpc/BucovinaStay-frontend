@@ -1,12 +1,32 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Heart, Loader2 } from "lucide-react";
+import { Heart, Star } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../../stores/authStore";
 import { useFavoritesStore } from "../../stores/favoritesStore";
 
 import "./Favorites.css";
 
+function FavSkeleton() {
+  return (
+    <div className="favGrid">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <div key={i} className="favSkeletonCard">
+          <div className="favSkeletonMedia" />
+          <div className="favSkeletonBody">
+            <div className="favSkeletonLine w70" />
+            <div className="favSkeletonLine w45" />
+            <div className="favSkeletonLine w55" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function Favorites() {
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language?.startsWith("en") ? "en-US" : "ro-RO";
   const { isAuthenticated } = useAuthStore();
 
   const setFavEnabled = useFavoritesStore((s) => s.setEnabled);
@@ -24,34 +44,43 @@ export default function Favorites() {
 
   useEffect(() => {
     if (!isAuthenticated) return;
-    // dacă e stale sau pagina s-a schimbat, încărcăm
     loadAll({ page, limit: 24 });
   }, [isAuthenticated, page, loadAll, allStale]);
 
   const hasItems = (all || []).length > 0;
 
   const subtitle = useMemo(() => {
-    if (!isAuthenticated) return "Autentifică-te ca să vezi cazările salvate.";
-    if (allLoading) return "Se încarcă…";
-    if (!hasItems) return "Nu ai favorite încă. Explorează cazările și apasă ❤️.";
-    return `Ai ${allMeta.total} ${allMeta.total === 1 ? "favorit" : "favorite"}.`;
-  }, [isAuthenticated, allLoading, hasItems, allMeta.total]);
+    if (!isAuthenticated) return t("favPage.subtitle.notAuth");
+    if (allLoading) return t("favPage.subtitle.loading");
+    if (!hasItems) return t("favPage.subtitle.empty");
+    return t("favPage.subtitle.count", { count: allMeta.total });
+  }, [isAuthenticated, allLoading, hasItems, allMeta.total, t]);
+
+  function formatPrice(p, currency = "RON") {
+    const n = Number(p);
+    if (!Number.isFinite(n) || n <= 0) return null;
+    try {
+      return new Intl.NumberFormat(locale, { style: "currency", currency, maximumFractionDigits: 0 }).format(n);
+    } catch {
+      return `${n} ${currency}`;
+    }
+  }
 
   return (
-    <main className="favPage ">
+    <main className="favPage">
       <div className="container">
         <div className="favTop">
           <div>
             <h1 className="text-page-title favTitle">
               <Heart size={22} />
-              Favorite
+              {t("favorites.title")}
             </h1>
             <p className="text-muted">{subtitle}</p>
           </div>
 
           <div className="favActions">
             <Link to="/cazari" className="btn btn-accent">
-              Explorează cazări
+              {t("favPage.explore")}
             </Link>
           </div>
         </div>
@@ -59,70 +88,81 @@ export default function Favorites() {
         {!isAuthenticated ? (
           <div className="favGate">
             <div className="favGateCard">
-              <div className="favGateTitle">Trebuie să fii autentificat</div>
-              <div className="favGateText">Intră în cont ca să îți păstrezi lista de favorite.</div>
+              <div className="favGateTitle">{t("favPage.gate.title")}</div>
+              <div className="favGateText">{t("favPage.gate.text")}</div>
               <Link to="/auth/login" className="btn btn-primary">
-                Autentificare
+                {t("favPage.gate.cta")}
               </Link>
             </div>
           </div>
         ) : allLoading ? (
-          <div className="favLoading">
-            <Loader2 className="spin" size={20} />
-            Se încarcă favoritele…
-          </div>
+          <FavSkeleton />
         ) : !hasItems ? (
           <div className="favEmpty">
             <div className="favEmptyCard">
-              <div className="favEmptyTitle">Încă nu ai favorite</div>
-              <div className="favEmptyText">
-                Când găsești o cazare care îți place, apasă ❤️ și o vei vedea aici.
-              </div>
+              <div className="favEmptyTitle">{t("favPage.empty.title")}</div>
+              <div className="favEmptyText">{t("favPage.empty.text")}</div>
               <Link to="/cazari" className="btn btn-primary">
-                Vezi cazări
+                {t("favPage.empty.cta")}
               </Link>
             </div>
           </div>
         ) : (
           <>
             <section className="favGrid">
-              {all.map((p) => (
-                <Link key={p.id} to={`/cazari/${p.id}`} className="favCard">
-                  <div
-                    className="favImg"
-                    style={p.image ? { backgroundImage: `url(${p.image})` } : undefined}
-                    aria-label={p.title}
-                  />
-                  <div className="favBody">
-                    <div className="favCardTitle">{p.title}</div>
-                    <div className="favCardSub">
-                      {(p.location || p.city || "Bucovina") +
-                        (typeof p.pricePerNight === "number"
-                          ? ` • ${p.pricePerNight} ${p.currency || "RON"}/noapte`
-                          : "")}
+              {all.map((p) => {
+                const price = formatPrice(p.pricePerNight, p.currency);
+                const location = p.locality || p.city || p.location || "—";
+                const rating = Number(p.ratingAvg ?? p.rating);
+                const hasRating = Number.isFinite(rating) && rating > 0;
+                const reviews = Number(p.reviewsCount ?? p.reviews ?? 0);
+
+                return (
+                  <Link key={p.id} to={`/cazari/${p.id}`} className="favCard">
+                    <div
+                      className="favImg"
+                      style={p.image ? { backgroundImage: `url(${p.image})` } : undefined}
+                      aria-label={p.title}
+                    >
+                      {hasRating ? (
+                        <div className="favRatingChip">
+                          <Star size={11} />
+                          <span>{rating.toFixed(1)}</span>
+                          {reviews > 0 ? <span className="favRatingCount">({reviews})</span> : null}
+                        </div>
+                      ) : null}
                     </div>
-                  </div>
-                </Link>
-              ))}
+                    <div className="favBody">
+                      <div className="favCardTitle">{p.title}</div>
+                      <div className="favCardSub">
+                        {location}
+                        {price ? ` • ${price}/noapte` : ""}
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
             </section>
 
-            <div className="favPager">
-              <button className="btn" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
-                Înapoi
-              </button>
+            {allMeta.totalPages > 1 ? (
+              <div className="favPager">
+                <button className="btn" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
+                  {t("favPage.pager.prev")}
+                </button>
 
-              <div className="favPagerMeta">
-                Pagina <b>{page}</b> din <b>{allMeta.totalPages}</b>
+                <div className="favPagerMeta">
+                  {t("favPage.pager.page", { page, total: allMeta.totalPages })}
+                </div>
+
+                <button
+                  className="btn"
+                  disabled={page >= allMeta.totalPages}
+                  onClick={() => setPage((p) => p + 1)}
+                >
+                  {t("favPage.pager.next")}
+                </button>
               </div>
-
-              <button
-                className="btn"
-                disabled={page >= allMeta.totalPages}
-                onClick={() => setPage((p) => p + 1)}
-              >
-                Înainte
-              </button>
-            </div>
+            ) : null}
           </>
         )}
       </div>

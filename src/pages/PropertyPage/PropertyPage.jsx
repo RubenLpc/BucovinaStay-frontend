@@ -26,8 +26,11 @@ import {
   Sparkles,
   Car,
   X,
+  ChevronLeft,
   ChevronRight,
   Images as ImagesIcon,
+  ZoomIn,
+  ZoomOut,
   ShieldCheck,
 } from "lucide-react";
 
@@ -67,6 +70,31 @@ function clampText(text, n = 320) {
   return t.slice(0, n).trim() + "…";
 }
 
+function StarRating({ value, max = 5, size = 15 }) {
+  return (
+    <div className="ppStars" aria-hidden="true">
+      {Array.from({ length: max }, (_, i) => {
+        const pct = Math.min(100, Math.max(0, (value - i) * 100));
+        const gId = `pps-${i}`;
+        return (
+          <svg key={i} width={size} height={size} viewBox="0 0 24 24">
+            <defs>
+              <linearGradient id={gId}>
+                <stop offset={`${pct}%`} stopColor="#f59e0b" />
+                <stop offset={`${pct}%`} stopColor="currentColor" stopOpacity="0.15" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+              fill={`url(#${gId})`}
+            />
+          </svg>
+        );
+      })}
+    </div>
+  );
+}
+
 function Modal({ open, title, onClose, children, size = "lg", closeLabel = "Închide" }) {
   if (!open) return null;
   return (
@@ -102,6 +130,8 @@ export default function PropertyPage() {
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [showAllAmenities, setShowAllAmenities] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [lightboxIdx, setLightboxIdx] = useState(null);
+  const [lbZoomed, setLbZoomed] = useState(false);
 
   const user = useAuthStore((s) => s.user);
   const { favIds, toggle: toggleFav, loading: favLoading } = useFavorites(!!user);
@@ -207,6 +237,17 @@ export default function PropertyPage() {
       alive = false;
     };
   }, [hostUserId]);
+
+  useEffect(() => {
+    if (lightboxIdx === null) return;
+    const onKey = (e) => {
+      if (e.key === "ArrowLeft")  { setLbZoomed(false); setLightboxIdx((i) => (i - 1 + images.length) % images.length); }
+      if (e.key === "ArrowRight") { setLbZoomed(false); setLightboxIdx((i) => (i + 1) % images.length); }
+      if (e.key === "Escape")     { setLightboxIdx(null); setLbZoomed(false); }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightboxIdx, images.length]);
 
   const quickFacts = useMemo(() => {
     const items = [];
@@ -454,7 +495,7 @@ export default function PropertyPage() {
                 <div className="ppFactsRow">
                   {quickFacts.map(({ Icon, text }) => (
                     <div className="ppFact" key={text}>
-                      <Icon size={18} />
+                      <div className="ppFactIcon"><Icon size={16} /></div>
                       <span>{text}</span>
                     </div>
                   ))}
@@ -477,8 +518,8 @@ export default function PropertyPage() {
               {canShowHighlights ? (
                 <div className="ppHighlights">
                   {ratingAvg >= 4.8 && reviewsCount >= 10 ? (
-                    <div className="ppHighlightItem">
-                      <Trophy size={18} />
+                    <div className="ppHighlightItem ppHighlightItem--amber">
+                      <div className="ppHighlightIcon ppHighlightIcon--amber"><Trophy size={17} /></div>
                       <div>
                         <div className="ppHighlightTitle">{t("propertyPage.highlights.topRatedTitle")}</div>
                         <div className="ppHighlightDesc">{t("propertyPage.highlights.topRatedDesc")}</div>
@@ -487,8 +528,8 @@ export default function PropertyPage() {
                   ) : null}
 
                   {facilities.includes("spa") ? (
-                    <div className="ppHighlightItem">
-                      <Sparkles size={18} />
+                    <div className="ppHighlightItem ppHighlightItem--teal">
+                      <div className="ppHighlightIcon ppHighlightIcon--teal"><Sparkles size={17} /></div>
                       <div>
                         <div className="ppHighlightTitle">{t("propertyPage.highlights.relaxTitle")}</div>
                         <div className="ppHighlightDesc">{t("propertyPage.highlights.relaxDesc")}</div>
@@ -497,8 +538,8 @@ export default function PropertyPage() {
                   ) : null}
 
                   {facilities.includes("parking") ? (
-                    <div className="ppHighlightItem">
-                      <Car size={18} />
+                    <div className="ppHighlightItem ppHighlightItem--blue">
+                      <div className="ppHighlightIcon ppHighlightIcon--blue"><Car size={17} /></div>
                       <div>
                         <div className="ppHighlightTitle">{t("propertyPage.highlights.parkingTitle")}</div>
                         <div className="ppHighlightDesc">{t("propertyPage.highlights.parkingDesc")}</div>
@@ -535,7 +576,7 @@ export default function PropertyPage() {
                     const Icon = meta.icon; // ✅ corect: în catalog este "icon"
                     return (
                       <div className="ppAmenity" key={key}>
-                        {Icon ? <Icon size={20} /> : null}
+                        {Icon ? <div className="ppAmenityIcon"><Icon size={16} /></div> : null}
                         <span>{meta.label || key}</span>
                       </div>
                     );
@@ -558,12 +599,13 @@ export default function PropertyPage() {
               {reviewsCount > 0 && ratingAvg > 0 ? (
                 <div className="ppReviewSummary">
                   <div className="ppReviewScore">
-                    <div className="ppBigScore">
-                      <span className="ppScoreLaurel">🏆</span>
-                      <span>{ratingAvg.toFixed(1).replace(".", ",")}</span>
-                      <span className="ppScoreLaurel">🏆</span>
+                    <div className="ppScoreDisplay">
+                      <div className="ppScoreNum">{ratingAvg.toFixed(1).replace(".", ",")}</div>
+                      <div className="ppScoreRight">
+                        <StarRating value={ratingAvg} size={16} />
+                        <div className="ppMuted ppScoreCount">{t("propertyPage.reviewsBasedOn", { count: reviewsCount })}</div>
+                      </div>
                     </div>
-                    <div className="ppMuted">{t("propertyPage.reviewsBasedOn", { count: reviewsCount })}</div>
                   </div>
 
                   <div className="ppReviewNote">
@@ -749,9 +791,14 @@ export default function PropertyPage() {
 
           <div className="ppPhotoGrid">
             {images.map((src, idx) => (
-              <div className="ppPhotoCell" key={src + idx}>
+              <button
+                className="ppPhotoCell"
+                key={src + idx}
+                onClick={() => { setLbZoomed(false); setLightboxIdx(idx); }}
+                aria-label={t("propertyPage.gallery.photoAlt", { n: idx + 1 })}
+              >
                 <img src={src} alt={t("propertyPage.gallery.photoAlt", { n: idx + 1 })} loading="lazy" />
-              </div>
+              </button>
             ))}
           </div>
         </Modal>
@@ -771,7 +818,7 @@ export default function PropertyPage() {
               return (
                 <div className="ppAmenityRow" key={key}>
                   {Icon ? <Icon size={20} /> : null}
-                  <span>{meta.label || key}</span>
+                  <span>{meta.labelKey ? t(meta.labelKey) : (meta.label || key)}</span>
                 </div>
               );
             })}
@@ -812,6 +859,70 @@ export default function PropertyPage() {
           </div>
         </Modal>
       </div>
+
+      {/* ── LIGHTBOX ── */}
+      {lightboxIdx !== null ? (
+        <div
+          className="ppLightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label={t("propertyPage.gallery.photosTitle")}
+          onClick={() => { setLightboxIdx(null); setLbZoomed(false); }}
+        >
+          <button
+            className="ppLbBtn ppLbClose"
+            onClick={(e) => { e.stopPropagation(); setLightboxIdx(null); setLbZoomed(false); }}
+            aria-label={t("common.close")}
+          >
+            <X size={18} />
+          </button>
+
+          {images.length > 1 ? (
+            <>
+              <button
+                className="ppLbBtn ppLbNav ppLbPrev"
+                onClick={(e) => { e.stopPropagation(); setLbZoomed(false); setLightboxIdx((i) => (i - 1 + images.length) % images.length); }}
+                aria-label="Foto anterioară"
+              >
+                <ChevronLeft size={22} />
+              </button>
+              <button
+                className="ppLbBtn ppLbNav ppLbNext"
+                onClick={(e) => { e.stopPropagation(); setLbZoomed(false); setLightboxIdx((i) => (i + 1) % images.length); }}
+                aria-label="Foto următoare"
+              >
+                <ChevronRight size={22} />
+              </button>
+            </>
+          ) : null}
+
+          <div
+            className={`ppLbImgWrap${lbZoomed ? " is-zoomed" : ""}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={images[lightboxIdx]}
+              alt={t("propertyPage.gallery.photoAlt", { n: lightboxIdx + 1 })}
+              className="ppLbImg"
+              draggable="false"
+              onClick={() => setLbZoomed((z) => !z)}
+            />
+          </div>
+
+          <div className="ppLbBar" onClick={(e) => e.stopPropagation()}>
+            <span className="ppLbCounter">{lightboxIdx + 1} / {images.length}</span>
+            <button
+              className="ppLbBtn ppLbZoomBtn"
+              onClick={() => setLbZoomed((z) => !z)}
+              aria-label={lbZoomed ? "Zoom out" : "Zoom in"}
+            >
+              {lbZoomed ? <ZoomOut size={16} /> : <ZoomIn size={16} />}
+              {lbZoomed ? "Zoom out" : "Zoom in"}
+            </button>
+            <span className="ppLbHint">← →  navighează  ·  Esc  închide</span>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

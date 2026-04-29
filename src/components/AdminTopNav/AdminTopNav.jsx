@@ -24,6 +24,7 @@ const ADMIN_TABS = [
   { key: "overview", path: "/admin" },
   { key: "users", path: "/admin/users" },
   { key: "listings", path: "/admin/listings" },
+  { key: "trails", path: "/admin/trails" },
   { key: "reviews", path: "/admin/reviews" },
   { key: "settings", path: "/admin/settings" },
 ];
@@ -32,6 +33,7 @@ function getActiveKey(pathname) {
   if (pathname === "/admin") return "overview";
   if (pathname.startsWith("/admin/users")) return "users";
   if (pathname.startsWith("/admin/listings")) return "listings";
+  if (pathname.startsWith("/admin/trails")) return "trails";
   if (pathname.startsWith("/admin/reviews")) return "reviews";
   if (pathname.startsWith("/admin/settings")) return "settings";
   return "overview";

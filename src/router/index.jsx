@@ -28,6 +28,7 @@ import AdminUsers from "../pages/Admin/AdminUsers";
 import AdminListings from "../pages/Admin/AdminListings";
 import AdminSettings from "../pages/Admin/AdminSettings";
 import AdminReviews from "../pages/Admin/AdminReviews";
+import AdminTrails from "../pages/Admin/AdminTrails";
 import Maintenance from "../pages/Maintenance/Maintenance";
 import Favorites from "../pages/Favorites/Favorites";
 
@@ -95,6 +96,7 @@ export const router = createBrowserRouter([
           { index: true, element: <AdminOverview /> },
           { path: "users", element: <AdminUsers /> },
           { path: "listings", element: <AdminListings /> },
+          { path: "trails", element: <AdminTrails /> },
           { path: "settings", element: <AdminSettings /> },
           { path: "reviews", element: <AdminReviews /> },
 

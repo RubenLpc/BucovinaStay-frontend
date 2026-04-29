@@ -7,7 +7,7 @@ import { trackClick, trackImpression } from "../../api/analyticsService";
 import { useAuthStore } from "../../stores/authStore";
 import { useFavorites } from "../../hooks/useFavorites";
 
-import { Star, MapPin, Users, Heart, ChevronRight } from "lucide-react";
+import { Star, MapPin, Users, Heart } from "lucide-react";
 
 import "./StayCard.css";
 import { AMENITY_BY_KEY } from "../../constants/amenitiesCatalog";
@@ -274,19 +274,6 @@ export default function StayCard({ stay, active = false, onOpen, onHover }) {
             </div>
             <div className="stayCardPriceHint">{t("stayCard.priceHint")}</div>
           </div>
-
-          <button
-            className="stayCardCta"
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              open();
-            }}
-            aria-label={t("stayCard.seeDetails")}
-          >
-            {t("stayCard.see")} <ChevronRight size={18} />
-          </button>
         </div>
       </div>
     </article>

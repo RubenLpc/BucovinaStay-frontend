@@ -2369,3 +2369,485 @@
     0 16px 34px rgba(2,6,23,.38),
     0 2px 6px rgba(2,6,23,.22);
 }
+
+.adTrailStats{
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.adTrailLayout{
+  display: grid;
+  grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.adTrailComposer,
+.adTrailTable{
+  overflow: hidden;
+}
+
+.adTrailComposerTop{
+  margin-bottom: 12px;
+}
+
+.adTrailForm{
+  display: grid;
+  gap: 12px;
+}
+
+.adTrailGrid2{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.adField{
+  display: grid;
+  gap: 7px;
+}
+
+.adFieldLabel{
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.adFieldInput,
+.adFieldSelect,
+.adFieldTextarea{
+  width: 100%;
+}
+
+.adFieldInput,
+.adFieldTextarea{
+  min-height: 42px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg-soft);
+  padding: 10px 12px !important;
+  box-shadow: none;
+}
+
+.adFieldTextarea{
+  resize: vertical;
+  min-height: 108px;
+}
+
+.adFieldInput:focus,
+.adFieldTextarea:focus,
+.adFieldSelect:focus{
+  border-color: var(--accent-border);
+  box-shadow: var(--focus-ring);
+}
+
+.adTrailToggle{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  font-weight: 850;
+}
+
+.adHiddenInput{
+  display: none;
+}
+
+.adTrailUpload{
+  display: grid;
+  gap: 10px;
+}
+
+.adTrailImageFrame{
+  min-height: 188px;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  border: 1px dashed var(--border-2);
+  background: var(--bg-soft);
+}
+
+.adTrailImageFrame img{
+  width: 100%;
+  height: 188px;
+  object-fit: cover;
+  display: block;
+}
+
+.adTrailImageEmpty{
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  color: var(--muted);
+  font-weight: 800;
+  text-align: center;
+  padding: 18px;
+}
+
+.adTrailUploadActions{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.adTrailActions{
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 6px;
+}
+
+.adTrailRow{
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.adTrailCardMain{
+  display: flex;
+  gap: 14px;
+  min-width: 0;
+}
+
+.adTrailThumb{
+  width: 106px;
+  height: 88px;
+  flex: 0 0 auto;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  color: var(--muted);
+}
+
+.adTrailThumb img{
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.adTrailCopy{
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.adTrailNameRow{
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.adTrailNameWrap{
+  min-width: 0;
+}
+
+.adTrailName{
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 950;
+  line-height: 1.2;
+}
+
+.adTrailMeta{
+  margin-top: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+
+.adTrailMetaRich{
+  margin-top: 0;
+}
+
+.adTrailBadges{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.adTrailSummary{
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.adTrailTagRow{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.adTrailTag{
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.adTrailSource{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.adTrailButtons{
+  min-width: 0;
+}
+
+.adStatTrail{
+  min-height: 142px;
+}
+
+@media (max-width: 1100px){
+  .adTrailLayout{
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px){
+  .adTrailStats{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px){
+  .adTrailGrid2,
+  .adTrailRow{
+    grid-template-columns: 1fr;
+  }
+
+  .adTrailCardMain{
+    flex-direction: column;
+  }
+
+  .adTrailThumb{
+    width: 100%;
+    height: 180px;
+  }
+
+  .adTrailNameRow,
+  .adTrailButtons{
+    display: grid;
+    gap: 10px;
+  }
+
+  .adTrailBadges{
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 520px){
+  .adTrailStats{
+    grid-template-columns: 1fr;
+  }
+
+  .adTrailActions{
+    flex-direction: column;
+  }
+}
+
+.adShell[data-admin-theme="dark"] .adTrailThumb,
+.adShell[data-admin-theme="dark"] .adTrailImageFrame,
+.adShell[data-admin-theme="dark"] .adTrailTag,
+.adShell[data-admin-theme="dark"] .adFieldInput,
+.adShell[data-admin-theme="dark"] .adFieldTextarea{
+  background: rgba(255,255,255,0.04) !important;
+  border-color: rgba(148,163,184,0.16) !important;
+}
+
+.adShell[data-admin-theme="dark"] .adTrailSource,
+.adShell[data-admin-theme="dark"] .adTrailName,
+.adShell[data-admin-theme="dark"] .adTrailToggle{
+  color: var(--ink);
+}
+
+.adShell[data-admin-theme="dark"] .cmModal{
+  background: rgba(8,11,19,0.96);
+  border-color: rgba(148,163,184,0.16);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.48);
+}
+
+.adShell[data-admin-theme="dark"] .cmTitle,
+.adShell[data-admin-theme="dark"] .cmDesc,
+.adShell[data-admin-theme="dark"] .cmBtn{
+  color: var(--ink);
+}
+
+.adShell[data-admin-theme="dark"] .cmBtn{
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(148,163,184,0.16);
+}
+
+/* =========================================================
+   AdminTrails — visual improvements
+   ========================================================= */
+
+/* ── Stat cards colorizate ── */
+.adStatTrailTotal .adStatMini  { background: rgba(255,56,92,0.12);  color: var(--accent); }
+.adStatTrailTotal .adStatGlow::after { background: radial-gradient(circle at 80% 10%, rgba(255,56,92,0.22), transparent 60%); }
+
+.adStatTrailPublished .adStatMini  { background: rgba(22,163,74,0.12); color: #16a34a; }
+.adStatTrailPublished .adStatGlow::after { background: radial-gradient(circle at 80% 10%, rgba(22,163,74,0.18), transparent 60%); }
+
+.adStatTrailDraft .adStatMini  { background: rgba(217,119,6,0.12); color: #d97706; }
+.adStatTrailDraft .adStatGlow::after { background: radial-gradient(circle at 80% 10%, rgba(217,119,6,0.16), transparent 60%); }
+
+.adStatTrailArchived .adStatMini  { background: rgba(100,116,139,0.12); color: #64748b; }
+.adStatTrailArchived .adStatGlow::after { background: radial-gradient(circle at 80% 10%, rgba(100,116,139,0.14), transparent 60%); }
+
+.adStatTrailTotal .adStatValue,
+.adStatTrailPublished .adStatValue,
+.adStatTrailDraft .adStatValue,
+.adStatTrailArchived .adStatValue { font-size: 1.9rem; }
+
+/* ── Bara de dificultate pe row ── */
+.adTrailRow {
+  position: relative;
+  overflow: hidden;
+  padding-left: 18px !important;
+}
+
+.adTrailDiffBar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 2px 0 0 2px;
+  flex-shrink: 0;
+}
+
+.adTrailDiffBar--easy { background: #16a34a; }
+.adTrailDiffBar--mid  { background: #d97706; }
+.adTrailDiffBar--hard { background: #dc2626; }
+
+/* ── Badge dificultate colorat ── */
+.adDiffBadge { font-weight: 850; }
+
+.adDiffBadge--easy {
+  background: rgba(22,163,74,0.10);
+  color: #15803d;
+  border-color: rgba(22,163,74,0.22) !important;
+}
+
+.adDiffBadge--mid {
+  background: rgba(217,119,6,0.10);
+  color: #b45309;
+  border-color: rgba(217,119,6,0.22) !important;
+}
+
+.adDiffBadge--hard {
+  background: rgba(220,38,38,0.10);
+  color: #b91c1c;
+  border-color: rgba(220,38,38,0.22) !important;
+}
+
+/* ── Thumbnail empty state ── */
+.adTrailThumbEmpty {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(
+    145deg,
+    rgba(241,245,249,1) 0%,
+    rgba(226,232,240,0.80) 100%
+  );
+  color: var(--muted);
+  border-radius: inherit;
+}
+
+/* ── Source link ca pill ── */
+.adTrailSource {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.adTrailSource:hover {
+  background: var(--accent-soft);
+  border-color: rgba(255,56,92,0.24);
+  color: var(--accent);
+}
+
+/* ── Form section labels ── */
+.adFormSectLabel {
+  font-size: 0.70rem;
+  font-weight: 900;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--muted);
+
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-2);
+  margin-top: 4px;
+}
+
+/* ── Dark mode overrides ── */
+.adShell[data-admin-theme="dark"] .adTrailThumbEmpty {
+  background: linear-gradient(145deg, rgba(30,41,59,0.80), rgba(15,23,42,0.60));
+}
+
+.adShell[data-admin-theme="dark"] .adTrailSource {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(148,163,184,0.16);
+  color: var(--muted);
+}
+
+.adShell[data-admin-theme="dark"] .adTrailSource:hover {
+  background: rgba(255,56,92,0.10);
+  border-color: rgba(255,56,92,0.24);
+  color: var(--accent);
+}
+
+.adShell[data-admin-theme="dark"] .adFormSectLabel {
+  border-color: rgba(148,163,184,0.14);
+}
+
+.adShell[data-admin-theme="dark"] .adDiffBadge--easy {
+  background: rgba(22,163,74,0.14);
+  border-color: rgba(22,163,74,0.24) !important;
+}
+
+.adShell[data-admin-theme="dark"] .adDiffBadge--mid {
+  background: rgba(217,119,6,0.14);
+  border-color: rgba(217,119,6,0.24) !important;
+}
+
+.adShell[data-admin-theme="dark"] .adDiffBadge--hard {
+  background: rgba(220,38,38,0.14);
+  border-color: rgba(220,38,38,0.24) !important;
+}
