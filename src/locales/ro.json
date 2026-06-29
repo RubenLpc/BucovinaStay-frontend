@@ -519,7 +519,8 @@
       "nature": "natură"
     },
 
-    "empty": "Nu am găsit trasee pentru filtrul ales."
+    "empty": "Nu am găsit trasee pentru filtrul ales.",
+    "loadMore": "Vezi mai multe ({{remaining}} rămase)"
   },
 
   "common": {

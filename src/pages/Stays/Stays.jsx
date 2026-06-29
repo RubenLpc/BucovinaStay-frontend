@@ -116,6 +116,7 @@ export default function Stays() {
   const [mobileSheetState, setMobileSheetState] = useState("collapsed");
   const [searchOpen, setSearchOpen] = useState(() => Boolean(searchParams.get("q")));
   const sheetDragRef = useRef(null);
+  const suppressNextClickRef = useRef(false);
   const suppressBoundsSyncUntilRef = useRef(0);
   const openPopup = (id) => {
     setPopupId(id);
@@ -338,6 +339,7 @@ export default function Stays() {
     if (!drag) return;
     const deltaY = e.clientY - drag.startY;
     if (deltaY <= -40) {
+      suppressNextClickRef.current = true;
       setMobileSheetState((prev) => {
         if (prev === "collapsed") return "list";
         if (prev === "peek") return "list";
@@ -346,6 +348,7 @@ export default function Stays() {
       return;
     }
     if (deltaY >= 40) {
+      suppressNextClickRef.current = true;
       setMobileSheetState((prev) => {
         if (prev === "list") return popupId ? "peek" : "collapsed";
         if (prev === "peek") return "collapsed";
@@ -1004,7 +1007,21 @@ export default function Stays() {
               <div className="staysMobileSheetTitle">{t("stays.mapZoneResults", { count: total })}</div>
             </div>
             {mobileSheetState === "peek" && selectedStay ? (
-              <div className="staysMobilePeek">{renderSelectedStayCard(selectedStay, "mobile")}</div>
+              <div
+                className="staysMobilePeek"
+                onPointerDown={beginSheetDrag}
+                onPointerUp={endSheetDrag}
+                onPointerCancel={() => { sheetDragRef.current = null; }}
+                onClickCapture={(e) => {
+                  if (suppressNextClickRef.current) {
+                    suppressNextClickRef.current = false;
+                    e.stopPropagation();
+                    e.preventDefault();
+                  }
+                }}
+              >
+                {renderSelectedStayCard(selectedStay, "mobile")}
+              </div>
             ) : null}
             {mobileSheetState === "list" ? (
               <div className="staysMobileListWrap">

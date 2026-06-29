@@ -108,6 +108,9 @@ export default function Trails() {
   const [sort, setSort] = useState("recomandate");
   const [chip, setChip] = useState("all");
   const [trails, setTrails] = useState(FALLBACK_TRAILS);
+  const [visibleCount, setVisibleCount] = useState(9);
+
+  useEffect(() => { setVisibleCount(9); }, [q, diff, sort, chip]);
 
   useEffect(() => {
     let alive = true;
@@ -217,49 +220,51 @@ export default function Trails() {
               />
             </div>
 
-            <div className="tr-filters">
-              <div className="tr-select">
-                <Filter size={16} />
-                <select value={diff} onChange={(e) => setDiff(e.target.value)} aria-label={t("trails.filterDifficulty")}>
-                  {diffOptions.map((opt) => (
-                    <option key={opt} value={opt}>{opt}</option>
-                  ))}
-                </select>
+            <div className="tr-bottom-row">
+              <div className="tr-filters">
+                <div className="tr-select">
+                  <Filter size={16} />
+                  <select value={diff} onChange={(e) => setDiff(e.target.value)} aria-label={t("trails.filterDifficulty")}>
+                    {diffOptions.map((opt) => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="tr-select">
+                  <TrendingUp size={16} />
+                  <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label={t("trails.sortAria")}>
+                    <option value="recomandate">{t("trails.sort.recommended")}</option>
+                    <option value="durata">{t("trails.sort.duration")}</option>
+                    <option value="dificultate">{t("trails.sort.difficulty")}</option>
+                  </select>
+                </div>
               </div>
 
-              <div className="tr-select">
-                <TrendingUp size={16} />
-                <select value={sort} onChange={(e) => setSort(e.target.value)} aria-label={t("trails.sortAria")}>
-                  <option value="recomandate">{t("trails.sort.recommended")}</option>
-                  <option value="durata">{t("trails.sort.duration")}</option>
-                  <option value="dificultate">{t("trails.sort.difficulty")}</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="tr-chips" role="tablist" aria-label={t("trails.quickFilters")}>
-              <button
-                className={`tr-chip ${chip === "all" ? "is-active" : ""}`}
-                onClick={() => setChip("all")}
-              >
-                {t("trails.all")}
-              </button>
-              {CHIP_TAGS.map((x) => (
+              <div className="tr-chips" role="tablist" aria-label={t("trails.quickFilters")}>
                 <button
-                  key={x.key}
-                  className={`tr-chip ${chip === x.key ? "is-active" : ""}`}
-                  onClick={() => setChip(x.key)}
+                  className={`tr-chip ${chip === "all" ? "is-active" : ""}`}
+                  onClick={() => setChip("all")}
                 >
-                  {t(x.labelKey)}
+                  {t("trails.all")}
                 </button>
-              ))}
+                {CHIP_TAGS.map((x) => (
+                  <button
+                    key={x.key}
+                    className={`tr-chip ${chip === x.key ? "is-active" : ""}`}
+                    onClick={() => setChip(x.key)}
+                  >
+                    {t(x.labelKey)}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </header>
 
         {filtered.length ? (
           <section className="tr-grid" aria-label={t("trails.listAria")} data-reveal-stagger>
-            {filtered.map((tr) => (
+            {filtered.slice(0, visibleCount).map((tr) => (
               <article
                 key={tr.id}
                 className="tr-card"
@@ -339,6 +344,18 @@ export default function Trails() {
               </article>
             ))}
           </section>
+        ) : null}
+
+        {filtered.length > visibleCount ? (
+          <div className="tr-load-more">
+            <button
+              className="tr-load-more-btn"
+              type="button"
+              onClick={() => setVisibleCount((v) => v + 9)}
+            >
+              {t("trails.loadMore", { remaining: filtered.length - visibleCount })}
+            </button>
+          </div>
         ) : null}
 
         {filtered.length === 0 ? (

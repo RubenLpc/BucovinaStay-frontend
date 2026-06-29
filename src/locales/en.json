@@ -514,7 +514,8 @@
                   "nature": "nature"
                 },
             
-                "empty": "No trails match your current filters."
+                "empty": "No trails match your current filters.",
+                "loadMore": "Show more ({{remaining}} left)"
               },
               
                 "common": {

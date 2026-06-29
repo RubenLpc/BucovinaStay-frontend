@@ -12,7 +12,6 @@ function emitMaintenance(payload) {
   maintenanceActive = true;
   for (const cb of maintenanceListeners) cb(payload);
 }
-// opțional: când revine platforma, poți reseta latch-ul
 export function clearMaintenance() {
   maintenanceActive = false;
 }
@@ -27,7 +26,6 @@ export async function apiFetch(url, options = {}) {
     ...(options.headers || {}),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
-  // setează Content-Type doar dacă NU e FormData
   const isFormData =
     typeof FormData !== "undefined" && options.body instanceof FormData;
   if (!isFormData) headers["Content-Type"] = "application/json";
@@ -44,7 +42,6 @@ export async function apiFetch(url, options = {}) {
     throw err;
   }
   if (!res.ok) {
-    // vezi și status ca să-ți fie clar
     const err = new Error(data?.message || `Request failed (${res.status})`);
     err.status = res.status;
     err.payload = data;
