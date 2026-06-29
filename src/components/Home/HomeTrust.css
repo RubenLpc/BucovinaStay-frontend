@@ -61,6 +61,21 @@
   font-weight: 950;
   color: var(--ink);
 }
+.htsAnimTitle {
+  font-size: 22px;
+  font-weight: 950;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  line-height: 1.1;
+}
+.htsTitleSuffix {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+}
 .htsDesc{
   font-size: 13px;
   line-height: 1.3;

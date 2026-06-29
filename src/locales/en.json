@@ -2,9 +2,14 @@
   "nav": {
     "home": "Home",
     "stays": "Stays",
+    "trails": "Trails",
     "dashboard": "Dashboard"
   },
   
+  "footer": {
+    "rights": "All rights reserved.",
+    "trails": "Trails"
+  },
   "favorites": {
     "title": "Favorites",
     "seeAll": "See all favorites",
@@ -173,6 +178,26 @@
       "loginFailed": "Sign in failed.",
       "noAccount": "New here?",
       "createOne": "Create an account",
+      "forgotPassword": "Forgot your password?",
+      "forgotTitle": "Reset password",
+      "forgotSubtitle": "Enter your account email and we will send you a reset link.",
+      "forgotMissingEmail": "Please enter your email address.",
+      "forgotSuccess": "If an account exists for this email, you will receive a reset link.",
+      "forgotFailed": "Could not start the password reset.",
+      "sendResetLink": "Send reset link",
+      "sendingReset": "Sending...",
+      "backToLogin": "Back to sign in",
+      "resetTitle": "Choose a new password",
+      "resetSubtitle": "Your new password must be at least 6 characters long.",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "resetPasswordBtn": "Reset password",
+      "resettingPassword": "Resetting...",
+      "resetMissingFields": "Please fill in both fields.",
+      "resetPasswordTooShort": "Password must be at least 6 characters long.",
+      "resetPasswordsMismatch": "Passwords do not match.",
+      "resetSuccess": "Your password was reset. You can sign in now.",
+      "resetFailed": "Could not reset your password.",
   
       "registerTitle": "Create account",
       "registerSubtitle": "Join BucovinaStay and explore Bucovina like a local.",
@@ -588,7 +613,10 @@
                     "empty": "No photos yet.",
                     "photosTitle": "Photos",
                     "imagesCount": "{{count}} images",
-                    "photoAlt": "Photo {{n}}"
+                    "photoAlt": "Photo {{n}}",
+                    "lbHint": "← →  navigate  ·  Esc  close",
+                    "zoomIn": "Zoom in",
+                    "zoomOut": "Zoom out"
                   },
               
                   "host": {

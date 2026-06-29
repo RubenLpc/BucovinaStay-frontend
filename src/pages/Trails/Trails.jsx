@@ -258,7 +258,7 @@ export default function Trails() {
         </header>
 
         {filtered.length ? (
-          <section className="tr-grid" aria-label={t("trails.listAria")}>
+          <section className="tr-grid" aria-label={t("trails.listAria")} data-reveal-stagger>
             {filtered.map((tr) => (
               <article
                 key={tr.id}

@@ -3,23 +3,18 @@ import { toast } from "sonner";
 async function createDraft(payload) {
   try {
     const body = { ...payload };
-
-    // ✅ dacă nu ai coordonate valide, nu trimite geo deloc
     const coords = body?.geo?.coordinates;
     const okCoords = Array.isArray(coords) && coords.length === 2;
-
     if (!okCoords) {
       delete body.geo;
     } else {
       body.geo = { type: "Point", coordinates: coords };
     }
-
     // (restul mai jos)
     const data = await apiFetch("/properties/host", {
       method: "POST",
       body: JSON.stringify(body),
     });
-
     toast.success("Draft creat", { description: "Poți continua completarea." });
     return data;
   } catch (err) {
@@ -27,8 +22,6 @@ async function createDraft(payload) {
     throw err;
   }
 }
-
-
 async function updateDraft(id, payload) {
   try {
     const data = await apiFetch(`/properties/host/${id}`, {
@@ -42,7 +35,6 @@ async function updateDraft(id, payload) {
     throw err;
   }
 }
-
 async function submitForReview(id) {
   try {
     const data = await apiFetch(`/properties/host/${id}/submit`, { method: "POST" });
@@ -53,7 +45,6 @@ async function submitForReview(id) {
     throw err;
   }
 }
-
 async function getCloudinarySignature() {
   // endpointul tău din backend: /uploads/cloudinary-signature
   try {
@@ -63,12 +54,10 @@ async function getCloudinarySignature() {
     throw err;
   }
 }
-
  async function getPropertyById(id) {
   if (!id) throw new Error("Missing property id");
   return apiFetch(`/properties/${id}`, { method: "GET" });
 }
-
 export const hostPropertyService = {
   createDraft,
   updateDraft,

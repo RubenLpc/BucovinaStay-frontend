@@ -7,12 +7,15 @@ import { authService } from "../api/authService";
 import { onMaintenance } from "../api/client";
 import { useSettingsStore } from "../stores/settingsStore";
 import { useState } from "react";
+import { observeRevealEls } from "../utils/revealObserver";
+import "../styles/reveal.css";
 
 const SITE_THEME_KEY = "site-theme";
 
 export default function MainLayout() {
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const location = useLocation();
+  const { pathname } = location;
   const isHome = pathname === "/" || pathname === "/trasee";
   const [theme, setTheme] = useState(() => {
     if (typeof window === "undefined") return "light";
@@ -45,11 +48,18 @@ export default function MainLayout() {
     localStorage.setItem(SITE_THEME_KEY, theme);
   }, [theme]);
 
+  useEffect(() => {
+    const id = setTimeout(() => observeRevealEls(), 60);
+    return () => clearTimeout(id);
+  }, [pathname]);
+
   return (
     <div className="siteShell" data-site-theme={theme}>
       <Header theme={theme} onToggleTheme={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))} />
       <main className={`app-main ${isHome ? "noOffset" : "withOffset"}`}>
-        <Outlet />
+        <div key={pathname} className="page-enter">
+          <Outlet />
+        </div>
       </main>
       <Footer />
       <Chatbot />

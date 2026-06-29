@@ -41,6 +41,7 @@ export default function Login() {
   const [bgBlur, setBgBlur] = useState(false);
 
   useAuthStore((s) => s.isAuthenticated);
+  const routeMessage = location.state?.message;
 
   useEffect(() => {
     let alive = true;
@@ -190,11 +191,18 @@ export default function Login() {
               </div>
 
               {error && <p className="authError">{error}</p>}
+              {routeMessage && !error && <p className="authSuccess">{routeMessage}</p>}
 
               <button className="authSubmit" disabled={loading}>
                 {loading ? t("auth.loggingIn") : t("auth.loginBtn")}
               </button>
             </form>
+
+            <div className="authFooter authFooterTight">
+              <Link to="/auth/forgot-password" className="authLink">
+                {t("auth.forgotPassword")}
+              </Link>
+            </div>
 
             <div className="authFooter">
               {t("auth.noAccount")}{" "}

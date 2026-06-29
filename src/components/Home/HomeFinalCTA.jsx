@@ -22,7 +22,7 @@ export default function HomeFinalCTA({
 
   return (
     <section className="ppSection hctaBlock">
-      <div className="hctaSurface">
+      <div className="hctaSurface" data-reveal>
         <div className="hctaGlow" aria-hidden="true" />
 
         <div className="hctaLeft">

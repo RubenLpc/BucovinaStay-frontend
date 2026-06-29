@@ -375,7 +375,7 @@ export default function HorizontalListings({
 
   return (
     <section id="hl2-listings" className="container hl2-wrap">
-      <header className="hl2-head">
+      <header className="hl2-head" data-reveal>
         <div className="hl2-headLeft">
           <div className="hl2-kicker">{t("hl.kicker")}</div>
           <h2 className="hl2-title">{computedTitle}</h2>

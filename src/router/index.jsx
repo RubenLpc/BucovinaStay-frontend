@@ -7,6 +7,8 @@ import HostLayout from "../layouts/HostLayout";
 import Home from "../pages/Home/Home";
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
+import ForgotPassword from "../pages/Auth/ForgotPassword";
+import ResetPassword from "../pages/Auth/ResetPassword";
 import Profile from "../pages/Profile/Profile";
 import ProtectedRoute from "./ProtectedRoute";
 import Trails from "../pages/Trails/Trails";
@@ -44,6 +46,8 @@ export const router = createBrowserRouter([
     children: [
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
+      { path: "forgot-password", element: <ForgotPassword /> },
+      { path: "reset-password/:token", element: <ResetPassword /> },
       { index: true, element: <Navigate to="/auth/login" replace /> },
     ],
   },

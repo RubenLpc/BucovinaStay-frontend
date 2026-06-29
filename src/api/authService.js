@@ -50,13 +50,9 @@ async function register(details) {
 }
 
 async function getMe() {
-  try {
-    const user = await apiFetch("/auth/me");
-    useAuthStore.getState().setUser(user);
-    return user;
-  } catch (error) {
-    throw error;
-  }
+  const user = await apiFetch("/auth/me");
+  useAuthStore.getState().setUser(user);
+  return user;
 }
 
 async function updateMe(payload) {
@@ -75,10 +71,27 @@ async function changePassword(payload) {
       body: JSON.stringify(payload),
     });
   }
+
+async function forgotPassword(payload) {
+  return apiFetch("/auth/forgot-password", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+async function resetPassword(token, payload) {
+  return apiFetch(`/auth/reset-password/${token}`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
 export const authService = {
   login,
   register,
   getMe,
   updateMe,
   changePassword,
+  forgotPassword,
+  resetPassword,
 };

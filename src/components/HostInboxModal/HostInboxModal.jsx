@@ -3,7 +3,6 @@ import { X, Phone, Mail, MessageSquare, CheckCircle2, Circle, ExternalLink, Send
 import "./HostInboxModal.css";
 import { useSettingsStore } from "../../stores/settingsStore";
 import { formatDateTz } from "../../utils/format";
-
 function cleanPhone(s) {
   return String(s || "").replace(/[^\d+]/g, "");
 }
@@ -13,7 +12,6 @@ function waDigits(s) {
 function encode(v) {
   return encodeURIComponent(String(v || ""));
 }
-
 export default function HostInboxModal({
   open,
   msg,
@@ -25,67 +23,53 @@ export default function HostInboxModal({
   const [draft, setDraft] = useState("");
   const [copied, setCopied] = useState(false);
   const taRef = useRef(null);
-
   useEffect(() => {
     if (!open) return;
     setDraft("");
     setTimeout(() => taRef.current?.focus(), 60);
   }, [open]);
-
   useEffect(() => {
     const onEsc = (e) => e.key === "Escape" && onClose?.();
     if (open) window.addEventListener("keydown", onEsc);
     return () => window.removeEventListener("keydown", onEsc);
   }, [open, onClose]);
-
   const m = msg || {};
   const isNew = (m.status || "new") === "new";
-
   const guestName =
     m.guestName || m.fromName || m.name || "Client";
   const guestEmail = m.guestEmail || "";
   const guestPhone = m.guestPhone || "";
-
   const propertyTitle = m.propertyId?.title || "Proprietate";
   const propertyCity = [m.propertyId?.locality, m.propertyId?.city].filter(Boolean).join(", ");
   const propertyCover = m.propertyId?.coverImage?.url || "";
-
   const when = m.createdAt ? formatDateTz(m.createdAt, timezone, locale) : "";
-
   const telHref = guestPhone ? `tel:${cleanPhone(guestPhone)}` : "";
   const smsHref = guestPhone ? `sms:${cleanPhone(guestPhone)}?body=${encode(draft || "")}` : "";
   const waHref = guestPhone ? `https://wa.me/${waDigits(guestPhone)}?text=${encode(draft || "")}` : "";
   const mailHref = guestEmail ? `mailto:${guestEmail}?subject=${encode("Răspuns: " + propertyTitle)}&body=${encode(draft || "")}` : "";
-
   const canSend = (draft || "").trim().length >= 2;
-
   const headerSubtitle = useMemo(() => {
     const parts = [];
     if (propertyCity) parts.push(propertyCity);
     if (when) parts.push(when);
     return parts.join(" • ");
   }, [propertyCity, when]);
-
   if (!open) return null;
   async function handleReplySend() {
     if (!reply.trim()) {
       toast.error("Mesaj gol", { description: "Scrie un mesaj înainte de trimitere." });
       return;
     }
-  
     try {
       setSending(true);
-  
       await sendHostReply({
         messageId: msg._id,
         text: reply,
       });
-  
       toast.success("Răspuns trimis", {
         description: "Clientul va primi mesajul.",
       });
-  
-      setReply("");        // ✅ curăță textarea
+      setReply("");
       onClose?.();         // opțional: închizi modalul
     } catch (err) {
       toast.error("Eroare", {
@@ -95,8 +79,6 @@ export default function HostInboxModal({
       setSending(false);
     }
   }
-  
-
   return (
     <div className="himOverlay" role="dialog" aria-modal="true">
       <button className="himBackdrop" onClick={onClose} aria-label="Închide" />
@@ -111,7 +93,6 @@ export default function HostInboxModal({
             </div>
             <div className="himSub">{headerSubtitle}</div>
           </div>
-
           <div className="himTopRight">
             {isNew ? (
               <button className="himChip" type="button" onClick={onMarkRead}>
@@ -124,13 +105,11 @@ export default function HostInboxModal({
                 Marchează necitit
               </button>
             )}
-
             <button className="himClose" onClick={onClose} aria-label="Închide">
               <X size={18} />
             </button>
           </div>
         </div>
-
         {/* PROPERTY CARD */}
         <div className="himCard">
           <div
@@ -141,13 +120,11 @@ export default function HostInboxModal({
           <div className="himCardBody">
             <div className="himCardTitle">{propertyTitle}</div>
             <div className="himCardMeta">{propertyCity || "—"}</div>
-
             <div className="himActions">
               <a className={`himBtn ${guestPhone ? "" : "isDisabled"}`} href={telHref} onClick={(e) => !guestPhone && e.preventDefault()}>
                 <Phone size={16} />
                 Sună
               </a>
-
               <a
                 className={`himBtn ${guestPhone ? "" : "isDisabled"}`}
                 href={guestPhone ? `sms:${cleanPhone(guestPhone)}` : "#"}
@@ -156,7 +133,6 @@ export default function HostInboxModal({
                 <MessageSquare size={16} />
                 SMS
               </a>
-
               <a
                 className={`himBtn ${guestPhone ? "" : "isDisabled"}`}
                 href={guestPhone ? `https://wa.me/${waDigits(guestPhone)}` : "#"}
@@ -167,7 +143,6 @@ export default function HostInboxModal({
                 <MessageSquare size={16} />
                 WhatsApp
               </a>
-
               <a
                 className={`himBtn ${guestEmail ? "" : "isDisabled"}`}
                 href={guestEmail ? `mailto:${guestEmail}` : "#"}
@@ -176,7 +151,6 @@ export default function HostInboxModal({
                 <Mail size={16} />
                 Email
               </a>
-
               <button
                 className="himBtn himBtnGhost"
                 type="button"
@@ -194,13 +168,11 @@ export default function HostInboxModal({
             </div>
           </div>
         </div>
-
         {/* MESSAGE BODY */}
         <div className="himMsg">
           <div className="himMsgLabel">Mesaj</div>
           <div className="himMsgBubble">{m.message || "—"}</div>
         </div>
-
         {/* REPLY */}
         <div className="himReply">
           <div className="himMsgLabel">Răspunde rapid</div>
@@ -212,10 +184,8 @@ export default function HostInboxModal({
             placeholder="Scrie un răspuns scurt…"
             maxLength={800}
           />
-
           <div className="himReplyBar">
             <div className="himHint">Trimite prin canalul preferat (SMS / WhatsApp / Email).</div>
-
             <div className="himSendBtns">
               <a
                 className={`himSend ${guestPhone && canSend ? "" : "isDisabled"}`}
@@ -225,7 +195,6 @@ export default function HostInboxModal({
                 <Send size={16} />
                 SMS
               </a>
-
               <a
                 className={`himSend ${guestPhone && canSend ? "" : "isDisabled"}`}
                 href={guestPhone && canSend ? waHref : "#"}
@@ -236,7 +205,6 @@ export default function HostInboxModal({
                 <Send size={16} />
                 WhatsApp
               </a>
-
               <a
                 className={`himSend ${guestEmail && canSend ? "" : "isDisabled"}`}
                 href={guestEmail && canSend ? mailHref : "#"}
@@ -248,8 +216,6 @@ export default function HostInboxModal({
             </div>
           </div>
         </div>
-
-        
       </div>
     </div>
   );

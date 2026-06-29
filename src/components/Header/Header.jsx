@@ -49,6 +49,11 @@ export default function Header({ theme = "light", onToggleTheme }) {
   }, [location.pathname]);
 
   useEffect(() => {
+    setMobileOpen(false);
+    setUserOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
     const onDown = (e) => {
       if (rootRef.current && !rootRef.current.contains(e.target)) {
         setMobileOpen(false);
@@ -122,6 +127,10 @@ export default function Header({ theme = "light", onToggleTheme }) {
 
             <NavLink to="/cazari" className="nav-link">
               {t("nav.stays")}
+            </NavLink>
+
+            <NavLink to="/trasee" className="nav-link">
+              {t("nav.trails")}
             </NavLink>
           </nav>
 
@@ -269,6 +278,9 @@ export default function Header({ theme = "light", onToggleTheme }) {
               <NavLink to="/cazari" onClick={() => setMobileOpen(false)}>
                 {t("nav.stays")}
               </NavLink>
+              <NavLink to="/trasee" onClick={() => setMobileOpen(false)}>
+                {t("nav.trails")}
+              </NavLink>
 
               {isAuthenticated && dashboardPath && (
                 <NavLink to={dashboardPath} onClick={() => setMobileOpen(false)}>
@@ -302,7 +314,8 @@ export default function Header({ theme = "light", onToggleTheme }) {
                   setMobileOpen(false);
                 }}
               >
-                {t} {currentLang.toUpperCase()}/ {nextLang.toUpperCase()}
+                <Languages size={16} />
+                {currentLang.toUpperCase()} / {nextLang.toUpperCase()}
               </button>
             </div>
           </div>

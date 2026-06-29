@@ -8,6 +8,7 @@ import HomeFinalCTA from "../../components/Home/HomeFinalCTA";
 
 import { getHighlights } from "../../api/staysHighlightsService";
 import { aiSemanticSearch } from "../../api/aiSearchService";
+import { getStats } from "../../api/statsService";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
@@ -18,6 +19,7 @@ export default function Home() {
 
   const [items, setItems] = useState([]);
   const [loadingFeatured, setLoadingFeatured] = useState(true);
+  const [siteStats, setSiteStats] = useState(null);
 
   const [aiLoading, setAiLoading] = useState(false);
   const [mode, setMode] = useState("highlights"); // highlights | ai
@@ -59,6 +61,10 @@ export default function Home() {
       alive = false;
     };
   }, [t]);
+
+  useEffect(() => {
+    getStats().then(setSiteStats).catch(() => {});
+  }, []);
 
   const handleAISearch = async (q) => {
     try {
@@ -119,7 +125,15 @@ export default function Home() {
       <TrailsHero />
       <div className="container">
         <HomeCategories />
-        <HomeTrust variant="rating" rating={4.9} reviews={1200} />
+        <HomeTrust
+          metrics={siteStats ? {
+            avgRating:    siteStats.avgRating,
+            reviewsCount: siteStats.reviewsCount,
+            verifiedHosts: siteStats.hostsCount,
+            staysCount:   siteStats.staysCount,
+          } : null}
+          loading={!siteStats}
+        />
         <HomeFinalCTA />
       </div>
     </>

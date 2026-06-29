@@ -1,14 +1,33 @@
+import { useEffect, useState } from "react";
 import AISearch from "../AISearch/AISearch";
 import heroIllustration from "../../assets/images/hero-bucovina-illustration.png";
 import { useTranslation } from "react-i18next";
+import { getStats } from "../../api/statsService";
 import "./Hero.css";
 
 export default function Hero({ onAISearch, aiLoading }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    getStats()
+      .then(setStats)
+      .catch(() => {});
+  }, []);
+
+  const locale = i18n.language?.startsWith("en") ? "en-US" : "ro-RO";
+
+  function fmt(n) {
+    if (typeof n !== "number") return null;
+    return n.toLocaleString(locale);
+  }
+
+  const staysVal  = stats ? `${fmt(stats.staysCount)}+` : "—";
+  const staysLbl  = t("hero.stat1Lbl");
 
   return (
     <section className="heroV2">
-      {/* background layers */}
       <div className="heroV2Bg" aria-hidden="true">
         <div className="heroV2Blob heroV2BlobA" />
         <div className="heroV2Blob heroV2BlobB" />
@@ -18,102 +37,57 @@ export default function Hero({ onAISearch, aiLoading }) {
       <div className="container heroV2Container">
         {/* LEFT */}
         <div className="heroV2Left">
-           {/* LEFT 
-          <div className="heroV2Kicker">
-            <span className="heroV2Dot" />
-            <span className="heroV2Brand">{t("hero.kicker") || "BucovinaStay"}</span>
-            <span className="heroV2Sep" />
-            <span className="heroV2KickerSub">
-              {t("hero.kickerSub") || "cabins • nature • comfort"}
-            </span>
-          </div>*/}
-
-          <h1 className="heroV2Title">
-            {t("hero.title") || "Find your perfect stay"}
-            <span className="heroV2TitleAccent">
-              {" "}
-              {t("hero.titleAccent") || "in Bucovina"}
-            </span>
+          <h1 className="heroV2Title hero-enter" style={{ animationDelay: "0.05s" }}>
+            {t("hero.title")}
+            <span className="heroV2TitleAccent"> {t("hero.titleAccent")}</span>
           </h1>
 
-          <p className="heroV2Subtitle">
-            {t("hero.subtitle") ||
-              "Premium cabins, authentic hosts, and mountain views — book fast, travel easy."}
+          <p className="heroV2Subtitle hero-enter" style={{ animationDelay: "0.18s" }}>
+            {t("hero.subtitle")}
           </p>
 
-          
-
-          <div className="heroV2Search">
+          <div className="heroV2Search hero-enter" style={{ animationDelay: "0.30s" }}>
             <AISearch onSearch={onAISearch} loading={aiLoading} />
           </div>
 
-          <div className="heroV2Trust">
+          <div className="heroV2Trust hero-enter" style={{ animationDelay: "0.42s" }}>
             <div className="heroV2Avatars" aria-hidden="true">
               <span className="heroV2Avatar" />
               <span className="heroV2Avatar" />
               <span className="heroV2Avatar" />
               <span className="heroV2Avatar heroV2AvatarMore">+99</span>
             </div>
-
             <div className="heroV2TrustText">
               <div className="heroV2TrustLine1">
                 <span className="heroV2Star" aria-hidden="true">★</span>
-                <b>{t("hero.trustTitle") || "Trusted by travelers"}</b>
+                <b>{t("hero.trustTitle")}</b>
               </div>
-              <div className="heroV2TrustLine2">
-                {t("hero.trustSub") || "Real reviews • Verified hosts • Secure booking"}
-              </div>
+              <div className="heroV2TrustLine2">{t("hero.trustSub")}</div>
             </div>
           </div>
 
-          <div className="heroV2MiniStats">
+          <div className="heroV2MiniStats hero-enter" style={{ animationDelay: "0.52s" }}>
             <div className="heroV2MiniStat">
-              <div className="heroV2MiniVal">{t("hero.stat1Val") || "120+"}</div>
-              <div className="heroV2MiniLbl">{t("hero.stat1Lbl") || "Cabins & stays"}</div>
+              <div className="heroV2MiniVal">{staysVal}</div>
+              <div className="heroV2MiniLbl">{staysLbl}</div>
             </div>
-            
             <div className="heroV2MiniStat">
-              <div className="heroV2MiniVal">{t("hero.stat3Val") || "24/7"}</div>
-              <div className="heroV2MiniLbl">{t("hero.stat3Lbl") || "Support"}</div>
+              <div className="heroV2MiniVal">{t("hero.stat3Val")}</div>
+              <div className="heroV2MiniLbl">{t("hero.stat3Lbl")}</div>
             </div>
           </div>
         </div>
 
         {/* RIGHT */}
         <div className="heroV2Right">
-          
-            
-
-            
-              
-
-              <div className="heroV2Art">
-                <img
-                  className="heroV2Illu"
-                  src={heroIllustration}
-                  alt={t("hero.mockAlt") || "Bucovina cabin in a hand, minimal premium render"}
-                  loading="eager"
-                />
-{/* RIGHT 
-                <div className="heroV2Chip heroV2ChipA">
-                  <div className="heroV2ChipVal">{t("hero.chip1Val") || "28+"}</div>
-                  <div className="heroV2ChipLbl">{t("hero.chip1Lbl") || "Premium stays"}</div>
-                </div>
-
-                <div className="heroV2Chip heroV2ChipB">
-                  <div className="heroV2ChipVal">{t("hero.chip2Val") || "12K+"}</div>
-                  <div className="heroV2ChipLbl">{t("hero.chip2Lbl") || "Happy guests"}</div>
-                </div>
-
-                <div className="heroV2Chip heroV2ChipC">
-                  <div className="heroV2ChipVal">{t("hero.chip3Val") || "50+"}</div>
-                  <div className="heroV2ChipLbl">{t("hero.chip3Lbl") || "Top hosts"}</div>
-                </div>*/}
-              </div>
-            
-          
-
-         
+          <div className="heroV2Art hero-enter-right" style={{ animationDelay: "0.12s" }}>
+            <img
+              className="heroV2Illu"
+              src={heroIllustration}
+              alt={t("hero.mockAlt")}
+              loading="eager"
+            />
+          </div>
         </div>
       </div>
     </section>

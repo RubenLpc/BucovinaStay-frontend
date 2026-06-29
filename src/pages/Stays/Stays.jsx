@@ -1,13 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-
 import Map, { Marker, Popup } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-
 import "./Stays.css";
 import { listStays } from "../../api/staysService";
 import StayCard from "../../components/Stays/StayCard";
-
 import { useAuthStore } from "../../stores/authStore";
 import { useFavorites } from "../../hooks/useFavorites";
 import { toast } from "sonner";
@@ -15,7 +12,6 @@ import wifiIcon from "../../assets/wifi.png";
 import toiletIcon from "../../assets/toilet.png";
 import parkingIcon from "../../assets/parking.png";
 import petIcon from "../../assets/pet.png";
-
 import {
   Search,
   SlidersHorizontal,
@@ -24,11 +20,9 @@ import {
   Heart,
   ChevronDown,
 } from "lucide-react";
-
 import { AMENITY_BY_KEY } from "../../constants/amenitiesCatalog";
 import { PROPERTY_TYPES } from "../../constants/propertyTypes";
 import { useTranslation } from "react-i18next";
-
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 const PAGE_SIZE = 9;
 const MOBILE_BREAKPOINT = 860;
@@ -39,7 +33,6 @@ const FEATURED_AMENITY_IMAGES = {
   petFriendly: petIcon,
   washer: toiletIcon,
 };
-
 // ---------- helpers URL ----------
 function setParam(sp, key, val) {
   if (val == null || val === "" || val === "all") sp.delete(key);
@@ -49,7 +42,6 @@ function parseNum(x, fallback) {
   const n = Number(x);
   return Number.isFinite(n) ? n : fallback;
 }
-
 // bounds string: "swLat,swLng,neLat,neLng"
 function encodeBoundsFromMapbox(b) {
   if (!b) return "";
@@ -74,70 +66,50 @@ function boundsToParams(boundsStr) {
     neLng: String(b.neLng),
   };
 }
-
-
 export default function Stays() {
   const { t, i18n } = useTranslation();
   const locale = i18n.language?.startsWith("en") ? "en-US" : "ro-RO";
-
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const mapRef = useRef(null);
   const searchInputRef = useRef(null);
-
   // --- token
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN || "";
-
-  // ✅ favorites
   const { isAuthenticated } = useAuthStore();
   const { favIds, toggle: toggleFav } = useFavorites(isAuthenticated);
-
-  // ✅ initial state from URL
   const [q, setQ] = useState(searchParams.get("q") || "");
   const [sort, setSort] = useState(searchParams.get("sort") || "recommended");
   const [type, setType] = useState(searchParams.get("type") || "all");
-
   // 🔥 price filters
   const urlMinPrice = searchParams.get("priceMin");
   const urlMaxPrice = searchParams.get("priceMax");
-
   const [minPrice, setMinPrice] = useState(urlMinPrice != null ? parseNum(urlMinPrice, 0) : null);
   const [maxPrice, setMaxPrice] = useState(urlMaxPrice != null ? parseNum(urlMaxPrice, 0) : null);
-
   const [capacityMin, setCapacityMin] = useState(parseNum(searchParams.get("capacityMin"), 0));
   const [minRating, setMinRating] = useState(parseNum(searchParams.get("minRating"), 0));
-
   const [amenities, setAmenities] = useState(() => {
     const csv = searchParams.get("facilities") || "";
     const s = new Set(csv.split(",").map((x) => x.trim()).filter(Boolean));
     return s;
   });
-
   const [currency, setCurrency] = useState(searchParams.get("currency") || "RON");
-
   // 🔥 price range inteligent (derivat din rezultate)
   const [priceBounds, setPriceBounds] = useState({ min: 0, max: 0, step: 10 });
-
   // draft sliders
   const [minPriceDraft, setMinPriceDraft] = useState(null);
   const [maxPriceDraft, setMaxPriceDraft] = useState(null);
-
-
   // layout state
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [showAllAmenities, setShowAllAmenities] = useState(false);
-
   const [page, setPage] = useState(parseNum(searchParams.get("page"), 1));
   const [results, setResults] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState(null);
-
   // Map state (area search)
   const [boundsCommitted, setBoundsCommitted] = useState(searchParams.get("bounds") || "");
   const [boundsDirtyStr, setBoundsDirtyStr] = useState("");
   const areaSearchDebounceRef = useRef(null);
-
   const [activeId, setActiveId] = useState(null);
   const [popupId, setPopupId] = useState(null);
   const [isMobile, setIsMobile] = useState(() => (typeof window !== "undefined" ? window.innerWidth <= MOBILE_BREAKPOINT : false));
@@ -145,17 +117,14 @@ export default function Stays() {
   const [searchOpen, setSearchOpen] = useState(() => Boolean(searchParams.get("q")));
   const sheetDragRef = useRef(null);
   const suppressBoundsSyncUntilRef = useRef(0);
-
   const openPopup = (id) => {
     setPopupId(id);
     setActiveId(id);
   };
-
   const closePopup = () => {
     setPopupId(null);
     setActiveId(null);
   };
-
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
     const onResize = () => setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
@@ -163,14 +132,11 @@ export default function Stays() {
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
-
   useEffect(() => {
     if (!searchOpen) return;
     const id = window.setTimeout(() => searchInputRef.current?.focus(), 140);
     return () => window.clearTimeout(id);
   }, [searchOpen]);
-
-  // ✅ debounce search
   const qDebounceRef = useRef(null);
   const [qDebounced, setQDebounced] = useState(q);
   useEffect(() => {
@@ -178,37 +144,27 @@ export default function Stays() {
     qDebounceRef.current = setTimeout(() => setQDebounced(q), 250);
     return () => clearTimeout(qDebounceRef.current);
   }, [q]);
-
   // Reset page when committed filters change
   useEffect(() => {
     setPage(1);
   }, [qDebounced, sort, type, minPrice, maxPrice, capacityMin, minRating, amenities, boundsCommitted, currency]);
-
-  // ✅ keep URL in sync
   useEffect(() => {
     const sp = new URLSearchParams(searchParams);
-
     setParam(sp, "q", qDebounced.trim() ? qDebounced.trim() : "");
     setParam(sp, "sort", sort !== "recommended" ? sort : "");
     setParam(sp, "type", type !== "all" ? type : "");
-
     setParam(sp, "priceMin", minPrice != null ? String(minPrice) : "");
     setParam(sp, "priceMax", maxPrice != null ? String(maxPrice) : "");
-
     setParam(sp, "capacityMin", capacityMin > 0 ? capacityMin : "");
     setParam(sp, "minRating", minRating > 0 ? minRating : "");
-
     const fac = amenities.size ? Array.from(amenities).join(",") : "";
     setParam(sp, "facilities", fac);
-
     setParam(sp, "currency", currency !== "RON" ? currency : "");
     setParam(sp, "bounds", boundsCommitted || "");
     setParam(sp, "page", page > 1 ? page : "");
-
     setSearchParams(sp, { replace: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [qDebounced, sort, type, minPrice, maxPrice, capacityMin, minRating, amenities, boundsCommitted, page, currency]);
-
   // Format price label (locale-aware)
   function moneyLabel(value, ccy = "RON") {
     const n = Number(value ?? 0);
@@ -219,39 +175,30 @@ export default function Stays() {
       return `${n} ${ccy}`;
     }
   }
-
   // Fetch
   useEffect(() => {
     let alive = true;
-
     (async () => {
       try {
         setLoading(true);
         setErr(null);
-
         const params = {
           page: String(page),
           limit: String(PAGE_SIZE),
           sort,
           currency,
         };
-
         if (qDebounced.trim()) params.q = qDebounced.trim();
         if (type !== "all") params.type = type;
-
         if (minPrice != null) params.priceMin = String(minPrice);
         if (maxPrice != null) params.priceMax = String(maxPrice);
-
         if (capacityMin > 0) params.capacityMin = String(capacityMin);
         if (minRating > 0) params.minRating = String(minRating);
         if (amenities.size > 0) params.facilities = Array.from(amenities).join(",");
-
         const bParams = boundsToParams(boundsCommitted);
         if (bParams) Object.assign(params, bParams);
-
         const data = await listStays(params);
         if (!alive) return;
-
         setResults(data.items || []);
         setTotal(data.total ?? 0);
       } catch (e) {
@@ -263,12 +210,10 @@ export default function Stays() {
         if (alive) setLoading(false);
       }
     })();
-
     return () => {
       alive = false;
     };
   }, [qDebounced, sort, type, minPrice, maxPrice, capacityMin, minRating, amenities, page, boundsCommitted, currency]);
-
   // 🔥 Price bounds inteligente din rezultate
   useEffect(() => {
     const arr = Array.isArray(results) ? results : [];
@@ -276,7 +221,6 @@ export default function Stays() {
       .map((x) => x?.pricePerNight)
       .filter((v) => typeof v === "number" && Number.isFinite(v) && v > 0)
       .sort((a, b) => a - b);
-
     if (!prices.length) {
       const sliderMax = currency === "EUR" ? 600 : 2400;
       setPriceBounds({ min: 0, max: sliderMax, step: 1, sliderMin: 0, sliderMax });
@@ -284,26 +228,20 @@ export default function Stays() {
       setMaxPriceDraft((p) => (p == null ? sliderMax : p));
       return;
     }
-
     const pHigh = prices[Math.floor((prices.length - 1) * 0.98)];
     const rawMax = Math.max(1, pHigh);
-
     // slider starts at 0 și se termină cu ~15% padding peste p98
     const sliderMin = 0;
     const sliderMax = Math.ceil(rawMax * 1.15);
     const niceMin = Math.max(0, prices[0]);
     const niceMax = rawMax;
-
     setPriceBounds({ min: niceMin, max: niceMax, step: 1, sliderMin, sliderMax });
-
     setMinPriceDraft((prev) => (prev == null ? sliderMin : clamp(prev, sliderMin, sliderMax)));
     setMaxPriceDraft((prev) => (prev == null ? sliderMax : clamp(prev, sliderMin, sliderMax)));
-
     if (minPrice != null) setMinPrice((p) => clamp(p, sliderMin, sliderMax));
     if (maxPrice != null) setMaxPrice((p) => clamp(p, sliderMin, sliderMax));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [results, currency]);
-
   // dacă schimbi moneda, reset preț aplicat
   useEffect(() => {
     setMinPrice(null);
@@ -311,12 +249,10 @@ export default function Stays() {
     setMinPriceDraft(null);
     setMaxPriceDraft(null);
   }, [currency]);
-
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   useEffect(() => {
     if (page > totalPages) setPage(totalPages);
   }, [page, totalPages]);
-
   const toggleAmenity = (key) => {
     setAmenities((prev) => {
       const next = new Set(prev);
@@ -325,7 +261,6 @@ export default function Stays() {
       return next;
     });
   };
-
   const clearFilters = () => {
     setType("all");
     setMinPrice(null);
@@ -338,14 +273,12 @@ export default function Stays() {
     setBoundsCommitted("");
     setBoundsDirtyStr("");
   };
-
   const openStay = (stay) => {
     const id = stay?.id || stay?._id;
     if (!id) return;
     navigate(`/cazari/${id}`);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-
   // items with coords
   const mapItems = useMemo(() => {
     const arr = Array.isArray(results) ? results : [];
@@ -353,14 +286,12 @@ export default function Stays() {
       .map((s) => ({ ...s, id: s.id || s._id }))
       .filter((s) => Array.isArray(s?.geo?.coordinates) && s.geo.coordinates.length === 2);
   }, [results]);
-
   const defaultCenter = useMemo(() => ({ latitude: 47.65, longitude: 25.55, zoom: 8.6 }), []);
   const selectedStay = useMemo(() => {
     const selectedId = popupId || activeId;
     if (!selectedId) return null;
     return results.find((s) => (s.id || s._id) === selectedId) || mapItems.find((s) => s.id === selectedId) || null;
   }, [activeId, popupId, results, mapItems]);
-
   useEffect(() => {
     if (!isMobile) {
       setMobileSheetState("collapsed");
@@ -372,7 +303,6 @@ export default function Stays() {
     }
     setMobileSheetState((prev) => (prev === "peek" ? "collapsed" : prev));
   }, [isMobile, popupId]);
-
   // Map handlers
   const onMapIdle = () => {
     const m = mapRef.current?.getMap?.();
@@ -381,40 +311,32 @@ export default function Stays() {
     const b = m.getBounds?.();
     const enc = encodeBoundsFromMapbox(b);
     if (!enc) return;
-
     if (enc !== boundsCommitted) {
       setBoundsDirtyStr(enc);
     }
   };
-
   useEffect(() => {
     if (!boundsDirtyStr || boundsDirtyStr === boundsCommitted) return undefined;
     clearTimeout(areaSearchDebounceRef.current);
     areaSearchDebounceRef.current = setTimeout(() => {
       setBoundsCommitted(boundsDirtyStr);
     }, 500);
-
     return () => clearTimeout(areaSearchDebounceRef.current);
   }, [boundsDirtyStr, boundsCommitted]);
-
   const syncHoverToMap = (stay) => {
     const id = stay?.id || stay?._id;
     if (!id) return;
     setActiveId(id);
   };
-
   const beginSheetDrag = (e) => {
     if (!isMobile) return;
     sheetDragRef.current = { startY: e.clientY };
   };
-
   const endSheetDrag = (e) => {
     const drag = sheetDragRef.current;
     sheetDragRef.current = null;
     if (!drag) return;
-
     const deltaY = e.clientY - drag.startY;
-
     if (deltaY <= -40) {
       setMobileSheetState((prev) => {
         if (prev === "collapsed") return "list";
@@ -423,7 +345,6 @@ export default function Stays() {
       });
       return;
     }
-
     if (deltaY >= 40) {
       setMobileSheetState((prev) => {
         if (prev === "list") return popupId ? "peek" : "collapsed";
@@ -432,7 +353,6 @@ export default function Stays() {
       });
     }
   };
-
   const toggleSheetLevel = () => {
     setMobileSheetState((prev) => {
       if (prev === "collapsed") return popupId ? "peek" : "list";
@@ -440,28 +360,23 @@ export default function Stays() {
       return popupId ? "peek" : "collapsed";
     });
   };
-
   const typeLabel = (typeKey) => {
     if (!typeKey || typeKey === "all") return t("stays.allTypes");
     const meta = PROPERTY_TYPES?.find?.((x) => x.key === typeKey);
     if (!meta) return typeKey;
     return meta.labelKey ? t(meta.labelKey) : meta.label || typeKey;
   };
-
   const amenityLabel = (k) => {
     const meta = AMENITY_BY_KEY?.[k];
     if (!meta) return k;
     return meta.labelKey ? t(meta.labelKey) : meta.label || k;
   };
-
   // chips
   const activeChips = useMemo(() => {
     const chips = [];
-
     if (type !== "all") {
       chips.push({ key: "type", label: typeLabel(type), onX: () => setType("all") });
     }
-
     if (minPrice != null || maxPrice != null) {
       const both = minPrice != null && maxPrice != null;
       const onlyMin = minPrice != null && maxPrice == null;
@@ -472,7 +387,6 @@ export default function Stays() {
         : onlyMin
           ? t("stays.chips.minPrice", { value: moneyLabel(minPrice, currency) })
           : t("stays.chips.maxPrice", { value: moneyLabel(maxPrice, currency) });
-
       chips.push({
         key: "price",
         label,
@@ -484,7 +398,6 @@ export default function Stays() {
         },
       });
     }
-
     if (minRating > 0) {
       chips.push({
         key: "rating",
@@ -494,7 +407,6 @@ export default function Stays() {
                   },
       });
     }
-
     if (capacityMin > 0) {
       chips.push({
         key: "capacity",
@@ -502,11 +414,9 @@ export default function Stays() {
         onX: () => setCapacityMin(0),
       });
     }
-
     if (currency && currency !== "RON") {
       chips.push({ key: "currency", label: currency, onX: () => setCurrency("RON") });
     }
-
     if (amenities.size) {
       Array.from(amenities)
         .slice(0, 3)
@@ -521,23 +431,19 @@ export default function Stays() {
         });
       }
     }
-
     return chips;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type, minPrice, maxPrice, capacityMin, minRating, amenities, currency, priceBounds.sliderMin, priceBounds.sliderMax, locale, t]);
-
   const visibleAmenities = useMemo(() => {
     const featuredSet = new Set(["wifi", "parking", "petFriendly", "washer"]);
     const all = Object.values(AMENITY_BY_KEY).filter((a) => !featuredSet.has(a.key));
     return showAllAmenities ? all : all.slice(0, 18);
   }, [showAllAmenities]);
-
   const featuredAmenities = useMemo(() => {
     return FIXED_RECOMMENDED_AMENITY_KEYS
       .map((key) => AMENITY_BY_KEY[key])
       .filter(Boolean);
   }, []);
-
   const priceHistogram = useMemo(() => {
     const N = 34;
     const sMin = priceBounds.sliderMin ?? priceBounds.min;
@@ -545,9 +451,7 @@ export default function Stays() {
     const prices = results
       .map((x) => x?.pricePerNight)
       .filter((v) => typeof v === "number" && Number.isFinite(v) && v > 0);
-
     if (!prices.length || sMax <= sMin) return Array(N).fill(4);
-
     const bucketSize = (sMax - sMin) / N;
     const counts = Array(N).fill(0);
     prices.forEach((p) => {
@@ -557,7 +461,6 @@ export default function Stays() {
     const maxCount = Math.max(...counts, 1);
     return counts.map((c) => Math.max(4, Math.round((c / maxCount) * 62)));
   }, [results, priceBounds.sliderMin, priceBounds.sliderMax]);
-
   const activeFilterCount = useMemo(() => {
     let count = 0;
     if (type !== "all") count += 1;
@@ -569,7 +472,6 @@ export default function Stays() {
     if (boundsCommitted) count += 1;
     return count;
   }, [type, minPrice, maxPrice, capacityMin, minRating, currency, amenities, boundsCommitted]);
-
   const handleToggleFav = async (id) => {
     if (!isAuthenticated) {
       toast.info(t("toasts.authRequired"), { description: t("toasts.authRequiredDesc") });
@@ -581,10 +483,8 @@ export default function Stays() {
       toast.error(t("toasts.favUpdateFailed"));
     }
   };
-
   const renderSelectedStayCard = (stay, variant = "desktop") => {
     if (!stay) return null;
-
     const id = stay.id || stay._id;
     const title = stay.title || stay.name || (locale === "ro-RO" ? "Cazare" : "Stay");
     const loc = stay.locality || stay.city || stay.location || "—";
@@ -594,12 +494,10 @@ export default function Stays() {
     const rating = Number(stay.ratingAvg ?? stay.rating ?? 0);
     const reviews = Number(stay.reviewsCount ?? stay.reviews ?? 0);
     const isFav = favIds?.has?.(id);
-
     return (
       <article className={`staysFeatureCard staysFeatureCard--${variant}`} onClick={() => openStay(stay)}>
         <div className="staysFeatureMedia">
           {img ? <img src={img} alt={title} loading="lazy" /> : <div className="staysFeatureImgPh" />}
-
           <div className="staysFeatureActions">
             <button
               type="button"
@@ -612,7 +510,6 @@ export default function Stays() {
             >
               <Heart size={18} />
             </button>
-
             <button
               type="button"
               className="staysFeatureAction"
@@ -626,7 +523,6 @@ export default function Stays() {
             </button>
           </div>
         </div>
-
         <div className="staysFeatureBody">
           <div className="staysFeatureTop">
             <div className="staysFeatureTitle">{title}</div>
@@ -638,14 +534,12 @@ export default function Stays() {
               </div>
             ) : null}
           </div>
-
           <div className="staysFeatureSub">{loc}</div>
           <div className="staysFeaturePrice">{price}</div>
         </div>
       </article>
     );
   };
-
   const propertyTypeOptions = useMemo(() => {
     const items = [
       { key: "all", label: t("stays.allTypes") },
@@ -654,16 +548,13 @@ export default function Stays() {
         label: labelKey ? t(labelKey) : label || key,
       })),
     ];
-
     const rows = [];
     for (let i = 0; i < items.length; i += 4) rows.push(items.slice(i, i + 4));
     return rows;
   }, [t]);
-
   const activeRatingBtn = [0, 3, 4, 4.5].reduce((best, opt) => opt <= minRating ? opt : best, 0);
   const sMin = priceBounds.sliderMin ?? priceBounds.min;
   const sMax = priceBounds.sliderMax ?? priceBounds.max;
-
   const Filters = (
     <aside className="staysFiltersCard staysFiltersCardV2">
       {activeChips.length ? (
@@ -679,7 +570,6 @@ export default function Stays() {
           </div>
         </div>
       ) : null}
-
       <div className="staysFilterBlock">
         <div className="staysLabel">{t("stays.recommendedForYou")}</div>
         <div className="staysFeaturedAmenityGrid">
@@ -688,7 +578,6 @@ export default function Stays() {
             const on = amenities.has(a.key);
             const label = a.labelKey ? t(a.labelKey) : a.label || a.key;
             const imageSrc = FEATURED_AMENITY_IMAGES[a.key];
-
             return (
               <button
                 key={a.key}
@@ -706,7 +595,6 @@ export default function Stays() {
           })}
         </div>
       </div>
-
       <div className="staysFilterBlock">
         <div className="staysLabel">{t("stays.propertyType")}</div>
         <div className="staysTypeRows">
@@ -729,7 +617,6 @@ export default function Stays() {
           ))}
         </div>
       </div>
-
       <div className="staysFilterBlock">
         <div className="staysLabel">{t("stays.guests")}</div>
         <div className="staysCounterRow">
@@ -762,14 +649,12 @@ export default function Stays() {
           </div>
         </div>
       </div>
-
       <div className="staysFilterBlock">
         <div className="staysRowBetween">
           <div>
             <div className="staysLabel staysLabelNoGap">{t("stays.pricePerNight")}</div>
             <div className="staysFiltersMicrocopy">{t("stays.priceHintModal")}</div>
           </div>
-
           <div className="staysInlineSelect">
             <span className="staysTiny">{t("stays.currency")}</span>
             <select value={currency} onChange={(e) => setCurrency(e.target.value)} aria-label={t("stays.currency")}>
@@ -778,7 +663,6 @@ export default function Stays() {
             </select>
           </div>
         </div>
-
         <div className="staysPriceChartWrap" aria-hidden="true">
           <div className="staysPriceBars">
             {priceHistogram.map((heightPx, idx) => {
@@ -793,7 +677,6 @@ export default function Stays() {
             })}
           </div>
         </div>
-
         <div className="staysPriceSlider">
           <div className="staysPriceSliderTrack">
             <div
@@ -835,7 +718,6 @@ export default function Stays() {
             onTouchEnd={() => { const v = maxPriceDraft ?? sMax; setMaxPrice(v >= sMax ? null : v); }}
           />
         </div>
-
         <div className="staysPriceInputs">
           <div className="staysPriceInputPill">
             <span className="staysTiny">{t("stays.min")}</span>
@@ -846,7 +728,6 @@ export default function Stays() {
             <strong>{moneyLabel(maxPriceDraft ?? sMax, currency)}</strong>
           </div>
         </div>
-
         {(minPrice != null || maxPrice != null) && (
           <button
             className="staysGhostBtn"
@@ -862,7 +743,6 @@ export default function Stays() {
           </button>
         )}
       </div>
-
       <div className="staysFilterBlock">
         <div className="staysLabel">{t("stays.minScore")}</div>
         <div className="staysTypeRow">
@@ -883,7 +763,6 @@ export default function Stays() {
           ))}
         </div>
       </div>
-
       <div className="staysFilterBlock">
         <div className="staysLabel">{t("stays.amenities")}</div>
         <div className="staysAmenityGrid staysAmenityGridComfort">
@@ -891,7 +770,6 @@ export default function Stays() {
             const Icon = a.icon || Sparkles;
             const on = amenities.has(a.key);
             const label = a.labelKey ? t(a.labelKey) : a.label || a.key;
-
             return (
               <button
                 key={a.key}
@@ -916,7 +794,6 @@ export default function Stays() {
           ) : null;
         })()}
       </div>
-
       {boundsCommitted ? (
         <div className="staysFilterBlock">
           <div className="staysLabel">{t("stays.mapArea")}</div>
@@ -927,7 +804,6 @@ export default function Stays() {
       ) : null}
     </aside>
   );
-
   return (
     <div className={`staysMapLayout ${filtersOpen ? "filtersOpen" : ""} ${isMobile ? "isMobileMap" : ""} sheet-${mobileSheetState} ${searchOpen ? "searchOpen" : ""}`}>
       <div className="staysTopBar">
@@ -938,9 +814,7 @@ export default function Stays() {
               <span>{t("stays.filters")}</span>
               {activeFilterCount > 0 ? <span className="staysFilterCountBubble">{activeFilterCount}</span> : null}
             </button>
-
             <span className="staysControlDivider" aria-hidden="true" />
-
             <div className={`staysSearchDock ${searchOpen ? "isOpen" : ""}`}>
               <button
                 className="staysSearchBadge"
@@ -950,7 +824,6 @@ export default function Stays() {
               >
                 <Search size={16} />
               </button>
-
               <div className={`staysSearchExpand ${searchOpen ? "isOpen" : ""}`}>
                 <input
                   ref={searchInputRef}
@@ -970,10 +843,8 @@ export default function Stays() {
               </div>
             </div>
           </div>
-
         </div>
       </div>
-
       <main className="staysMain3">
         <section className="staysColMap">
           <div className="staysMapCard">
@@ -1003,7 +874,6 @@ export default function Stays() {
                     const isActive = activeId === id && popupId !== id;
                     const isSelected = popupId === id;
                     const isFav = favIds?.has?.(id);
-
                     return (
                       <Marker key={id} longitude={lng} latitude={lat} anchor="bottom">
                         <button
@@ -1021,7 +891,6 @@ export default function Stays() {
                       </Marker>
                     );
                   })}
-
                   {!isMobile && popupId ? (
                     <Popup
                       longitude={mapItems.find((x) => x.id === popupId)?.geo?.coordinates?.[0] ?? 0}
@@ -1039,20 +908,17 @@ export default function Stays() {
                     </Popup>
                   ) : null}
                 </Map>
-
                 {!mapItems.length && !loading ? <div className="staysMapNoPins">{t("stays.noPins")}</div> : null}
               </>
             )}
           </div>
         </section>
-
         <section className="staysColList">
           <div className="staysListHead">
             <div className="staysListTitle">
               {loading ? t("stays.listHeadLoading") : t("stays.mapZoneResults", { count: total })}
             </div>
           </div>
-
           {loading ? (
             <div className="staysSkeletonList" aria-hidden="true">
               {Array.from({ length: 4 }).map((_, idx) => (
@@ -1084,15 +950,15 @@ export default function Stays() {
             </div>
           ) : (
             <>
-              <div className="staysList">
-                {results.map((s) => {
+              <div className="staysList" key={results.map((s) => s.id || s._id).join(",")}>
+                {results.map((s, index) => {
                   const id = s.id || s._id;
                   const stay = { ...s, id };
-
                   return (
                     <div
                       key={id}
                       className={`staysListItemWrap ${activeId === id || popupId === id ? "isActive" : ""}`}
+                      style={{ "--ri": index }}
                       onMouseEnter={() => syncHoverToMap(stay)}
                       onMouseLeave={() => {
                         setActiveId((current) => (popupId === current ? current : null));
@@ -1108,14 +974,11 @@ export default function Stays() {
                   );
                 })}
               </div>
-
               <div className="staysPager">
                 <button className="staysPageBtn" type="button" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
                   {t("stays.pagerPrev")}
                 </button>
-
                 <div className="staysPageInfo">{t("stays.pagerInfo", { page, total: totalPages })}</div>
-
                 <button className="staysPageBtn" type="button" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
                   {t("stays.pagerNext")}
                 </button>
@@ -1124,7 +987,6 @@ export default function Stays() {
           )}
         </section>
       </main>
-
       {isMobile ? (
         <>
           <section className={`staysMobileSheet is-${mobileSheetState}`}>
@@ -1138,15 +1000,12 @@ export default function Stays() {
             >
               <span className="staysMobileSheetGrip" />
             </button>
-
             <div className="staysMobileSheetHeader">
               <div className="staysMobileSheetTitle">{t("stays.mapZoneResults", { count: total })}</div>
             </div>
-
             {mobileSheetState === "peek" && selectedStay ? (
               <div className="staysMobilePeek">{renderSelectedStayCard(selectedStay, "mobile")}</div>
             ) : null}
-
             {mobileSheetState === "list" ? (
               <div className="staysMobileListWrap">
                 {loading ? (
@@ -1176,7 +1035,6 @@ export default function Stays() {
                   results.map((s) => {
                     const id = s.id || s._id;
                     const stay = { ...s, id };
-
                     return (
                       <div key={id} className={`staysListItemWrap ${activeId === id || popupId === id ? "isActive" : ""}`}>
                         <StayCard
@@ -1189,15 +1047,12 @@ export default function Stays() {
                     );
                   })
                 )}
-
                 {!loading && !err && results.length > 0 ? (
                   <div className="staysPager staysPagerMobile">
                     <button className="staysPageBtn" type="button" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
                       {t("stays.pagerPrev")}
                     </button>
-
                     <div className="staysPageInfo">{t("stays.pagerInfo", { page, total: totalPages })}</div>
-
                     <button className="staysPageBtn" type="button" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
                       {t("stays.pagerNext")}
                     </button>
@@ -1208,7 +1063,6 @@ export default function Stays() {
           </section>
         </>
       ) : null}
-
       <div className={`staysDrawerOverlay ${filtersOpen ? "open" : ""}`} onClick={() => setFiltersOpen(false)} />
       <div className={`staysDrawer ${filtersOpen ? "open" : ""}`} role="dialog" aria-modal="true">
         <div className="staysDrawerTop">

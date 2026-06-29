@@ -1,5 +1,4 @@
 // client/src/data/stays.js
-
 const amenityMap = {
     // keys din listingsMock -> keys folosite în Stays (AMENITIES)
     wifi: "wifi",
@@ -18,24 +17,18 @@ const amenityMap = {
     quiet: "quiet",
     balcony: "balcony",
   };
-  
   const normalizeAmenities = (arr = []) =>
     Array.from(new Set(arr.map((a) => amenityMap[a] || a).filter(Boolean)));
-  
   const computeBadges = (s) => {
     const b = [];
-  
     // exemple simple (ajustezi cum vrei)
     if (s.rating >= 4.85) b.push("Super Host");
     if (s.amenities?.includes("micdejun")) b.push("Mic dejun inclus");
     if (s.amenities?.includes("spa") || s.amenities?.includes("sauna")) b.push("Spa");
     if (s.pricePerNight <= 240) b.push("Best Value");
-  
     // max 2 ca să nu aglomereze cardul
     return b.slice(0, 2);
   };
-  
-  // ✅ Un singur dataset unificat (schema stays)
   export const stays = [
     // --- Din stays-ul tău existent (cu createdAt adăugat) ---
     {
@@ -113,7 +106,6 @@ const amenityMap = {
       image:
         "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=80",
     },
-  
     // --- Din listingsMock (convertit) ---
     {
       id: "cabana-vedere-munte",
@@ -204,10 +196,6 @@ const amenityMap = {
     amenities: normalizeAmenities(s.amenities),
     badges: s.badges?.length ? s.badges : computeBadges(s),
   }));
-  
-  // ✅ pentru Home page: “featured”
   export const featuredStays = stays.slice(0, 6);
-  
-  // ✅ ca să nu mai crape Home.jsx dacă importă default
   export default stays;
   

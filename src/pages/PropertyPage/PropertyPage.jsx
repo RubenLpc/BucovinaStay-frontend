@@ -11,10 +11,9 @@ import { trackImpression, trackClick } from "../../api/analyticsService";
 import { getHostProfilePublic } from "../../api/hostProfileService";
 import defaultAvatar from "../../assets/default_avatar.png";
 import { AMENITY_BY_KEY } from "../../constants/amenitiesCatalog";
-
 import { toast } from "sonner";
 import "./PropertyPage.css";
-
+import { observeRevealEls } from "../../utils/revealObserver";
 import {
   Heart,
   Share2,
@@ -33,9 +32,7 @@ import {
   ZoomOut,
   ShieldCheck,
 } from "lucide-react";
-
 import { useTranslation } from "react-i18next";
-
 const TYPE_LABELS = {
   apartament: "Apartament",
   pensiune: "Pensiune",
@@ -44,7 +41,6 @@ const TYPE_LABELS = {
   vila: "Vilă",
   tiny_house: "Tiny House",
 };
-
 function isNonEmptyString(v) {
   return typeof v === "string" && v.trim().length > 0;
 }
@@ -62,14 +58,12 @@ function formatMoney(value, currency = "RON") {
     return `${value ?? 0} ${currency || ""}`.trim();
   }
 }
-
 function clampText(text, n = 320) {
   if (!isNonEmptyString(text)) return "";
   const t = text.trim();
   if (t.length <= n) return t;
   return t.slice(0, n).trim() + "…";
 }
-
 function StarRating({ value, max = 5, size = 15 }) {
   return (
     <div className="ppStars" aria-hidden="true">
@@ -94,7 +88,6 @@ function StarRating({ value, max = 5, size = 15 }) {
     </div>
   );
 }
-
 function Modal({ open, title, onClose, children, size = "lg", closeLabel = "Închide" }) {
   if (!open) return null;
   return (
@@ -110,11 +103,9 @@ function Modal({ open, title, onClose, children, size = "lg", closeLabel = "Înc
     </div>
   );
 }
-
 export default function PropertyPage() {
   const { t } = useTranslation();
   const { id } = useParams();
-
   useEffect(() => {
     if (!id) return;
     const key = `pp:view:${id}`;
@@ -122,33 +113,25 @@ export default function PropertyPage() {
     sessionStorage.setItem(key, "1");
     trackImpression([id]);
   }, [id]);
-
   const [loading, setLoading] = useState(true);
   const [p, setP] = useState(null);
   const [err, setErr] = useState("");
-
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [showAllAmenities, setShowAllAmenities] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [lightboxIdx, setLightboxIdx] = useState(null);
   const [lbZoomed, setLbZoomed] = useState(false);
-
   const user = useAuthStore((s) => s.user);
   const { favIds, toggle: toggleFav, loading: favLoading } = useFavorites(!!user);
-
   const [hostUser, setHostUser] = useState(null);
   const [hostProfile, setHostProfile] = useState(null);
   const [hostProfileLoading, setHostProfileLoading] = useState(false);
-
   const [msgOpen, setMsgOpen] = useState(false);
-
   const DEFAULT_HOST_AVATAR = defaultAvatar;
-
   const isFav = useMemo(() => {
     if (!id) return false;
     return favIds.has(String(id));
   }, [favIds, id]);
-
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -170,31 +153,24 @@ export default function PropertyPage() {
       alive = false;
     };
   }, [id, t]);
-
   const images = useMemo(() => {
     const list = Array.isArray(p?.images) ? p.images.map((x) => x?.url).filter(Boolean) : [];
     const cover = p?.coverImage?.url;
     if (cover && !list.includes(cover)) return [cover, ...list];
     return list.length ? list : cover ? [cover] : [];
   }, [p]);
-
   const title = p?.title || t("propertyPage.fallbackTitle");
   const subtitle = isNonEmptyString(p?.subtitle) ? p.subtitle : "";
   const typeLabel = p?.type ? TYPE_LABELS[p.type] || p.type : "";
-
   const locationLine = [p?.locality, p?.city, p?.region].filter(isNonEmptyString).join(", ");
-
   const price = typeof p?.pricePerNight === "number" ? p.pricePerNight : null;
   const currency = p?.currency || "RON";
-
   const ratingAvg = typeof p?.ratingAvg === "number" ? p.ratingAvg : 0;
   const reviewsCount = typeof p?.reviewsCount === "number" ? p.reviewsCount : 0;
-
   const facilities = useMemo(() => {
     const arr = Array.isArray(p?.facilities) ? p.facilities : [];
     return arr.filter((k) => AMENITY_BY_KEY[k]);
   }, [p]);
-
   const coords = useMemo(() => {
     const c = p?.geo?.coordinates;
     if (!Array.isArray(c) || c.length !== 2) return null;
@@ -202,19 +178,15 @@ export default function PropertyPage() {
     if (!Number.isFinite(lng) || !Number.isFinite(lat)) return null;
     return { lat, lng };
   }, [p]);
-
   const canShowHighlights = ratingAvg > 0 && reviewsCount > 0;
-
   const hostFromProperty = p?.hostId && typeof p.hostId === "object" ? p.hostId : null;
   const hostUserId =
     hostFromProperty?._id ||
     hostUser?._id ||
     (typeof p?.hostId === "string" ? p.hostId : null) ||
     null;
-
   useEffect(() => {
     let alive = true;
-
     (async () => {
       if (!hostUserId) {
         setHostProfile(null);
@@ -232,12 +204,10 @@ export default function PropertyPage() {
         if (alive) setHostProfileLoading(false);
       }
     })();
-
     return () => {
       alive = false;
     };
   }, [hostUserId]);
-
   useEffect(() => {
     if (lightboxIdx === null) return;
     const onKey = (e) => {
@@ -248,22 +218,16 @@ export default function PropertyPage() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [lightboxIdx, images.length]);
-
   const quickFacts = useMemo(() => {
     const items = [];
-
     if (hasValue(typeLabel)) items.push({ Icon: Home, text: t("propertyPage.facts.entirePlace", { type: typeLabel }) });
     if (typeof p?.capacity === "number" && p.capacity > 0)
       items.push({ Icon: Users, text: t("propertyPage.facts.guests", { count: p.capacity }) });
-
     if (isNonEmptyString(p?.addressLine)) items.push({ Icon: MapPin, text: p.addressLine.trim() });
-
     return items;
   }, [p, typeLabel, t]);
-
   const displayedAmenities = facilities.slice(0, 8);
   const remainingAmenitiesCount = Math.max(0, facilities.length - displayedAmenities.length);
-
   const mapEmbedSrc = useMemo(() => {
     if (coords) {
       return `https://www.google.com/maps?q=${coords.lat},${coords.lng}&z=13&output=embed`;
@@ -271,27 +235,21 @@ export default function PropertyPage() {
     const q = encodeURIComponent(p?.city || p?.locality || "Bucovina");
     return `https://www.google.com/maps?q=${q}&z=12&output=embed`;
   }, [coords, p]);
-
   const hostName =
     hostProfile?.displayName ||
     hostProfile?.name ||
     hostFromProperty?.name ||
     hostUser?.name ||
     t("propertyPage.host.fallbackName");
-
   const hostPhone = hostFromProperty?.phone || hostUser?.phone || "";
-
   const hostAvatar =
     (isNonEmptyString(hostProfile?.avatarUrl) && hostProfile.avatarUrl) || DEFAULT_HOST_AVATAR;
-
   const hostBio = (isNonEmptyString(hostProfile?.bio) && hostProfile.bio.trim()) || "";
-
   const hasPhone = typeof hostPhone === "string" && hostPhone.trim().length > 0;
   const cleanPhone = (s) => String(s || "").replace(/[^\d+]/g, "");
   const telHref = hasPhone ? `tel:${cleanPhone(hostPhone)}` : "";
   const waHref = hasPhone ? `https://wa.me/${cleanPhone(hostPhone).replace(/^\+/, "")}` : "";
   const smsHref = hasPhone ? `sms:${cleanPhone(hostPhone)}` : "";
-
   const onShare = async () => {
     try {
       const url = window.location.href;
@@ -308,7 +266,6 @@ export default function PropertyPage() {
       // ignore
     }
   };
-
   const onSave = async () => {
     if (!user) {
       toast.info(t("propertyPage.toasts.authRequired.title"), {
@@ -316,7 +273,6 @@ export default function PropertyPage() {
       });
       return;
     }
-
     try {
       await toggleFav(String(id));
       // toast-urile add/remove le ai deja în hook/service
@@ -326,12 +282,16 @@ export default function PropertyPage() {
       });
     }
   };
-
   async function handleSendMessage({ propertyId, message, guestName, guestEmail, guestPhone }) {
     await sendHostMessage({ propertyId, message, guestName, guestEmail, guestPhone });
     toast.success(t("propertyPage.toasts.messageSent"));
   }
-
+  useEffect(() => {
+    if (!loading) {
+      const id = setTimeout(() => observeRevealEls(), 120);
+      return () => clearTimeout(id);
+    }
+  }, [loading]);
   if (loading) {
     return (
       <div className="ppShell">
@@ -351,7 +311,6 @@ export default function PropertyPage() {
       </div>
     );
   }
-
   if (err) {
     return (
       <div className="ppShell">
@@ -364,9 +323,7 @@ export default function PropertyPage() {
       </div>
     );
   }
-
   if (!p) return null;
-
   return (
     <div className="ppShell">
       <div className="ppContainer">
@@ -374,7 +331,6 @@ export default function PropertyPage() {
         <div className="ppHeader">
           <div className="ppHeaderLeft">
             <h1 className="ppTitle">{title}</h1>
-
             <div className="ppMetaRow">
               {canShowHighlights ? (
                 <>
@@ -395,7 +351,6 @@ export default function PropertyPage() {
                   </button>
                 </>
               ) : null}
-
               {isNonEmptyString(locationLine) ? (
                 <>
                   {canShowHighlights ? <span className="ppDot">•</span> : null}
@@ -405,7 +360,6 @@ export default function PropertyPage() {
                   </span>
                 </>
               ) : null}
-
               {isNonEmptyString(subtitle) ? (
                 <>
                   <span className="ppDot">•</span>
@@ -414,13 +368,11 @@ export default function PropertyPage() {
               ) : null}
             </div>
           </div>
-
           <div className="ppHeaderActions">
             <button className="ppActionBtn" onClick={onShare}>
               <Share2 size={16} />
               <span>{t("propertyPage.actions.share")}</span>
             </button>
-
             <button
               className={`ppActionBtn ${isFav ? "isActive" : ""}`}
               onClick={onSave}
@@ -433,7 +385,6 @@ export default function PropertyPage() {
             </button>
           </div>
         </div>
-
         {/* GALLERY */}
         <div className="ppGalleryWrap">
           {images.length ? (
@@ -445,7 +396,6 @@ export default function PropertyPage() {
               >
                 <img src={images[0]} alt={t("propertyPage.gallery.mainAlt")} loading="eager" />
               </button>
-
               <div className="ppGallerySide">
                 {(images.slice(1, 5).length ? images.slice(1, 5) : images.slice(0, 4)).map((src, idx) => (
                   <button
@@ -458,7 +408,6 @@ export default function PropertyPage() {
                   </button>
                 ))}
               </div>
-
               <button
                 className="ppAllPhotosBtn"
                 onClick={() => {
@@ -479,7 +428,6 @@ export default function PropertyPage() {
             </div>
           )}
         </div>
-
         {/* MAIN GRID */}
         <div className="ppGrid">
           {/* LEFT */}
@@ -490,7 +438,6 @@ export default function PropertyPage() {
                   ? t("propertyPage.headlineWithCity", { type: typeLabel, city: p?.city || t("propertyPage.regionFallback") })
                   : t("propertyPage.detailsTitle")}
               </h2>
-
               {quickFacts.length ? (
                 <div className="ppFactsRow">
                   {quickFacts.map(({ Icon, text }) => (
@@ -501,7 +448,6 @@ export default function PropertyPage() {
                   ))}
                 </div>
               ) : null}
-
               {Array.isArray(p?.badges) && p.badges.filter(isNonEmptyString).length ? (
                 <div className="ppBadges">
                   {p.badges
@@ -514,7 +460,6 @@ export default function PropertyPage() {
                     ))}
                 </div>
               ) : null}
-
               {canShowHighlights ? (
                 <div className="ppHighlights">
                   {ratingAvg >= 4.8 && reviewsCount >= 10 ? (
@@ -526,7 +471,6 @@ export default function PropertyPage() {
                       </div>
                     </div>
                   ) : null}
-
                   {facilities.includes("spa") ? (
                     <div className="ppHighlightItem ppHighlightItem--teal">
                       <div className="ppHighlightIcon ppHighlightIcon--teal"><Sparkles size={17} /></div>
@@ -536,7 +480,6 @@ export default function PropertyPage() {
                       </div>
                     </div>
                   ) : null}
-
                   {facilities.includes("parking") ? (
                     <div className="ppHighlightItem ppHighlightItem--blue">
                       <div className="ppHighlightIcon ppHighlightIcon--blue"><Car size={17} /></div>
@@ -548,9 +491,7 @@ export default function PropertyPage() {
                   ) : null}
                 </div>
               ) : null}
-
               <div className="ppDivider" />
-
               {isNonEmptyString(p?.description) ? (
                 <>
                   <p className="ppDesc">{clampText(p.description, 420)}</p>
@@ -564,16 +505,14 @@ export default function PropertyPage() {
                 <p className="ppMuted">{t("propertyPage.descriptionMissing")}</p>
               )}
             </div>
-
             {facilities.length ? (
-              <div className="ppSection">
+              <div className="ppSection" data-reveal>
                 <h2 className="ppH2">{t("propertyPage.amenitiesTitle")}</h2>
-
                 <div className="ppAmenitiesGrid">
                   {displayedAmenities.map((key) => {
                     const meta = AMENITY_BY_KEY[key];
                     if (!meta) return null;
-                    const Icon = meta.icon; // ✅ corect: în catalog este "icon"
+                    const Icon = meta.icon;
                     return (
                       <div className="ppAmenity" key={key}>
                         {Icon ? <div className="ppAmenityIcon"><Icon size={16} /></div> : null}
@@ -582,20 +521,16 @@ export default function PropertyPage() {
                     );
                   })}
                 </div>
-
                 <button className="ppOutlineBtn" onClick={() => setShowAllAmenities(true)}>
                   {t("propertyPage.actions.showAllAmenities", { count: facilities.length })}
                 </button>
-
                 {remainingAmenitiesCount > 0 ? (
                   <div className="ppTinyHint">{t("propertyPage.moreAmenities", { count: remainingAmenitiesCount })}</div>
                 ) : null}
               </div>
             ) : null}
-
-            <div className="ppSection">
+            <div className="ppSection" data-reveal>
               <h2 className="ppH2">{t("propertyPage.reviewsTitle")}</h2>
-
               {reviewsCount > 0 && ratingAvg > 0 ? (
                 <div className="ppReviewSummary">
                   <div className="ppReviewScore">
@@ -607,7 +542,6 @@ export default function PropertyPage() {
                       </div>
                     </div>
                   </div>
-
                   <div className="ppReviewNote">
                     <ShieldCheck size={18} />
                     <div>
@@ -623,12 +557,10 @@ export default function PropertyPage() {
                 </div>
               )}
             </div>
-
             {isNonEmptyString(p?.city) || coords ? (
-              <div className="ppSection">
+              <div className="ppSection" data-reveal>
                 <h2 className="ppH2">{t("propertyPage.mapTitle")}</h2>
                 {isNonEmptyString(locationLine) ? <div className="ppMuted">{locationLine}</div> : null}
-
                 <div className="ppMapWrap">
                   <iframe
                     title={t("propertyPage.mapFrameTitle")}
@@ -643,7 +575,6 @@ export default function PropertyPage() {
               </div>
             ) : null}
           </div>
-
           {/* RIGHT */}
           <div className="ppColRight">
             <div className="ppBookingCard">
@@ -656,7 +587,6 @@ export default function PropertyPage() {
                 ) : (
                   <div className="ppMuted">{t("propertyPage.priceUnavailable")}</div>
                 )}
-
                 {canShowHighlights ? (
                   <div className="ppBookingRating">
                     <Star size={14} />
@@ -666,13 +596,11 @@ export default function PropertyPage() {
                   </div>
                 ) : null}
               </div>
-
               <div className="ppContactBlock">
                 <div className="ppContactTitle">{t("propertyPage.contact.title")}</div>
                 <div className="ppContactSubtitle">
                   {t("propertyPage.contact.subtitle", { host: hostName })}
                 </div>
-
                 <div className="ppContactButtons">
                   {hasPhone ? (
                     <a
@@ -694,7 +622,6 @@ export default function PropertyPage() {
                       {t("propertyPage.contact.callNow")}
                     </button>
                   )}
-
                   <a
                     className="ppOutlineBtn ppOutlineBtnFull"
                     href={smsHref}
@@ -702,7 +629,6 @@ export default function PropertyPage() {
                   >
                     {t("propertyPage.contact.sendSms")}
                   </a>
-
                   {hasPhone ? (
                     <a
                       className="ppOutlineBtn ppOutlineBtnFull"
@@ -715,15 +641,12 @@ export default function PropertyPage() {
                     </a>
                   ) : null}
                 </div>
-
                 <div className="ppContactHint">
                   <ShieldCheck size={16} />
                   <span>{t("propertyPage.contact.hint")}</span>
                 </div>
               </div>
-
               <div className="ppBookingDivider" />
-
               <div className="ppMiniRecap">
                 {typeof price === "number" && price > 0 ? (
                   <div className="ppMiniRow">
@@ -731,7 +654,6 @@ export default function PropertyPage() {
                     <b>{formatMoney(price, currency)}</b>
                   </div>
                 ) : null}
-
                 <div className="ppMiniRow">
                   <span className="ppMuted">{t("propertyPage.recap.location")}</span>
                   <b>{p?.city || p?.locality || "—"}</b>
@@ -740,28 +662,28 @@ export default function PropertyPage() {
             </div>
           </div>
         </div>
-
         {hostUserId ? (
           <>
-            <HostSection
-              host={{
-                id: hostUserId,
-                name: hostName,
-                avatarUrl: hostAvatar,
-                bio: hostBio,
-                verified: !!hostProfile?.verified,
-                isSuperHost: !!hostProfile?.isSuperHost,
-                hostingSince: hostProfile?.hostingSince || null,
-                responseRate: hostProfile?.responseRate ?? null,
-                responseTimeBucket: hostProfile?.responseTimeBucket || "unknown",
-                languages: Array.isArray(hostProfile?.languages) ? hostProfile.languages : [],
-                stats: hostProfile?.stats || null,
-              }}
-              loading={hostProfileLoading}
-              property={p}
-              onMessage={() => setMsgOpen(true)}
-            />
-
+            <div data-reveal>
+              <HostSection
+                host={{
+                  id: hostUserId,
+                  name: hostName,
+                  avatarUrl: hostAvatar,
+                  bio: hostBio,
+                  verified: !!hostProfile?.verified,
+                  isSuperHost: !!hostProfile?.isSuperHost,
+                  hostingSince: hostProfile?.hostingSince || null,
+                  responseRate: hostProfile?.responseRate ?? null,
+                  responseTimeBucket: hostProfile?.responseTimeBucket || "unknown",
+                  languages: Array.isArray(hostProfile?.languages) ? hostProfile.languages : [],
+                  stats: hostProfile?.stats || null,
+                }}
+                loading={hostProfileLoading}
+                property={p}
+                onMessage={() => setMsgOpen(true)}
+              />
+            </div>
             <MessageHostModal
               open={msgOpen}
               onClose={() => setMsgOpen(false)}
@@ -771,11 +693,9 @@ export default function PropertyPage() {
             />
           </>
         ) : null}
-
-        <div style={{ marginTop: 28 }}>
+        <div style={{ marginTop: 28 }} data-reveal>
           <PropertyReviews propertyId={id} />
         </div>
-
         {/* MODALS */}
         <Modal
           open={showAllPhotos}
@@ -788,7 +708,6 @@ export default function PropertyPage() {
             <div className="ppPhotoModalTitle">{t("propertyPage.gallery.photosTitle")}</div>
             <div className="ppMuted">{t("propertyPage.gallery.imagesCount", { count: images.length })}</div>
           </div>
-
           <div className="ppPhotoGrid">
             {images.map((src, idx) => (
               <button
@@ -802,7 +721,6 @@ export default function PropertyPage() {
             ))}
           </div>
         </Modal>
-
         <Modal
           open={showAllAmenities}
           title={t("propertyPage.amenitiesTitle")}
@@ -814,7 +732,7 @@ export default function PropertyPage() {
             {facilities.map((key) => {
               const meta = AMENITY_BY_KEY[key];
               if (!meta) return null;
-              const Icon = meta.icon; // ✅ corect
+              const Icon = meta.icon;
               return (
                 <div className="ppAmenityRow" key={key}>
                   {Icon ? <Icon size={20} /> : null}
@@ -824,7 +742,6 @@ export default function PropertyPage() {
             })}
           </div>
         </Modal>
-
         <Modal
           open={showFullDescription}
           title={t("propertyPage.fullDescTitle")}
@@ -838,7 +755,6 @@ export default function PropertyPage() {
             ) : (
               <p className="ppMuted">{t("propertyPage.descriptionUnavailable")}</p>
             )}
-
             <div className="ppFullDescMeta">
               {isNonEmptyString(locationLine) ? (
                 <div className="ppFullDescLine">
@@ -859,7 +775,6 @@ export default function PropertyPage() {
           </div>
         </Modal>
       </div>
-
       {/* ── LIGHTBOX ── */}
       {lightboxIdx !== null ? (
         <div
@@ -876,7 +791,6 @@ export default function PropertyPage() {
           >
             <X size={18} />
           </button>
-
           {images.length > 1 ? (
             <>
               <button
@@ -895,7 +809,6 @@ export default function PropertyPage() {
               </button>
             </>
           ) : null}
-
           <div
             className={`ppLbImgWrap${lbZoomed ? " is-zoomed" : ""}`}
             onClick={(e) => e.stopPropagation()}
@@ -908,18 +821,17 @@ export default function PropertyPage() {
               onClick={() => setLbZoomed((z) => !z)}
             />
           </div>
-
           <div className="ppLbBar" onClick={(e) => e.stopPropagation()}>
             <span className="ppLbCounter">{lightboxIdx + 1} / {images.length}</span>
             <button
               className="ppLbBtn ppLbZoomBtn"
               onClick={() => setLbZoomed((z) => !z)}
-              aria-label={lbZoomed ? "Zoom out" : "Zoom in"}
+              aria-label={lbZoomed ? t("propertyPage.gallery.zoomOut") : t("propertyPage.gallery.zoomIn")}
             >
               {lbZoomed ? <ZoomOut size={16} /> : <ZoomIn size={16} />}
-              {lbZoomed ? "Zoom out" : "Zoom in"}
+              {lbZoomed ? t("propertyPage.gallery.zoomOut") : t("propertyPage.gallery.zoomIn")}
             </button>
-            <span className="ppLbHint">← →  navighează  ·  Esc  închide</span>
+            <span className="ppLbHint">{t("propertyPage.gallery.lbHint")}</span>
           </div>
         </div>
       ) : null}

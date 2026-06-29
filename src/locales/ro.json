@@ -2,7 +2,12 @@
   "nav": {
     "home": "Acasă",
     "stays": "Cazări",
+    "trails": "Trasee",
     "dashboard": "Dashboard"
+  },
+  "footer": {
+    "rights": "Toate drepturile rezervate.",
+    "trails": "Trasee"
   },
   "favorites": {
     "title": "Favorite",
@@ -178,6 +183,26 @@
     "loginFailed": "Autentificare eșuată.",
     "noAccount": "Nu ai cont?",
     "createOne": "Creează unul",
+    "forgotPassword": "Ai uitat parola?",
+    "forgotTitle": "Resetează parola",
+    "forgotSubtitle": "Introdu emailul contului tău și îți trimitem un link de resetare.",
+    "forgotMissingEmail": "Completează adresa de email.",
+    "forgotSuccess": "Dacă există un cont cu acest email, vei primi un link de resetare.",
+    "forgotFailed": "Nu am putut porni resetarea parolei.",
+    "sendResetLink": "Trimite link de resetare",
+    "sendingReset": "Se trimite...",
+    "backToLogin": "Înapoi la autentificare",
+    "resetTitle": "Alege o parolă nouă",
+    "resetSubtitle": "Parola nouă trebuie să aibă cel puțin 6 caractere.",
+    "newPassword": "Parolă nouă",
+    "confirmPassword": "Confirmă parola",
+    "resetPasswordBtn": "Resetează parola",
+    "resettingPassword": "Se resetează...",
+    "resetMissingFields": "Completează ambele câmpuri.",
+    "resetPasswordTooShort": "Parola trebuie să aibă cel puțin 6 caractere.",
+    "resetPasswordsMismatch": "Parolele nu coincid.",
+    "resetSuccess": "Parola a fost resetată. Te poți autentifica acum.",
+    "resetFailed": "Nu am putut reseta parola.",
 
     "registerTitle": "Creează cont",
     "registerSubtitle": "Alătură-te BucovinaStay și descoperă Bucovina ca un localnic.",
@@ -608,7 +633,10 @@
       "empty": "Nu există fotografii încă.",
       "photosTitle": "Fotografii",
       "imagesCount": "{{count}} imagini",
-      "photoAlt": "Foto {{n}}"
+      "photoAlt": "Foto {{n}}",
+      "lbHint": "← →  navighează  ·  Esc  închide",
+      "zoomIn": "Mărește",
+      "zoomOut": "Micșorează"
     },
 
     "host": {
